@@ -1,0 +1,219 @@
+{
+  "main": {
+    "id": "f4d23f0f84676563",
+    "type": "split",
+    "children": [
+      {
+        "id": "286d636839af3c9b",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "b888b0c8c99c0b63",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "03_DisenoArquitectura/Despliegue.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Despliegue"
+            }
+          },
+          {
+            "id": "5c9cad60a3385100",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "03_DisenoArquitectura/Requerimientos_No_Funcionales_Fase_I.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Requerimientos_No_Funcionales_Fase_I"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "af9beb6bb2884ee3",
+    "type": "split",
+    "children": [
+      {
+        "id": "b6d8e2d5116685ec",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "559f1e6d9a849ab5",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Explorador de archivos"
+            }
+          },
+          {
+            "id": "99fa8e9852c9a7f1",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Buscar"
+            }
+          },
+          {
+            "id": "82adcce7bce137ba",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Marcadores"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "16a92d26aabbc172",
+    "type": "split",
+    "children": [
+      {
+        "id": "132294d44986c426",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "c24bdc2c7938901f",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "01_Ideación/Solución.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Enlaces entrantes de Solución"
+            }
+          },
+          {
+            "id": "7473e69dbc3e83ab",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "01_Ideación/Solución.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Enlaces salientes de Solución"
+            }
+          },
+          {
+            "id": "8128c227178e7cf8",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Etiquetas"
+            }
+          },
+          {
+            "id": "7782cc0f99ac05ec",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "01_Ideación/Solución.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Esquema de Solución"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Abrir selector rápido": false,
+      "graph:Abrir vista gráfica": false,
+      "canvas:Crear nuevo lienzo": false,
+      "daily-notes:Abrir la nota de hoy": false,
+      "templates:Insertar plantilla": false,
+      "command-palette:Abrir paleta de comandos": false,
+      "bases:Crear nueva base": false
+    }
+  },
+  "active": "b888b0c8c99c0b63",
+  "lastOpenFiles": [
+    "03_DisenoArquitectura/Arquitectura_Sistema.md",
+    "03_DisenoArquitectura/Flujos_Principales.md",
+    "03_DisenoArquitectura/Requerimientos_No_Funcionales_Fase_I.md",
+    "03_DisenoArquitectura/Requerimientos_Funcionales_Fase_I.md",
+    "03_DisenoArquitectura/Modulos/Autenticación y Usuarios.md",
+    "03_DisenoArquitectura/Modulos/Clientes.md",
+    "03_DisenoArquitectura/Modulos/Dashboard.md",
+    "03_DisenoArquitectura/Modulos/Facturación.md",
+    "03_DisenoArquitectura/Modulos/OCR - IA.md",
+    "03_DisenoArquitectura/Modulos/Productos - Servicios.md",
+    "02_Tecnología/Justificacion_Tecnica.md",
+    "02_Tecnología/Stack_Tecnologico.md",
+    "01_Ideación/Impacto_Esperado.md",
+    "05_Investigación/OCR - IA.md",
+    "05_Investigación/Ticketbai.md",
+    "05_Investigación/UX - UI.md",
+    "03_DisenoArquitectura/Arquitectura.md",
+    "03_DisenoArquitectura/Despliegue.md",
+    "01_Ideación/Usuario_Objetivo.md",
+    "01_Ideación/Solucion.md",
+    "01_Ideación/Problema.md",
+    "03_DisenoArquitectura/Modulos",
+    "01_Ideación/Módulos.md",
+    "Sin nombre",
+    "Bienvenido.md",
+    "05_Investigación",
+    "04_Desarrollo",
+    "03_DisenoArquitectura",
+    "02_Tecnología",
+    "01_Ideación"
+  ]
+}
