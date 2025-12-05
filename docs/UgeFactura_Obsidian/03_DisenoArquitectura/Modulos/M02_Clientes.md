@@ -1,4 +1,4 @@
-Almacenar los datos de clientes y vincularlos con facturas.
+Gestionar los datos de clientes y vincularlos con facturas.
 
 Funciones:
 - Crear, editar y eliminar clientes

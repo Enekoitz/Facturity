@@ -1,8 +1,10 @@
-Gestionar todo el ciclo de creación, edición y almacenamiento de facturas.
+Gestión, consulta, visualización y procesamiento mediante OCR de la factura.
+
 Funciones:
-- Crear factura: manualmente o vía OCR
+- Crear factura: manualmente o vía OCR automáticamente
 - Revisar y editar factura
 - Confirmar factura
+- Anular factura
 - Guardar y visualizar facturas con formato editable
 - Exportar y visualizar factura en PDF
 - Listar, filtrar, buscar facturas existentes
