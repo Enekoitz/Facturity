@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UgeFactura.Domain.ValueObjects
+namespace UgeFactura.Domain.Cliente.ValueObjects
 {
     public sealed record Domicilio
     {

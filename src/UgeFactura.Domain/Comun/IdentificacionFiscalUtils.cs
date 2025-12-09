@@ -5,33 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using UgeFactura.Domain.ValueObjects;
+using UgeFactura.Domain.Cliente.ValueObjects;
 
 namespace UgeFactura.Domain.Comun
 {
-    public enum SubTipoIdentificacion
-    {
-        Nif,
-        Nie,
-        Cif,
-        Desconocido
-    }
     public static class IdentificacionFiscalUtils
     {
         private const string LetrasNif = "TRWAGMYFPDXBNJZSQVHLCKE";
-
-        public static SubTipoIdentificacion DetectarSubTipo(string valor)
-        {
-            if (string.IsNullOrWhiteSpace(valor)) return SubTipoIdentificacion.Desconocido;
-
-            valor = valor.Trim().ToUpper();
-
-            if (EsNif(valor)) return SubTipoIdentificacion.Nif;
-            if (EsNie(valor)) return SubTipoIdentificacion.Nie;
-            if (EsCif(valor)) return SubTipoIdentificacion.Cif;
-
-            return SubTipoIdentificacion.Desconocido;
-        }
 
         public static bool EsNifNieOCifValido(string valor, out string mensajeError)
         {

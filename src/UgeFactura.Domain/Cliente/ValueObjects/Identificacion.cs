@@ -6,9 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using UgeFactura.Domain.Cliente.Servicios;
 using UgeFactura.Domain.Comun;
-using static UgeFactura.Domain.Comun.IdentificacionFiscalUtils;
 
-namespace UgeFactura.Domain.ValueObjects
+namespace UgeFactura.Domain.Cliente.ValueObjects
 {
     public sealed record Identificacion
     {
@@ -17,11 +16,12 @@ namespace UgeFactura.Domain.ValueObjects
         public string Valor { get; private set; }
         public string? PaisCodigo { get; private set; }
 
-        private Identificacion(TipoIdentificacion tipo, string valor, string? paisCodigo)
+        private Identificacion(TipoIdentificacion tipo, string valor, string? paisCodigo, SubTipoIdentificacion? subTipo)
         {
             Tipo = tipo;
             Valor = valor;
             PaisCodigo = paisCodigo;
+            SubTipo = subTipo;
         }
 
         public static Result<Identificacion> Crear(string tipoCodigo, string valor, string? paisCodigo = null)
@@ -45,41 +45,20 @@ namespace UgeFactura.Domain.ValueObjects
             if (errores.Count > 0)
                 return Result.Fail<Identificacion>(string.Join("; ", errores));
 
-            if (identificacionResult.Value.Tipo.Codigo == "01")
-            {
-                var SubTipoIdentificacionFiscal = IdentificacionFiscalUtils.DetectarSubTipo(p.Identificacion.Valor);
-
-                if (SubTipoIdentificacionFiscal == SubTipoIdentificacion.Nif)
-                {
-
-                }
-                else if (SubTipoIdentificacionFiscal == SubTipoIdentificacion.Nie)
-                {
-
-                }
-                else if (SubTipoIdentificacionFiscal == SubTipoIdentificacion.Cif)
-                {
-
-                }
-                else
-                {
-                    errores.Add("La identificación fiscal no es un NIF, NIE o CIF válido.");
-                }
-            }
-
-            if (errores.Count > 0)
-                return Result.Fail<Identificacion>(string.Join("; ", errores));
-
             if (tipoResult.Value.RequierePais && !ValidadorCodigos.EsCodigoPaisValido(paisCodigo, out string mensajeError))
                 errores.Add(mensajeError);
 
             if (errores.Count > 0)
                 return Result.Fail<Identificacion>(string.Join("; ", errores));
 
+            var subTipoResult = SubTiposIdentificacion.ObtenerSubTipo(tipoResult.Value.Codigo, valor);
+            if (subTipoResult.IsFailed)
+                errores.AddRange(subTipoResult.Errors.Select(e => e.Message));
+
             if (!tipoResult.Value.EsValido(valor, out mensajeError))
                 return Result.Fail<Identificacion>(mensajeError);
 
-            return Result.Ok(new Identificacion(tipoResult.Value, valor, paisCodigo));
+            return Result.Ok(new Identificacion(tipoResult.Value, valor, paisCodigo, subTipoResult.Value));
         }
 
         public override string ToString() => Valor;

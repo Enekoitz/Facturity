@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using UgeFactura.Domain.Cliente.ValueObjects;
 
-namespace UgeFactura.Domain.ValueObjects
+namespace UgeFactura.Domain.Cliente.ValueObjects
 {
-    public record class TipoIdentificacion
+    public sealed record TipoIdentificacion
     {
         public string Codigo { get; init; }
         public string Tipo { get; init; }

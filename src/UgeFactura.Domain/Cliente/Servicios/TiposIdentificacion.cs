@@ -21,45 +21,12 @@ namespace UgeFactura.Domain.Cliente.Servicios
             { "07", new ValueObjects.TipoIdentificacion("07", "NIF Entidad extranjera" , (valor) => (IdentificacionFiscalUtils.EsNifEntidadExtranjeraValido(valor, out string msj), msj), true) },
         };
 
-        private static readonly Dictionary<string, string[]> _subtipoSegunTipos = new()
-        {
-            { "01", new string[] { "NIF", "NIE", "CIF" } },
-            { "02", new string[] { "NIF-IVA" } },
-            { "03", new string[] { "Pasaporte" } },
-            { "04", new string[] { "Documento oficial de identificación expedido por el país o territorio de residencia" } },
-            { "05", new string[] { "Certificado de residencia" } },
-            { "06", new string[] { "Otro documento probatorio" } },
-            { "07", new string[] { "NIF Entidad extranjera" } },
-        };
-
         public static Result<ValueObjects.TipoIdentificacion> Obtener(string tipoCodigo)
         {
             return _tipos.TryGetValue(tipoCodigo, out ValueObjects.TipoIdentificacion? value)
                 ? Result.Ok(value)
                 : Result.Fail<ValueObjects.TipoIdentificacion>("El código de tipo de identificación no es válido.");
         }
-
-        public static string? ObtenerSubtipo(string tipoCodigo, string valor)
-        {
-            if (_subtipoSegunTipos.TryGetValue(tipoCodigo, out string[] subtipos))
-            {
-                if (tipoCodigo == "01")
-                {
-                    if (IdentificacionFiscalUtils.EsNifValido(valor, out _))
-                        return "NIF";
-                    else if (IdentificacionFiscalUtils.EsNieValido(valor, out _))
-                        return "NIE";
-                    else if (IdentificacionFiscalUtils.EsCifValido(valor, out _))
-                        return "CIF";
-                    else
-                        return null;
-                }
-                else
-                {
-                    return subtipos.FirstOrDefault() ?? null;
-                }
-            }
-            return null;
-        }
+        
     }
 }
