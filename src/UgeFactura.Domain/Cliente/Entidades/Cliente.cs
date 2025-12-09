@@ -28,16 +28,54 @@ namespace UgeFactura.Domain.Cliente.Entidades
         public static Result<Cliente> Crear(ClienteParams p) {
             var errores = new List<string>();
 
+            if (string.IsNullOrWhiteSpace(p.Alias))
+                errores.Add("El alias no puede estar vacío.");
+
             var identificacionResult = Identificacion.Crear(p.Identificacion.CodigoTipo, p.Identificacion.Valor, p.Identificacion.PaisCodigo);
 
             if (identificacionResult.IsSuccess)
             {
-                if(string.IsNullOrWhiteSpace(p.Alias))
-                    errores.Add("El alias no puede estar vacío.");
+                List<string> erroresNombreApellido;
 
-                if (identificacionResult.Value.SubTipo.Value)
+                switch (identificacionResult.Value.SubTipo)
+                {
+                    case Servicios.SubTipoIdentificacion.NifPersonaFisica:
+                        ValidarNombreApellido(p.Nombre, p.PrimerApellido, p.SegundoApellido, out erroresNombreApellido);
+                        break;
 
-                ValidarNombreApellido(p.Nombre, p.PrimerApellido, p.SegundoApellido, out List<string> erroresNombreApellido);
+                    case Servicios.SubTipoIdentificacion.Nie:
+                        ValidarNombreApellido(p.Nombre, p.PrimerApellido, p.SegundoApellido, out erroresNombreApellido);
+                        break;
+
+                    case Servicios.SubTipoIdentificacion.NifPersonaJuridica:
+                        ValidarRazonSocial(p.RazonSocial, out erroresNombreApellido);
+                        break;
+
+                    default:
+                        if (!string.IsNullOrWhiteSpace(p.RazonSocial))
+                        {
+                            if (ValidarRazonSocial(p.RazonSocial, out erroresNombreApellido))
+                                p.Nombre = p.PrimerApellido = p.SegundoApellido = null;
+                        }
+                        else 
+                        {
+                            if (ValidarNombreApellido(p.Nombre, p.PrimerApellido, p.SegundoApellido, out erroresNombreApellido))
+                                p.RazonSocial = null;
+                        }
+
+                        erroresNombreApellido = new List<string>();
+                        break;
+                } 
+
+                if (erroresNombreApellido.Count > 0)
+                {
+                    errores.AddRange(erroresNombreApellido);
+                }
+
+                if (errores.Count > 0)
+                {
+                    return Result.Fail(string.Join("; ", errores));
+                }
 
                 return Result.Ok(new Cliente
                 {
@@ -51,7 +89,7 @@ namespace UgeFactura.Domain.Cliente.Entidades
             }
             else
             {
-                return Result.Fail(string.Join(", ", identificacionResult.Errors.Select(e => e.Message)));
+                return Result.Fail(string.Join("; ", identificacionResult.Errors.Select(e => e.Message)));
             }
         }
 
@@ -68,7 +106,7 @@ namespace UgeFactura.Domain.Cliente.Entidades
             {
                 erroresNombreApellido.Add("El nombre no puede estar vacío.");
             }
-            else if(nombre.Length > 20)
+            else if(nombre.Length > 39)
             {
                 erroresNombreApellido.Add("El nombre debe tener una longitud máxima de 20 caracteres.");
             }
@@ -77,12 +115,12 @@ namespace UgeFactura.Domain.Cliente.Entidades
             {
                 erroresNombreApellido.Add("El primer apellido no puede estar vacío.");
             }
-            else if (primerApellido?.Length > 20)
+            else if (primerApellido?.Length > 39)
             {
                 erroresNombreApellido.Add("El primer apellido debe tener una longitud máxima de 20 caracteres.");
             }
 
-            if (segundoApellido?.Length > 20)
+            if (segundoApellido?.Length > 39)
             {
                 erroresNombreApellido.Add("El segundo apellido debe tener una longitud máxima de 20 caracteres.");
             }
@@ -90,6 +128,24 @@ namespace UgeFactura.Domain.Cliente.Entidades
             if (erroresNombreApellido.Count > 0)
                 return false;
             
+            return true;
+        }
+
+        private static bool ValidarRazonSocial(
+            string? razonSocial, 
+            out List<string> erroresRazonSocial)
+        {
+            erroresRazonSocial = new List<string>();
+            if (string.IsNullOrWhiteSpace(razonSocial))
+            {
+                erroresRazonSocial.Add("La razón social no puede estar vacía.");
+            }
+            else if (razonSocial.Length > 120)
+            {
+                erroresRazonSocial.Add("La razón social debe tener una longitud máxima de 100 caracteres.");
+            }
+            if (erroresRazonSocial.Count > 0)
+                return false;
             return true;
         }
     }

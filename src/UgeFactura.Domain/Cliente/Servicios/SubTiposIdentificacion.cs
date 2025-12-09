@@ -10,7 +10,6 @@ namespace UgeFactura.Domain.Cliente.Servicios
 {
     public enum SubTipoIdentificacion
     {
-        Desconocido,
         NifPersonaFisica,
         Nie,
         NifPersonaJuridica
