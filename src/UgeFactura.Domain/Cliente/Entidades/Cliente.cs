@@ -2,151 +2,173 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using UgeFactura.Domain.Cliente.DTOs;
+using UgeFactura.Domain.Cliente.Servicios;
 using UgeFactura.Domain.Cliente.ValueObjects;
 using UgeFactura.Domain.Comun;
+using UgeFactura.Domain.Comun.Limites;
+using UgeFactura.Domain.Comun.Mensajes;
+using UgeFactura.Domain.Comun.Validaciones;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace UgeFactura.Domain.Cliente.Entidades
 {
-    internal class Cliente
+    public class Cliente
     {
-        private Guid Guid { get; set; }
-        private string Alias { get; set; }
-        private Identificacion Identificacion { get; set; }
-        private string? RazonSocial { get; set; }
-        private string? Nombre { get; set; }
-        private string? PrimerApellido { get; set; }
-        private string? SegundoApellido { get; set; }
-        private Domicilio Domicilio { get; set; }  
+        public Guid Id { get; init; }
+        public string Alias { get; private set; }
+        public IdentificacionFiscal Identificacion { get; private set; }
+        public string? RazonSocial { get; private set; }
+        public string? Nombre { get; private set; }
+        public string? PrimerApellido { get; private set; }
+        public string? SegundoApellido { get; private set; }
+        public Domicilio Domicilio { get; private set; }  
 
-        private Cliente() {
-            Guid = Guid.NewGuid();
+        private Cliente(string alias,
+            IdentificacionFiscal identificacionFiscal,
+            string? razonSocial,
+            string? nombre,
+            string? primerApellido,
+            string? segundoApellido,
+            Domicilio domicilio) 
+        {
+            Id = Guid.NewGuid();
+            Alias = alias;
+            Identificacion = identificacionFiscal;
+            RazonSocial = razonSocial;
+            Nombre = nombre;
+            PrimerApellido = primerApellido;
+            SegundoApellido = segundoApellido;
+            Domicilio = domicilio;
         }
 
-        public static Result<Cliente> Crear(ClienteParams p) {
+        public static Result<Cliente> Crear(
+            string alias,
+            IdentificacionFiscal identificacionFiscal,
+            string? razonSocial,
+            string? nombre,
+            string? primerApellido,
+            string? segundoApellido,
+            Domicilio domicilio) 
+        {
             var errores = new List<string>();
+            
+            ValidarDatos(alias, identificacionFiscal.SubTipo, razonSocial, nombre, primerApellido, segundoApellido, errores);
 
-            if (string.IsNullOrWhiteSpace(p.Alias))
-                errores.Add("El alias no puede estar vacío.");
+            if (errores.Count > 0)
+                return Result.Fail(string.Join("; ", errores));
 
-            var identificacionResult = Identificacion.Crear(p.Identificacion.CodigoTipo, p.Identificacion.Valor, p.Identificacion.PaisCodigo);
+            return Result.Ok(new Cliente(
+                                  alias,
+                                  identificacionFiscal,
+                                  razonSocial,
+                                  nombre,
+                                  primerApellido,
+                                  segundoApellido,
+                                  domicilio));
+        }
 
-            if (identificacionResult.IsSuccess)
+        internal static void ValidarDatos(
+            string alias,
+            SubTipoIdentificacionFiscal? subIdentificacionFiscal,
+            string? razonSocial,
+            string? nombre,
+            string? primerApellido,
+            string? segundoApellido,
+            List<string> errores)
+        {
+            ValidarAlias(alias, errores);
+
+            switch (subIdentificacionFiscal)
             {
-                List<string> erroresNombreApellido;
+                case SubTipoIdentificacionFiscal.NifPersonaFisica:
+                case SubTipoIdentificacionFiscal.Nie:
+                    ValidarNombreApellido(nombre, primerApellido, segundoApellido, errores);
+                    break;
 
-                switch (identificacionResult.Value.SubTipo)
-                {
-                    case Servicios.SubTipoIdentificacion.NifPersonaFisica:
-                        ValidarNombreApellido(p.Nombre, p.PrimerApellido, p.SegundoApellido, out erroresNombreApellido);
-                        break;
+                case SubTipoIdentificacionFiscal.NifPersonaJuridica:
+                    ValidarRazonSocial(razonSocial, errores);
+                    break;
 
-                    case Servicios.SubTipoIdentificacion.Nie:
-                        ValidarNombreApellido(p.Nombre, p.PrimerApellido, p.SegundoApellido, out erroresNombreApellido);
-                        break;
-
-                    case Servicios.SubTipoIdentificacion.NifPersonaJuridica:
-                        ValidarRazonSocial(p.RazonSocial, out erroresNombreApellido);
-                        break;
-
-                    default:
-                        if (!string.IsNullOrWhiteSpace(p.RazonSocial))
-                        {
-                            if (ValidarRazonSocial(p.RazonSocial, out erroresNombreApellido))
-                                p.Nombre = p.PrimerApellido = p.SegundoApellido = null;
-                        }
-                        else 
-                        {
-                            if (ValidarNombreApellido(p.Nombre, p.PrimerApellido, p.SegundoApellido, out erroresNombreApellido))
-                                p.RazonSocial = null;
-                        }
-
-                        erroresNombreApellido = new List<string>();
-                        break;
-                } 
-
-                if (erroresNombreApellido.Count > 0)
-                {
-                    errores.AddRange(erroresNombreApellido);
-                }
-
-                if (errores.Count > 0)
-                {
-                    return Result.Fail(string.Join("; ", errores));
-                }
-
-                return Result.Ok(new Cliente
-                {
-                    Alias = p.Alias,
-                    Identificacion = identificacionResult.Value,
-                    RazonSocial = p.RazonSocial,
-                    Nombre = p.Nombre,
-                    PrimerApellido = p.PrimerApellido,
-                    SegundoApellido = p.SegundoApellido,
-                });
-            }
-            else
-            {
-                return Result.Fail(string.Join("; ", identificacionResult.Errors.Select(e => e.Message)));
+                default:
+                    if (!string.IsNullOrWhiteSpace(razonSocial))
+                        ValidarRazonSocial(razonSocial, errores);
+                    else
+                        ValidarNombreApellido(nombre, primerApellido, segundoApellido, errores);
+                    break;
             }
         }
 
+        internal static void ValidarAlias(
+            string alias, 
+            List<string> errores)
+        {
+            ValidarTexto.ValidarNoVacio(
+                alias,
+                CodigoError.AliasVacio,
+                errores);
 
-        private static bool ValidarNombreApellido(
+            ValidarTexto.ValidarLongitud(
+                alias,
+                LimiteCliente.AliasLongitudMaxima,
+                CodigoError.AliasDemasiadoLargo,
+                errores);
+        }
+
+        private static void ValidarNombreApellido(
             string? nombre, 
             string? primerApellido, 
             string? segundoApellido, 
-            out List<string> erroresNombreApellido)
+            List<string> errores)
         {
-            erroresNombreApellido = new List<string>();
+            ValidarTexto.ValidarNoVacio(
+                nombre,
+                CodigoError.NombreVacio,
+                errores);
 
-            if (string.IsNullOrWhiteSpace(nombre))
-            {
-                erroresNombreApellido.Add("El nombre no puede estar vacío.");
-            }
-            else if(nombre.Length > 39)
-            {
-                erroresNombreApellido.Add("El nombre debe tener una longitud máxima de 20 caracteres.");
-            }
+            ValidarTexto.ValidarLongitud(
+                nombre,
+                LimiteCliente.NombreLongitudMaxima,
+                CodigoError.NombreDemasiadoLargo,
+                errores);
 
-            if (string.IsNullOrWhiteSpace(primerApellido))
-            {
-                erroresNombreApellido.Add("El primer apellido no puede estar vacío.");
-            }
-            else if (primerApellido?.Length > 39)
-            {
-                erroresNombreApellido.Add("El primer apellido debe tener una longitud máxima de 20 caracteres.");
-            }
+            ValidarTexto.ValidarNoVacio(
+                primerApellido,
+                CodigoError.PrimerApellidoVacio,
+                errores);
 
-            if (segundoApellido?.Length > 39)
-            {
-                erroresNombreApellido.Add("El segundo apellido debe tener una longitud máxima de 20 caracteres.");
-            }
+            ValidarTexto.ValidarLongitud(
+                primerApellido,
+                LimiteCliente.ApellidoLongitudMaxima,
+                CodigoError.PrimerApellidoDemasiadoLargo,
+                errores);
 
-            if (erroresNombreApellido.Count > 0)
-                return false;
-            
-            return true;
+            if (!string.IsNullOrWhiteSpace(segundoApellido))
+            {
+                ValidarTexto.ValidarLongitud(
+                    segundoApellido,
+                    LimiteCliente.ApellidoLongitudMaxima,
+                    CodigoError.SegundoApellidoDemasiadoLargo,
+                    errores);
+            }
         }
 
-        private static bool ValidarRazonSocial(
-            string? razonSocial, 
-            out List<string> erroresRazonSocial)
+        private static void ValidarRazonSocial(
+            string? razonSocial,
+            List<string> errores)
         {
-            erroresRazonSocial = new List<string>();
-            if (string.IsNullOrWhiteSpace(razonSocial))
-            {
-                erroresRazonSocial.Add("La razón social no puede estar vacía.");
-            }
-            else if (razonSocial.Length > 120)
-            {
-                erroresRazonSocial.Add("La razón social debe tener una longitud máxima de 100 caracteres.");
-            }
-            if (erroresRazonSocial.Count > 0)
-                return false;
-            return true;
+            ValidarTexto.ValidarNoVacio(
+                razonSocial,
+                CodigoError.RazonSocialVacio,
+                errores);
+
+            ValidarTexto.ValidarLongitud(
+                razonSocial,
+                LimiteCliente.RazonSocialLongitudMaxima,
+                CodigoError.RazonSocialDemasiadoLargo,
+                errores);
         }
     }
 }

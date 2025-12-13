@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UgeFactura.Domain.Comun
+namespace UgeFactura.Domain.Comun.Validaciones
 {
     public static class ValidadorCodigos
     {

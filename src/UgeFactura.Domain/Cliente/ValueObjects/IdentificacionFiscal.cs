@@ -5,18 +5,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UgeFactura.Domain.Cliente.Servicios;
-using UgeFactura.Domain.Comun;
+using UgeFactura.Domain.Comun.Validaciones;
 
 namespace UgeFactura.Domain.Cliente.ValueObjects
 {
-    public sealed record Identificacion
+    public sealed record IdentificacionFiscal
     {
-        public TipoIdentificacion Tipo { get; private set; }
-        public SubTipoIdentificacion? SubTipo { get; private set; }
+        public TipoIdentificacionFiscal Tipo { get; private set; }
+        public SubTipoIdentificacionFiscal? SubTipo { get; private set; }
         public string Valor { get; private set; }
         public string? PaisCodigo { get; private set; }
 
-        private Identificacion(TipoIdentificacion tipo, string valor, string? paisCodigo, SubTipoIdentificacion? subTipo)
+        private IdentificacionFiscal(TipoIdentificacionFiscal tipo, string valor, string? paisCodigo, SubTipoIdentificacionFiscal? subTipo)
         {
             Tipo = tipo;
             Valor = valor;
@@ -24,7 +24,7 @@ namespace UgeFactura.Domain.Cliente.ValueObjects
             SubTipo = subTipo;
         }
 
-        public static Result<Identificacion> Crear(string tipoCodigo, string valor, string? paisCodigo = null)
+        public static Result<IdentificacionFiscal> Crear(string tipoCodigo, string valor, string? paisCodigo = null)
         {
             tipoCodigo = tipoCodigo?.Trim().ToUpper() ?? string.Empty;
             valor = valor?.Trim().ToUpper() ?? string.Empty;
@@ -38,27 +38,27 @@ namespace UgeFactura.Domain.Cliente.ValueObjects
             if (string.IsNullOrWhiteSpace(valor))
                 errores.Add("El valor de la identificación no puede estar vacío.");
 
-            var tipoResult = TiposIdentificacion.Obtener(tipoCodigo);
+            var tipoResult = TiposIdentificacionFiscal.Obtener(tipoCodigo);
             if (tipoResult.IsFailed)
                 errores.AddRange(tipoResult.Errors.Select(e => e.Message));
 
             if (errores.Count > 0)
-                return Result.Fail<Identificacion>(string.Join("; ", errores));
+                return Result.Fail<IdentificacionFiscal>(string.Join("; ", errores));
 
             if (tipoResult.Value.RequierePais && !ValidadorCodigos.EsCodigoPaisValido(paisCodigo, out string mensajeError))
                 errores.Add(mensajeError);
 
             if (errores.Count > 0)
-                return Result.Fail<Identificacion>(string.Join("; ", errores));
+                return Result.Fail<IdentificacionFiscal>(string.Join("; ", errores));
 
-            var subTipoResult = SubTiposIdentificacion.ObtenerSubTipo(tipoResult.Value.Codigo, valor);
+            var subTipoResult = SubTiposIdentificacionFiscal.ObtenerSubTipo(tipoResult.Value.Codigo, valor);
             if (subTipoResult.IsFailed)
                 errores.AddRange(subTipoResult.Errors.Select(e => e.Message));
 
             if (!tipoResult.Value.EsValido(valor, out mensajeError))
-                return Result.Fail<Identificacion>(mensajeError);
+                return Result.Fail<IdentificacionFiscal>(mensajeError);
 
-            return Result.Ok(new Identificacion(tipoResult.Value, valor, paisCodigo, subTipoResult.Value));
+            return Result.Ok(new IdentificacionFiscal(tipoResult.Value, valor, paisCodigo, subTipoResult.Value));
         }
 
         public override string ToString() => Valor;

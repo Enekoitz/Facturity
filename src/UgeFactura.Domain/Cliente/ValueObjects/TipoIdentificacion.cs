@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace UgeFactura.Domain.Cliente.ValueObjects
 {
-    public sealed record TipoIdentificacion
+    public sealed record TipoIdentificacionFiscal
     {
         public string Codigo { get; init; }
         public string Tipo { get; init; }
         public bool RequierePais { get; init; } = false;
         private Func<string, (bool, string)> Validador { get; init; }
 
-        public TipoIdentificacion(string codigo, string tipo, Func<string, (bool, string)> validador, bool requierePais) { 
+        public TipoIdentificacionFiscal(string codigo, string tipo, Func<string, (bool, string)> validador, bool requierePais) { 
             Codigo = codigo;
             Tipo = tipo;
             Validador = validador;
