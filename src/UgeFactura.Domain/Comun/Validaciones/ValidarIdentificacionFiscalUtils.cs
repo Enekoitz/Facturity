@@ -7,9 +7,9 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UgeFactura.Domain.Cliente.ValueObjects;
 
-namespace UgeFactura.Domain.Comun
+namespace UgeFactura.Domain.Comun.Validaciones
 {
-    public static class IdentificacionFiscalUtils
+    public static class ValidarIdentificacionFiscalUtils
     {
         private const string LetrasNif = "TRWAGMYFPDXBNJZSQVHLCKE";
 

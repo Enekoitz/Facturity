@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace UgeFactura.Domain.Comun.Validaciones
 {
-    public static class ValidadorCodigos
+    public static class ValidarCodigos
     {
         public static bool EsCodigoPaisValido(string? codigoPais, out string mensajeError)
         {
