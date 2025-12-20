@@ -8,29 +8,15 @@ namespace UgeFactura.Domain.Tests.Cliente.ValueObjects
 {
     public class CodigoPostalTests
     {
-        [Fact]
-        public void CrearCodigoPostal_CodigoPostalNulo_Fallo()
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("  ")]
+        public void CrearCodigoPostal_CodigoPostalVacio_Fallo(string? codigoPostalEntrada)
         {
-            // Arrange
-            string? cp = null;
 
             // Act
-            var result = CodigoPostal.Crear(cp);
-
-            // Assert
-            Assert.True(result.IsFailed);
-            Assert.Single(result.Errors);
-            Assert.Equal("El código postal no puede estar vacío.", result.Errors[0].Message);
-        }
-
-        [Fact]
-        public void CrearCodigoPostal_CodigoPostalVacio_Fallo()
-        {
-            // Arrange
-            string cp = string.Empty;
-
-            // Act
-            var result = CodigoPostal.Crear(cp);
+            var result = CodigoPostal.Crear(codigoPostalEntrada);
 
             // Assert
             Assert.True(result.IsFailed);
