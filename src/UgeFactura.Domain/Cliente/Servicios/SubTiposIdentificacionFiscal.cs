@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UgeFactura.Domain.Comun;
+using UgeFactura.Domain.Comun.Mensajes;
+using UgeFactura.Domain.Comun.Validaciones;
 
 namespace UgeFactura.Domain.Cliente.Servicios
 {
@@ -23,24 +25,24 @@ namespace UgeFactura.Domain.Cliente.Servicios
             codigoIdentificacion = codigoIdentificacion.Trim().ToUpper();
 
             if (string.IsNullOrWhiteSpace(codigoIdentificacion))
-                return Result.Fail<SubTipoIdentificacionFiscal?>("El código de tipo de identificación no puede estar vacío.");
+                return Result.Fail<SubTipoIdentificacionFiscal?>(IdentificacionFiscalCodigosError.TipoIdentificacionFiscal_Vacio.ToString());
 
             if (string.IsNullOrWhiteSpace(valorIdentificacion))
-                return Result.Fail<SubTipoIdentificacionFiscal?>("El valor de identificación no puede estar vacío.");
+                return Result.Fail<SubTipoIdentificacionFiscal?>(IdentificacionFiscalCodigosError.ValorIdentificacionFiscal_Vacio.ToString());
 
             switch (codigoIdentificacion)
             {
                 case "01":
-                    if (IdentificacionFiscalUtils.EsNif(valorIdentificacion))
+                    if (ValidarIdentificacionFiscalUtils.EsNif(valorIdentificacion))
                         return Result.Ok<SubTipoIdentificacionFiscal?>(SubTipoIdentificacionFiscal.NifPersonaFisica);
 
-                    if (IdentificacionFiscalUtils.EsNie(valorIdentificacion))
+                    if (ValidarIdentificacionFiscalUtils.EsNie(valorIdentificacion))
                         return Result.Ok<SubTipoIdentificacionFiscal?>(SubTipoIdentificacionFiscal.Nie);
 
-                    if (IdentificacionFiscalUtils.EsCif(valorIdentificacion))
+                    if (ValidarIdentificacionFiscalUtils.EsCif(valorIdentificacion))
                         return Result.Ok<SubTipoIdentificacionFiscal?>(SubTipoIdentificacionFiscal.NifPersonaJuridica);
 
-                    return Result.Fail<SubTipoIdentificacionFiscal?>("No se ha podido determinar el subtipo de identificación.");
+                    return Result.Fail<SubTipoIdentificacionFiscal?>(IdentificacionFiscalCodigosError.SubTipoIdentificacionFiscal_Invalido.ToString());
 
                 default:
                     return Result.Ok<SubTipoIdentificacionFiscal?>(null);

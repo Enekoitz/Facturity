@@ -45,7 +45,7 @@ namespace UgeFactura.Domain.Cliente.ValueObjects
             if (errores.Count > 0)
                 return Result.Fail<IdentificacionFiscal>(string.Join("; ", errores));
 
-            if (tipoResult.Value.RequierePais && !ValidadorCodigos.EsCodigoPaisValido(paisCodigo, out string mensajeError))
+            if (tipoResult.Value.RequierePais && !ValidarCodigos.EsCodigoPaisValido(paisCodigo, out string mensajeError))
                 errores.Add(mensajeError);
 
             if (errores.Count > 0)

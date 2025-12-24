@@ -9,22 +9,22 @@ namespace UgeFactura.Domain.Comun.Validaciones
     {
         public static void ValidarNoVacio(
         string? valor,
-        CodigoError codigoError,
+        ClienteCodigosError codigoError,
         List<string> errores)
         {
             if (string.IsNullOrWhiteSpace(valor))
-                errores.Add(ErrorMensaje.Get(codigoError));
+                errores.Add(codigoError.ToString());
         }
 
         public static void ValidarLongitud(
         string? valor,
         int longitudMaxima,
-        CodigoError codigoError,
+        ClienteCodigosError codigoError,
         List<string> errores)
         {
             if (!string.IsNullOrWhiteSpace(valor) && valor.Length > longitudMaxima)
             {
-                errores.Add(string.Format(ErrorMensaje.Get(codigoError), longitudMaxima));
+                errores.Add(codigoError.ToString());
             }
         }
     }

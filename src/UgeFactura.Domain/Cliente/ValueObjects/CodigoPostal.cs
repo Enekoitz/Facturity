@@ -18,7 +18,7 @@ namespace UgeFactura.Domain.Cliente.ValueObjects
 
         public static Result<CodigoPostal> Crear(string cp)
         {
-            if (string.IsNullOrEmpty(cp))
+            if (string.IsNullOrWhiteSpace(cp))
                 return Result.Fail<CodigoPostal>("El código postal no puede estar vacío.");
 
             if (cp.Trim().Length != 5)

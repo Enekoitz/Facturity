@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UgeFactura.Domain.Cliente.ValueObjects;
+using UgeFactura.Domain.Comun.Mensajes;
 using Xunit;
 using Xunit.Sdk;
 
@@ -10,9 +12,6 @@ namespace UgeFactura.Domain.Comun.Validaciones
 {
     public class ValidarCodigosTests
     {
-        private readonly string MensajeErrorCodigoPaisVacio = "El código de país no puede estar vacío." ;
-        private readonly string MensajeErrorCodigoPaisLongitudInvalida = "El código de país debe tener una longitud de 2 caracteres.";
-
         [Theory]
         [InlineData(null)]
         [InlineData("")]
@@ -24,7 +23,7 @@ namespace UgeFactura.Domain.Comun.Validaciones
 
             // Assert
             Assert.False(esValido);
-            Assert.Equal(MensajeErrorCodigoPaisVacio, mensajeError);
+            Assert.Equal(IdentificacionFiscalCodigosError.CodigoPais_Vacio.ToString(), mensajeError);
         }
 
         [Theory]
@@ -37,7 +36,7 @@ namespace UgeFactura.Domain.Comun.Validaciones
 
             // Assert
             Assert.False(esValido);
-            Assert.Equal(MensajeErrorCodigoPaisLongitudInvalida, mensajeError);
+            Assert.Equal(IdentificacionFiscalCodigosError.CodigoPais_LongitudInvalida.ToString(), mensajeError);
         }
 
         [Theory]

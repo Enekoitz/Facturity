@@ -3,25 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UgeFactura.Domain.Comun.Mensajes;
 
 namespace UgeFactura.Domain.Comun.Validaciones
 {
     public static class ValidarCodigos
     {
-        public static bool EsCodigoPaisValido(string? codigoPais, out string mensajeError)
+        public static bool EsCodigoPaisValido(string? codigoPais, out string codigoError)
         {
-            mensajeError = string.Empty;
+            codigoError = string.Empty;
 
             if (string.IsNullOrWhiteSpace(codigoPais))
             {
-                mensajeError = "El código de país no puede estar vacío.";
+                codigoError = IdentificacionFiscalCodigosError.CodigoPais_Vacio.ToString();
                 return false;
             }
 
             codigoPais = codigoPais.Trim().ToUpper();
             if (codigoPais.Length != 2)
             {
-                mensajeError = "El código de país debe tener una longitud de 2 caracteres.";
+                codigoError = IdentificacionFiscalCodigosError.CodigoPais_LongitudInvalida.ToString();
                 return false;
             }
 

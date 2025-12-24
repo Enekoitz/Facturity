@@ -107,13 +107,13 @@ namespace UgeFactura.Domain.Cliente.Entidades
         {
             ValidarTexto.ValidarNoVacio(
                 alias,
-                CodigoError.AliasVacio,
+                ClienteCodigosError.Alias_Vacio,
                 errores);
 
             ValidarTexto.ValidarLongitud(
                 alias,
                 LimiteCliente.AliasLongitudMaxima,
-                CodigoError.AliasDemasiadoLargo,
+                ClienteCodigosError.Alias_DemasiadoLargo,
                 errores);
         }
 
@@ -125,24 +125,24 @@ namespace UgeFactura.Domain.Cliente.Entidades
         {
             ValidarTexto.ValidarNoVacio(
                 nombre,
-                CodigoError.NombreVacio,
+                ClienteCodigosError.Nombre_Vacio,
                 errores);
 
             ValidarTexto.ValidarLongitud(
                 nombre,
                 LimiteCliente.NombreLongitudMaxima,
-                CodigoError.NombreDemasiadoLargo,
+                ClienteCodigosError.Nombre_DemasiadoLargo,
                 errores);
 
             ValidarTexto.ValidarNoVacio(
                 primerApellido,
-                CodigoError.PrimerApellidoVacio,
+                ClienteCodigosError.PrimerApellido_Vacio,
                 errores);
 
             ValidarTexto.ValidarLongitud(
                 primerApellido,
                 LimiteCliente.ApellidoLongitudMaxima,
-                CodigoError.PrimerApellidoDemasiadoLargo,
+                ClienteCodigosError.PrimerApellido_DemasiadoLargo,
                 errores);
 
             if (!string.IsNullOrWhiteSpace(segundoApellido))
@@ -150,7 +150,7 @@ namespace UgeFactura.Domain.Cliente.Entidades
                 ValidarTexto.ValidarLongitud(
                     segundoApellido,
                     LimiteCliente.ApellidoLongitudMaxima,
-                    CodigoError.SegundoApellidoDemasiadoLargo,
+                    ClienteCodigosError.SegundoApellido_DemasiadoLargo,
                     errores);
             }
         }
@@ -161,13 +161,13 @@ namespace UgeFactura.Domain.Cliente.Entidades
         {
             ValidarTexto.ValidarNoVacio(
                 razonSocial,
-                CodigoError.RazonSocialVacio,
+                ClienteCodigosError.RazonSocial_Vacio,
                 errores);
 
             ValidarTexto.ValidarLongitud(
                 razonSocial,
                 LimiteCliente.RazonSocialLongitudMaxima,
-                CodigoError.RazonSocialDemasiadoLargo,
+                ClienteCodigosError.RazonSocial_DemasiadoLargo,
                 errores);
         }
     }

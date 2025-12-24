@@ -9,13 +9,13 @@ namespace UgeFactura.Domain.Cliente.ValueObjects
     public sealed record TipoIdentificacionFiscal
     {
         public string Codigo { get; init; }
-        public string Tipo { get; init; }
+        public string Nombre { get; init; }
         public bool RequierePais { get; init; } = false;
         private Func<string, (bool, string)> Validador { get; init; }
 
-        public TipoIdentificacionFiscal(string codigo, string tipo, Func<string, (bool, string)> validador, bool requierePais) { 
+        public TipoIdentificacionFiscal(string codigo, string nombre, Func<string, (bool, string)> validador, bool requierePais) { 
             Codigo = codigo;
-            Tipo = tipo;
+            Nombre = nombre;
             Validador = validador;
             RequierePais = requierePais;
         }

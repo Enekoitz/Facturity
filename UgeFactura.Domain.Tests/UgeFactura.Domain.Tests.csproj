@@ -23,11 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Cliente\Servicios\" />
-    <Folder Include="Cliente\ValueObjects\" />
     <Folder Include="Comun\Mensajes\" />
     <Folder Include="Comun\Limites\" />
-    <Folder Include="Comun\Validaciones\" />
   </ItemGroup>
 
 </Project>

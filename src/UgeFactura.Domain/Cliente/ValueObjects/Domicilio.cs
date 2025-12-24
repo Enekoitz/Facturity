@@ -37,19 +37,19 @@ namespace UgeFactura.Domain.Cliente.ValueObjects
 
             var errores = new List<string>();
 
-            if (string.IsNullOrEmpty(direccion))
+            if (string.IsNullOrWhiteSpace(direccion))
                 errores.Add("El domicilio no puede estar vacío.");
 
-            if (string.IsNullOrEmpty(municipio))
+            if (string.IsNullOrWhiteSpace(municipio))
                 errores.Add("El municipio no puede estar vacío.");
 
-            if (string.IsNullOrEmpty(provincia))
+            if (string.IsNullOrWhiteSpace(provincia))
                 errores.Add("La provincia no puede estar vacía.");
 
-            if (string.IsNullOrEmpty(region))
+            if (string.IsNullOrWhiteSpace(region))
                 errores.Add("La región no puede estar vacía.");
 
-            if (string.IsNullOrEmpty(pais))
+            if (string.IsNullOrWhiteSpace(pais))
                 errores.Add("El país no puede estar vacío.");
 
             var cpResult = CodigoPostal.Crear(cp);

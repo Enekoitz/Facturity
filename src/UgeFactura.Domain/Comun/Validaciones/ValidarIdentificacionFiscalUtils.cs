@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UgeFactura.Domain.Cliente.ValueObjects;
+using UgeFactura.Domain.Comun.Mensajes;
 
 namespace UgeFactura.Domain.Comun.Validaciones
 {
@@ -13,13 +14,13 @@ namespace UgeFactura.Domain.Comun.Validaciones
     {
         private const string LetrasNif = "TRWAGMYFPDXBNJZSQVHLCKE";
 
-        public static bool EsNifNieOCifValido(string valor, out string mensajeError)
+        public static bool EsNifNieOCifValido(string valor, out string codigoError)
         {
-            mensajeError = string.Empty;
+            codigoError = string.Empty;
 
             if (string.IsNullOrWhiteSpace(valor))
             {
-                mensajeError = "El NIF/NIE/CIF no puede estar vacío.";
+                codigoError = NIF_NIE_CIFCodigosError.NIF_NIE_CIF_Vacio.ToString();
                 return false;
             }
 
@@ -27,46 +28,46 @@ namespace UgeFactura.Domain.Comun.Validaciones
 
             if (valor.Length != 9)
             {
-                mensajeError = "El NIF/NIE/CIF debe tener una longitud de 9 caracteres.";
+                codigoError = NIF_NIE_CIFCodigosError.NIF_NIE_CIF_LongitudInvalida.ToString();
                 return false;
             }
 
             // NIF (persona física)
             if (EsNif(valor))
-                return EsNifValido(valor, out mensajeError);
+                return EsNifValido(valor, out codigoError);
 
             // NIE (extranjero)
             if (EsNie(valor))
-                return EsNieValido(valor, out mensajeError);
+                return EsNieValido(valor, out codigoError);
 
             // CIF / NIF persona jurídica
             if (EsCif(valor))
-                return EsCifValido(valor, out mensajeError);
+                return EsCifValido(valor, out codigoError);
 
-            mensajeError = "El formato del NIF/NIE/CIF no es válido.";
+            codigoError = NIF_NIE_CIFCodigosError.NIF_NIE_CIF_FormatoInvalido.ToString();
             return false;
         }
 
-        public static bool EsNifValido(string nif, out string mensajeError)
+        public static bool EsNifValido(string nif, out string codigoError)
         {
-            mensajeError = string.Empty;
+            codigoError = string.Empty;
             nif = nif.ToUpper().Trim();
 
             if (string.IsNullOrWhiteSpace(nif))
             {
-                mensajeError = "El NIF no puede estar vacío.";
+                codigoError = NIFCodigosError.NIF_Vacio.ToString();
                 return false;
             }
 
             if (!int.TryParse(nif[..8], out int numero))
             {
-                mensajeError = "Los 8 primeros caracteres del NIF deben ser numéricos.";
+                codigoError = NIFCodigosError.NIF_PrimerosCaracteresInvalidos.ToString();
                 return false;
             }
 
             if (nif.Trim().Length != 9)
             {
-                mensajeError = "El NIF debe tener una longitud de 9 caracteres.";
+                codigoError = NIFCodigosError.NIF_LongitudInvalida.ToString();
                 return false;
             }
 
@@ -74,7 +75,7 @@ namespace UgeFactura.Domain.Comun.Validaciones
             var regex = new System.Text.RegularExpressions.Regex(@"^\d{8}[A-Z]$");
             if (!regex.IsMatch(nif))
             {
-                mensajeError = "El formato del NIF no es correcto.";
+                codigoError = NIFCodigosError.NIF_FormatoInvalido.ToString();
                 return false;
             }
 
@@ -84,7 +85,7 @@ namespace UgeFactura.Domain.Comun.Validaciones
 
             if (expectedLetter != actualLetter)
             {
-                mensajeError = "La letra del NIF no es correcta.";
+                codigoError = NIFCodigosError.NIF_LetraIncorrecta.ToString();
                 return false;
             }
             else
@@ -93,21 +94,21 @@ namespace UgeFactura.Domain.Comun.Validaciones
             }
         }
 
-        public static bool EsNieValido(string nie, out string mensajeError)
+        public static bool EsNieValido(string nie, out string codigoError)
         {
-            mensajeError = string.Empty;
+            codigoError = string.Empty;
 
             nie = nie.ToUpper().Trim();
 
             if (string.IsNullOrWhiteSpace(nie))
             {
-                mensajeError = "El NIE no puede estar vacío.";
+                codigoError = NIECodigosError.NIE_Vacio.ToString();
                 return false;
             }
 
             if (nie.Trim().Length != 9)
             {
-                mensajeError = "El NIE debe tener una longitud de 9 caracteres.";
+                codigoError = NIECodigosError.NIE_LongitudInvalida.ToString();
                 return false;
             }
 
@@ -115,7 +116,7 @@ namespace UgeFactura.Domain.Comun.Validaciones
             var regex = new System.Text.RegularExpressions.Regex(@"^[XYZ]\d{7}[A-Z]$");
             if (!regex.IsMatch(nie))
             {
-                mensajeError = "El formato del NIE no es correcto.";
+                codigoError = NIECodigosError.NIE_FormatoInvalido.ToString();
                 return false;
             }
 
@@ -131,7 +132,7 @@ namespace UgeFactura.Domain.Comun.Validaciones
 
             if (numericPart.Length == 0)
             {
-                mensajeError = "La primera letra del NIE no es correcta.";
+                codigoError = NIECodigosError.NIE_PrimeraLetraInvalida.ToString();
                 return false;
             }
 
@@ -146,7 +147,7 @@ namespace UgeFactura.Domain.Comun.Validaciones
 
             if (expectedLetter != actualLetter)
             {
-                mensajeError = "La última letra del NIE no es correcta.";
+                codigoError = NIECodigosError.NIE_UltimaLetraInvalida.ToString();
                 return false;
             }
             else
@@ -155,13 +156,13 @@ namespace UgeFactura.Domain.Comun.Validaciones
             }
         }
 
-        public static bool EsCifValido(string cif, out string mensajeError)
+        public static bool EsCifValido(string cif, out string codigoError)
         {
-            mensajeError = string.Empty;
+            codigoError = string.Empty;
 
             if (string.IsNullOrWhiteSpace(cif))
             {
-                mensajeError = "El NIF de persona jurídica no puede estar vacío.";
+                codigoError = CIFCodigosError.CIF_Vacio.ToString();
                 return false;
             }
 
@@ -170,7 +171,7 @@ namespace UgeFactura.Domain.Comun.Validaciones
             // Debe tener 9 caracteres exactos
             if (cif.Length != 9)
             {
-                mensajeError = "El NIF de persona jurídica debe tener una longitud de 9 caracteres.";
+                codigoError = CIFCodigosError.CIF_LongitudInvalida.ToString();
                 return false;
             }
 
@@ -181,14 +182,14 @@ namespace UgeFactura.Domain.Comun.Validaciones
             // Letra inicial válida
             if (!"ABCDEFGHJKLMNPQRSUVW".Contains(letra))
             {
-                mensajeError = "El NIF de persona jurídica debe iniciar con una letra válida.";
+                codigoError = CIFCodigosError.CIF_PrimeraLetraInvalida.ToString();
                 return false;
             }
 
             // Los 7 siguientes deben ser dígitos
             if (!numeros.All(char.IsDigit))
             {
-                mensajeError = "El NIF de persona jurídica debe incluir 7 dígitos a partir del segundo caracter.";
+                codigoError = CIFCodigosError.CIF_FormatoInvalido.ToString();
                 return false;
             }
 
@@ -232,7 +233,7 @@ namespace UgeFactura.Domain.Comun.Validaciones
             {
                 if ( control != digitoControlLetra)
                 {
-                    mensajeError = "El dígito de control del NIF de persona jurídica debe ser una letra.";
+                    codigoError = CIFCodigosError.CIF_FormatoInvalido.ToString();
                     return false;
                 }
                 else
@@ -249,7 +250,7 @@ namespace UgeFactura.Domain.Comun.Validaciones
                 }
                 else
                 {
-                    mensajeError = "El dígito de control del NIF de persona jurídica debe ser una letra o un número.";
+                    codigoError = CIFCodigosError.CIF_FormatoInvalido.ToString();
                     return false;
                 }
             }
@@ -261,50 +262,50 @@ namespace UgeFactura.Domain.Comun.Validaciones
             }
             else
             {
-                mensajeError = "El dígito de control del NIF de persona jurídica es inválido.";
+                codigoError = CIFCodigosError.CIF_FormatoInvalido.ToString();
                 return false;
             }
         }
 
-        public static bool EsIdentificacionNoNifValida(string valor, string nombreTipo, out string mensajeError)
+        public static bool EsIdentificacionNoNifValida(string valor, string nombreTipo, out string codigoError)
         {
-            mensajeError = string.Empty;
+            codigoError = string.Empty;
 
             if (string.IsNullOrWhiteSpace(valor))
             {
-                mensajeError = $"El tipo de identificación '{nombreTipo}' no puede estar vacía.";
+                codigoError = IdentificacionFiscalCodigosError.ValorIdentificacionFiscal_Vacio.ToString();
                 return false;
             }
 
             if (valor.Length > 20)
             {
-                mensajeError = $"El tipo de identificación '{nombreTipo}' no puede tener más de 20 caracteres.";
+                codigoError = IdentificacionFiscalCodigosError.ValorIdentificacionFiscal_LongitudInvalida.ToString();
                 return false;
             }
 
             return true;
         }
 
-        public static bool EsNifEntidadExtranjeraValido(string valor, out string mensajeError)
+        public static bool EsNifEntidadExtranjeraValido(string valor, out string codigoError)
         {
-            mensajeError = string.Empty;
+            codigoError = string.Empty;
 
             if (string.IsNullOrWhiteSpace(valor))
             {
-                mensajeError = "El NIF de entidad extranjera no puede estar vacío.";
+                codigoError = IdentificacionFiscalCodigosError.ValorIdentificacionFiscal_Vacio.ToString();
                 return false;
             }
 
             if (valor.Length != 8)
             {
-                mensajeError = "El NIF de entidad extranjera debe tener 8 caracteres.";
+                codigoError = OtrosTiposIdentificacionCodigosError.NIFEntidadExtranjera_PrimerosCaracteresInvalidos.ToString();
                 return false;
             }
 
             var regexNifExtranjero = new Regex(@"^N\d{7}[A-Z]?$", RegexOptions.IgnoreCase);
             if (!regexNifExtranjero.IsMatch(valor))
             {
-                mensajeError = "El formato del NIF de entidad extranjera no es válido.";
+                codigoError = OtrosTiposIdentificacionCodigosError.NIFEntidadExtranjera_FormatoInvalido.ToString();
                 return false;
             }
 
@@ -368,7 +369,8 @@ namespace UgeFactura.Domain.Comun.Validaciones
 
             valor = valor.Trim().ToUpper();
             var regex = new Regex(@"^[ABCDEFGHJNPQRSUVW]\d{7}[0-9A-J]$");
-            if (!regex.IsMatch(valor)) return false;
+            if (!regex.IsMatch(valor)) 
+                return false;
 
             // Validación básica de dígito de control
             // Para simplificar aquí solo comprobamos el patrón, puedes añadir cálculo exacto si lo deseas.
