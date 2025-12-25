@@ -4,17 +4,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UgeFactura.Domain.Comun.Mensajes;
 
 namespace UgeFactura.Domain.Cliente.ValueObjects
 {
     public sealed record Domicilio
     {
-        private string Direccion { get; }
-        private CodigoPostal CP { get; }
-        private string Municipio { get; }
-        private string Provincia { get; }
-        private string Region { get; }
-        private string Pais { get; }
+        public string Direccion { get; private set; }
+        public CodigoPostal CP { get; private set; }
+        public string Municipio { get; private set; }
+        public string Provincia { get; private set; }
+        public string Region { get; private set; }
+        public string Pais { get; private set; }
 
         private Domicilio(string domicilio, CodigoPostal cp, string municipio, string provincia, string region, string pais)
         {
@@ -35,29 +36,29 @@ namespace UgeFactura.Domain.Cliente.ValueObjects
             region = region.Trim(); 
             pais = pais.Trim();
 
-            var errores = new List<string>();
+            var erroresCodigos = new List<string>();
 
             if (string.IsNullOrWhiteSpace(direccion))
-                errores.Add("El domicilio no puede estar vacío.");
+                erroresCodigos.Add(DomicilioCodigosError.Direccion_Vacio.ToString());
 
             if (string.IsNullOrWhiteSpace(municipio))
-                errores.Add("El municipio no puede estar vacío.");
+                erroresCodigos.Add(DomicilioCodigosError.Municipio_Vacio.ToString());
 
             if (string.IsNullOrWhiteSpace(provincia))
-                errores.Add("La provincia no puede estar vacía.");
+                erroresCodigos.Add(DomicilioCodigosError.Provincia_Vacio.ToString());
 
             if (string.IsNullOrWhiteSpace(region))
-                errores.Add("La región no puede estar vacía.");
+                erroresCodigos.Add(DomicilioCodigosError.Region_Vacio.ToString());
 
             if (string.IsNullOrWhiteSpace(pais))
-                errores.Add("El país no puede estar vacío.");
+                erroresCodigos.Add(DomicilioCodigosError.Pais_Vacio.ToString());
 
             var cpResult = CodigoPostal.Crear(cp);
             if (cpResult.IsFailed)
-                errores.AddRange(cpResult.Errors.Select(e => e.Message));
+                erroresCodigos.AddRange(cpResult.Errors.Select(e => e.Message));
 
-            if (errores.Count > 0)
-                return Result.Fail<Domicilio>(string.Join("; ", errores));
+            if (erroresCodigos.Count > 0)
+                return Result.Fail<Domicilio>(string.Join("; ", erroresCodigos));
 
             return Result.Ok(new Domicilio(
                 direccion, 

@@ -68,4 +68,21 @@ namespace UgeFactura.Domain.Comun.Mensajes
         NIFEntidadExtranjera_PrimerosCaracteresInvalidos,
         NIFEntidadExtranjera_PrimeraLetraInvalida,
     }
+
+    public enum DomicilioCodigosError
+    {
+        Direccion_Vacio,
+        CodigoPostal_Vacio,
+        Municipio_Vacio,
+        Provincia_Vacio,
+        Region_Vacio,
+        Pais_Vacio,
+    }
+
+    public enum CodigoPostalCodigosError
+    {
+        CodigoPostal_Vacio,
+        CodigoPostal_LongitudInvalida,
+        CodigoPostal_FormatoInvalido,
+    }
 }
