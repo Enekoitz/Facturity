@@ -1,6 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.1" />
+    <PackageReference Include="Npgsql" Version="10.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\UgeFactura.Domain\UgeFactura.Domain.csproj" />
     <ProjectReference Include="..\UgeFactura.Application\UgeFactura.Application.csproj" />
   </ItemGroup>
