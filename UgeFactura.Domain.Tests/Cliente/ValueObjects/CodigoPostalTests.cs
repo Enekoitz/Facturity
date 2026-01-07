@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using UgeFactura.Domain.Cliente.ValueObjects;
+using UgeFactura.Domain.Comun.Mensajes;
 using Xunit;
 
 namespace UgeFactura.Domain.Tests.Cliente.ValueObjects
@@ -12,7 +13,7 @@ namespace UgeFactura.Domain.Tests.Cliente.ValueObjects
         [InlineData(null)]
         [InlineData("")]
         [InlineData("  ")]
-        public void CrearCodigoPostal_CodigoPostalVacio_Fallo(string? codigoPostalEntrada)
+        public void CrearCodigoPostal_CodigoPostalVacio_Fallo(string codigoPostalEntrada)
         {
 
             // Act
@@ -21,7 +22,7 @@ namespace UgeFactura.Domain.Tests.Cliente.ValueObjects
             // Assert
             Assert.True(result.IsFailed);
             Assert.Single(result.Errors);
-            Assert.Equal("El código postal no puede estar vacío.", result.Errors[0].Message);
+            Assert.Equal(CodigoPostalCodigosError.CodigoPostal_Vacio.ToString(), result.Errors[0].Message);
         }
 
         [Fact]
@@ -36,7 +37,7 @@ namespace UgeFactura.Domain.Tests.Cliente.ValueObjects
             // Assert
             Assert.True(result.IsFailed);
             Assert.Single(result.Errors);
-            Assert.Equal("El código postal debe contener solo dígitos.", result.Errors[0].Message);
+            Assert.Equal(CodigoPostalCodigosError.CodigoPostal_FormatoInvalido.ToString(), result.Errors[0].Message);
         }
 
         [Fact]
@@ -51,7 +52,7 @@ namespace UgeFactura.Domain.Tests.Cliente.ValueObjects
             // Assert
             Assert.True(result.IsFailed);
             Assert.Single(result.Errors);
-            Assert.Equal("El código postal debe tener una longitud de 5 dígitos.", result.Errors[0].Message);
+            Assert.Equal(CodigoPostalCodigosError.CodigoPostal_LongitudInvalida.ToString(), result.Errors[0].Message);
         }
 
         [Fact]

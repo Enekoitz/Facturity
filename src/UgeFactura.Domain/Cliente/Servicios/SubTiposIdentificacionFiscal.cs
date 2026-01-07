@@ -21,11 +21,11 @@ namespace UgeFactura.Domain.Cliente.Servicios
     {
         public static Result<SubTipoIdentificacionFiscal?> ObtenerSubTipo(string codigoIdentificacion, string valorIdentificacion)
         {
-            valorIdentificacion = valorIdentificacion.Trim().ToUpper();
-            codigoIdentificacion = codigoIdentificacion.Trim().ToUpper();
-
             if (string.IsNullOrWhiteSpace(codigoIdentificacion))
                 return Result.Fail<SubTipoIdentificacionFiscal?>(IdentificacionFiscalCodigosError.TipoIdentificacionFiscal_Vacio.ToString());
+
+            valorIdentificacion = valorIdentificacion.Trim().ToUpper();
+            codigoIdentificacion = codigoIdentificacion.Trim().ToUpper();
 
             if (string.IsNullOrWhiteSpace(valorIdentificacion))
                 return Result.Fail<SubTipoIdentificacionFiscal?>(IdentificacionFiscalCodigosError.ValorIdentificacionFiscal_Vacio.ToString());
