@@ -5,10 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UgeFactura.Domain.Comun;
-using UgeFactura.Domain.Comun.Mensajes;
-using UgeFactura.Domain.Comun.Validaciones;
 
-namespace UgeFactura.Domain.Cliente.Servicios
+namespace UgeFactura.Domain.Clientes
 {
     public enum SubTipoIdentificacionFiscal
     {

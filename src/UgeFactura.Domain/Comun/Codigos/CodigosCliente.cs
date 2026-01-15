@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace UgeFactura.Domain.Comun.Mensajes
+namespace UgeFactura.Domain.Comun
 {
     public enum ClienteCodigosError
     {

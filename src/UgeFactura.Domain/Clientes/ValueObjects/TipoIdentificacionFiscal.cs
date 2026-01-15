@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UgeFactura.Domain.Cliente.ValueObjects
+namespace UgeFactura.Domain.Clientes
 {
     public sealed record TipoIdentificacionFiscal
     {

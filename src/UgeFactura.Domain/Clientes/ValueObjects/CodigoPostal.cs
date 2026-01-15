@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using UgeFactura.Domain.Comun.Mensajes;
+using UgeFactura.Domain.Comun;
 
-namespace UgeFactura.Domain.Cliente.ValueObjects
+namespace UgeFactura.Domain.Clientes
 {
     public sealed record CodigoPostal
     {

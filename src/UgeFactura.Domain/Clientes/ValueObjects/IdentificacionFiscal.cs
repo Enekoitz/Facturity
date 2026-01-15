@@ -4,10 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using UgeFactura.Domain.Cliente.Servicios;
-using UgeFactura.Domain.Comun.Validaciones;
+using UgeFactura.Domain.Comun;
 
-namespace UgeFactura.Domain.Cliente.ValueObjects
+namespace UgeFactura.Domain.Clientes
 {
     public sealed record IdentificacionFiscal
     {

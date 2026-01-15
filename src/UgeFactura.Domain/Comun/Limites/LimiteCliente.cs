@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace UgeFactura.Domain.Comun.Limites
+namespace UgeFactura.Domain.Comun
 {
     public class LimiteCliente
     {

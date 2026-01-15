@@ -5,10 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using UgeFactura.Domain.Cliente.ValueObjects;
-using UgeFactura.Domain.Comun.Mensajes;
+using UgeFactura.Domain.Clientes;
 
-namespace UgeFactura.Domain.Comun.Validaciones
+namespace UgeFactura.Domain.Comun
 {
     public static class ValidarIdentificacionFiscalUtils
     {

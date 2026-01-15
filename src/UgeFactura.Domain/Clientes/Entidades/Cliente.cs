@@ -5,15 +5,9 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using UgeFactura.Domain.Cliente.Servicios;
-using UgeFactura.Domain.Cliente.ValueObjects;
 using UgeFactura.Domain.Comun;
-using UgeFactura.Domain.Comun.Limites;
-using UgeFactura.Domain.Comun.Mensajes;
-using UgeFactura.Domain.Comun.Validaciones;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace UgeFactura.Domain.Cliente.Entidades
+namespace UgeFactura.Domain.Clientes
 {
     public class Cliente
     {

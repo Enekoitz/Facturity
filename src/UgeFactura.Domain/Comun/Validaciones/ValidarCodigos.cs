@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using UgeFactura.Domain.Comun.Mensajes;
+using UgeFactura.Domain.Comun;
 
-namespace UgeFactura.Domain.Comun.Validaciones
+namespace UgeFactura.Domain.Comun
 {
     public static class ValidarCodigos
     {

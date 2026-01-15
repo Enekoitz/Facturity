@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using UgeFactura.Domain.Comun.Mensajes;
 
-namespace UgeFactura.Domain.Comun.Validaciones
+namespace UgeFactura.Domain.Comun
 {
     public static class ValidarTexto
     {
