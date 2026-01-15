@@ -10,7 +10,7 @@ namespace UgeFactura.Domain.Clientes
 {
     public sealed record CodigoPostal
     {
-        private string Valor { get; }
+        public string Valor { get; }
 
         private CodigoPostal(string value)
         {
