@@ -25,6 +25,7 @@ namespace UgeFactura.Domain.Comun
         SubTipoIdentificacionFiscal_Invalido,
         CodigoPais_Vacio,
         CodigoPais_LongitudInvalida,
+        ReglaIdentificacionFiscal_Desconocido
     }
 
     public enum NIF_NIE_CIFCodigosError

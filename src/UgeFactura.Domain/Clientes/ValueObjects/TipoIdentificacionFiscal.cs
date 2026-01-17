@@ -6,24 +6,27 @@ using System.Threading.Tasks;
 
 namespace UgeFactura.Domain.Clientes
 {
-    public sealed record TipoIdentificacionFiscal
+    public sealed class  TipoIdentificacionFiscal
     {
         public string Codigo { get; init; }
-        public string Nombre { get; init; }
+        public string Nombre { get; init; } = string.Empty;
+        public ReglaIdentificacionFiscal Regla { get; init; }
         public bool RequierePais { get; init; } = false;
-        private Func<string, (bool, string)> Validador { get; init; }
 
-        public TipoIdentificacionFiscal(string codigo, string nombre, Func<string, (bool, string)> validador, bool requierePais) { 
+        protected TipoIdentificacionFiscal() { }
+
+        public TipoIdentificacionFiscal(string codigo, ReglaIdentificacionFiscal regla, bool requierePais)
+        {
             Codigo = codigo;
-            Nombre = nombre;
-            Validador = validador;
+            Regla = regla;
             RequierePais = requierePais;
         }
 
         public bool EsValido(string valor, out string mensajeError)
         {
-            (bool esValido, mensajeError) = Validador(valor);
-            return esValido;
+            var resultado = IdentificacionFiscalReglas.Obtener(Regla)(valor);
+            mensajeError = resultado.Item2;
+            return resultado.Item1;
         }
     }
 }

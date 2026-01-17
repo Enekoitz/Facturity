@@ -12,6 +12,8 @@ namespace UgeFactura.Domain.Clientes
     {
         public string Valor { get; }
 
+        private CodigoPostal() { }
+
         private CodigoPostal(string value)
         {
             Valor = value;

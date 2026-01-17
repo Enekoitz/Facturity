@@ -18,6 +18,8 @@ namespace UgeFactura.Domain.Clientes
         public string? Region { get; private set; }
         public string? Pais { get; private set; }
 
+        private Domicilio() { }
+
         private Domicilio(
             string direccion
             , CodigoPostal? cp

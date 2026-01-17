@@ -266,7 +266,7 @@ namespace UgeFactura.Domain.Comun
             }
         }
 
-        public static bool EsIdentificacionNoNifValida(string valor, string nombreTipo, out string codigoError)
+        public static bool EsIdentificacionNoNifValida(string valor, out string codigoError)
         {
             codigoError = string.Empty;
 

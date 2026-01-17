@@ -3,9 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices.Marshalling;
 using System.Text;
 using System.Threading.Tasks;
+using UgeFactura.Domain.Clientes.Servicios;
 using UgeFactura.Domain.Comun;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace UgeFactura.Domain.Clientes
 {
@@ -18,7 +21,9 @@ namespace UgeFactura.Domain.Clientes
         public string? Nombre { get; private set; }
         public string? PrimerApellido { get; private set; }
         public string? SegundoApellido { get; private set; }
-        public Domicilio Domicilio { get; private set; }  
+        public Domicilio Domicilio { get; private set; }
+
+        protected Cliente() { }
 
         private Cliente(string alias,
             IdentificacionFiscal identificacionFiscal,
@@ -48,8 +53,10 @@ namespace UgeFactura.Domain.Clientes
             Domicilio domicilio) 
         {
             var errores = new List<string>();
-            
-            ValidarDatos(alias, identificacionFiscal.SubTipo, razonSocial, nombre, primerApellido, segundoApellido, errores);
+
+            ValidarAlias(alias, errores);
+            SubtiposIdentificacionFiscalRegla? subtipoIdentificacionFiscal = SubtipoIdentificacionFiscalServicio.ObtenerSubtipo(identificacionFiscal.Tipo.Regla, identificacionFiscal.Valor);
+            ValidarNombresApellidosRazonSocial(subtipoIdentificacionFiscal, razonSocial, nombre, primerApellido, segundoApellido, errores);
 
             if (errores.Count > 0)
                 return Result.Fail(string.Join("; ", errores));
@@ -64,39 +71,8 @@ namespace UgeFactura.Domain.Clientes
                                   domicilio));
         }
 
-        internal static void ValidarDatos(
+        private static void ValidarAlias(
             string alias,
-            SubTipoIdentificacionFiscal? subIdentificacionFiscal,
-            string? razonSocial,
-            string? nombre,
-            string? primerApellido,
-            string? segundoApellido,
-            List<string> errores)
-        {
-            ValidarAlias(alias, errores);
-
-            switch (subIdentificacionFiscal)
-            {
-                case SubTipoIdentificacionFiscal.NifPersonaFisica:
-                case SubTipoIdentificacionFiscal.Nie:
-                    ValidarNombreApellido(nombre, primerApellido, segundoApellido, errores);
-                    break;
-
-                case SubTipoIdentificacionFiscal.NifPersonaJuridica:
-                    ValidarRazonSocial(razonSocial, errores);
-                    break;
-
-                default:
-                    if (!string.IsNullOrWhiteSpace(razonSocial))
-                        ValidarRazonSocial(razonSocial, errores);
-                    else
-                        ValidarNombreApellido(nombre, primerApellido, segundoApellido, errores);
-                    break;
-            }
-        }
-
-        internal static void ValidarAlias(
-            string alias, 
             List<string> errores)
         {
             ValidarTexto.ValidarNoVacio(
@@ -109,6 +85,34 @@ namespace UgeFactura.Domain.Clientes
                 LimiteCliente.AliasLongitudMaxima,
                 ClienteCodigosError.Alias_DemasiadoLargo,
                 errores);
+        }
+
+        private static void ValidarNombresApellidosRazonSocial(
+            SubtiposIdentificacionFiscalRegla? subtipoIdentificacionFiscal,
+            string? razonSocial,
+            string? nombre,
+            string? primerApellido,
+            string? segundoApellido,
+            List<string> errores)
+        {
+            switch (subtipoIdentificacionFiscal)
+            {
+                case SubtiposIdentificacionFiscalRegla.Nif:
+                case SubtiposIdentificacionFiscalRegla.Nie:
+                    ValidarNombreApellido(nombre, primerApellido, segundoApellido, errores);
+                    break;
+
+                case SubtiposIdentificacionFiscalRegla.Cif:
+                    ValidarRazonSocial(razonSocial, errores);
+                    break;
+
+                default:
+                    if (!string.IsNullOrWhiteSpace(razonSocial))
+                        ValidarRazonSocial(razonSocial, errores);
+                    else
+                        ValidarNombreApellido(nombre, primerApellido, segundoApellido, errores);
+                    break;
+            }
         }
 
         private static void ValidarNombreApellido(
