@@ -14,14 +14,24 @@ namespace UgeFactura.Infrastructure.Persistencia.Configuraciones
             builder.ToTable("clientes");
 
             builder.HasKey(c => c.Id);
-            builder.Property(c => c.Alias).IsRequired().HasMaxLength(50);
+            builder.Property(c => c.Alias).IsRequired().HasMaxLength(50).HasColumnName("alias");
 
             // Mapear VO como propiedades propias o tablas separadas
             builder.OwnsOne(c => c.Identificacion, id =>
             {
-                id.Property(i => i.Tipo).HasColumnName("tipo_codigo").IsRequired();
-                id.Property(i => i.Valor).HasColumnName("valor").IsRequired();
+                id.OwnsOne(j => j.Tipo, h =>
+                {
+                    h.Property(i => i.Codigo).HasColumnName("identificacion_tipo").IsRequired();
+                });
+
+                id.Property(i => i.Valor).HasColumnName("identificacion_numero").IsRequired();
                 id.Property(i => i.PaisCodigo).HasColumnName("pais");
+
+                // Relación de FK hacia TipoIdentificacionFiscal
+                id.HasOne<TipoIdentificacionFiscal>()
+                  .WithMany()  // No necesitamos navegación inversa
+                  .HasForeignKey(i => i.Tipo.Codigo)
+                  .HasConstraintName("FK_Cliente_TipoIdentificacionFiscal");
             });
 
             builder.OwnsOne(c => c.Domicilio, d =>
@@ -46,6 +56,7 @@ namespace UgeFactura.Infrastructure.Persistencia.Configuraciones
             builder.Property(c => c.Nombre).HasMaxLength(50);
             builder.Property(c => c.PrimerApellido).HasMaxLength(50);
             builder.Property(c => c.SegundoApellido).HasMaxLength(50);
+
         }
     }
 }

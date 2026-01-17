@@ -13,6 +13,7 @@ namespace UgeFactura.Infrastructure.Persistencia
             : base(options) { }
 
         public DbSet<Cliente> Clientes { get; set; }
+        public DbSet<TipoIdentificacionFiscal> TipoIdentificacionFiscal { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
