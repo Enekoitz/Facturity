@@ -7,10 +7,10 @@ using UgeFactura.Application.Clientes;
 
 namespace UgeFactura.Infrastructure.Persistencia.Repositorios
 {
-    public class ClienteRepository : IClienteRepository
+    public class ClienteRepository //: IClienteRepository
     {
-        public Task<bool> ExisteAliasAsync(string alias, CancellationToken cancellationToken = default) {
-            return Result.Ok();
-        }
+        //public Task<bool> ExisteAliasAsync(string alias, CancellationToken cancellationToken = default) {
+        //    return Result.Ok();
+        //}
     }
 }

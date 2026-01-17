@@ -24,7 +24,13 @@ namespace UgeFactura.Application.Clientes.Crear
                                                                     , command.IdentificacionValor))
                 return Result.Fail("Ya existe un cliente con la misma identificación fiscal.");
 
+            TipoIdentificacionFiscal? tipoIdentificacion = await _repoCliente.GetTipoIdentificacionAsync(command.IdentificacionTipoCodigo);
+
+            if (tipoIdentificacion is null)
+                return Result.Fail("El código de tipo de identificación no existe o es incorrecto.");
+
             Result<IdentificacionFiscal> identificacionFiscalResult = IdentificacionFiscal.Crear(command.IdentificacionTipoCodigo
+                                                                                                , tipoIdentificacion.Regla
                                                                                                 , command.IdentificacionValor
                                                                                                 , command.IdentificacionPais);
             if (identificacionFiscalResult.IsFailed)

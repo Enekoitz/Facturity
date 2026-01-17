@@ -14,4 +14,5 @@ public interface IClienteRepository
 
     Task AddAsync(Cliente cliente, CancellationToken cancellationToken = default);
 
+    Task<TipoIdentificacionFiscal?> GetTipoIdentificacionAsync(string codigoTipoIdentificacion, CancellationToken cancellationToken = default);
 }
