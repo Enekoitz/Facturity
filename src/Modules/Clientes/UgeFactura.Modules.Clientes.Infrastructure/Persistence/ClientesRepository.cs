@@ -1,12 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Data;
-using System.Data.SqlTypes;
 using UgeFactura.Modules.Clientes.Domain;
 using UgeFactura.Modules.Clientes.Features;
 
 namespace UgeFactura.Modules.Clientes.Infrastructure
 {
-    public class ClienteRepository(ClientesDbContext context) : IClienteRepository
+    public class ClientesRepository(ClientesDbContext context) : IClientesRepository
     {
         private readonly ClientesDbContext _context = context;
 
