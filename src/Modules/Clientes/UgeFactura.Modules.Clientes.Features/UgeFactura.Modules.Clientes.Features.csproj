@@ -1,9 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <Folder Include="ModifyCliente\" />
-    <Folder Include="GetClienteById\" />
-    <Folder Include="GetClientes\" />
+    <Folder Include="ModificarCliente\" />
+    <Folder Include="ObtenerClientePorId\" />
   </ItemGroup>
 
 	<ItemGroup>
