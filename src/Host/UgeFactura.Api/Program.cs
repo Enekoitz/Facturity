@@ -3,10 +3,9 @@ using UgeFactura.Modules.Bootstrapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
-#pragma warning disable CS8604 // Posible argumento de referencia nulo
 var connString = builder.Configuration.GetConnectionString("UgeFacturaDbConnection");
-builder.Services.AddAllModules(connString);
-#pragma warning restore CS8604 // Posible argumento de referencia nulo
+// Inyección de dependencias de la aplicación completa: infraestructura, features de todos los módulos (clientes, facturación, productos...)
+builder.Services.AddAllModules(connString); 
 
 builder.Services.AddOpenApi();
 
