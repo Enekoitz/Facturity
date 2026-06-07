@@ -12,7 +12,7 @@ namespace UgeFactura.Modules.Clientes.Infrastructure
                 options.UseNpgsql(connectionString,
                     o => o.MigrationsHistoryTable("__EFMigrationsHistory", "clientes")));
 
-            services.AddScoped<IClienteRepository, ClienteRepository>();
+            services.AddScoped<IClientesRepository, ClientesRepository>();
             return services;
         }
     }
