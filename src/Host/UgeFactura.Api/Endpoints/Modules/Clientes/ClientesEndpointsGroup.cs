@@ -4,12 +4,19 @@
     {
         public static IEndpointRouteBuilder MapClientesEndpoints(this IEndpointRouteBuilder app)
         {
-            var productsGroup = app.MapGroup("")
+            var clientesGroup = app.MapGroup("/api/clientes")
                                     .WithTags("Clientes");
-                             //TODO: .RequireAuthorization()
+            //TODO: .RequireAuthorization()
 
-            productsGroup.MapCrearCliente();
-              
+            var endpointTypes = typeof(ClientesEndpointsGroup).Assembly.GetTypes()
+            .Where(t => typeof(IEndpoint).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
+
+            foreach (var type in endpointTypes)
+            {
+                var endpoint = (IEndpoint)Activator.CreateInstance(type)!;
+                endpoint.MapEndpoint(clientesGroup);
+            }
+
             return app;
         }
     }
