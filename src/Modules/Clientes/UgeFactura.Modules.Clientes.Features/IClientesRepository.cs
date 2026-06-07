@@ -2,7 +2,7 @@
 
 namespace UgeFactura.Modules.Clientes.Features
 {
-    internal interface IClienteRepository
+    internal interface IClientesRepository
     {
         Task<bool> ExisteAliasAsync(string alias, CancellationToken cancellationToken = default);
 
