@@ -5,9 +5,9 @@ namespace UgeFactura.Modules.Clientes.Features
 {
     internal sealed class CrearClienteHandler
     {
-        private readonly IClienteRepository _repoCliente;
+        private readonly IClientesRepository _repoCliente;
 
-        public CrearClienteHandler(IClienteRepository repoCliente)
+        public CrearClienteHandler(IClientesRepository repoCliente)
         {
             _repoCliente = repoCliente;
         }

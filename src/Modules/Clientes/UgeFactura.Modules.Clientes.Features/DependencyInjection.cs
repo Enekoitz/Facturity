@@ -8,6 +8,7 @@ namespace UgeFactura.Modules.Clientes.Features
         public static IServiceCollection AddClientesFeatures(this IServiceCollection services)
         {
             services.AddScoped<CrearClienteHandler>();
+            services.AddScoped<ObtenerClientesHandler>();
             return services;
         }
     }
