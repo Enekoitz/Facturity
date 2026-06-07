@@ -2,11 +2,11 @@
 
 namespace UgeFactura.Api
 {
-    public static class CrearClienteEndpoint
+    public class CrearClienteEndpoint : IEndpoint
     {
-        public static void MapCrearCliente(this RouteGroupBuilder group)
+        public void MapEndpoint(IEndpointRouteBuilder app)
         {
-            group.MapPost("/api/clientes", async (CrearClienteCommand dto, CrearClienteHandler handler) =>
+            app.MapPost("/", async (CrearClienteCommand dto, CrearClienteHandler handler) =>
             {
                 var id = await handler.HandleAsync(dto);
                 return Results.Created($"/api/clientes/{id}", new { Id = id });
