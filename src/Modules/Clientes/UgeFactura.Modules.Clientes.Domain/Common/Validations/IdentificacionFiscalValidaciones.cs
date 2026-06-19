@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using UgeFactura.Modules.Clientes.Domain;
 
 namespace UgeFactura.Modules.Clientes.Domain
 {

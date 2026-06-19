@@ -1,4 +1,5 @@
-﻿using UgeFactura.Modules.Clientes.Features;
+﻿using Microsoft.AspNetCore.Mvc;
+using UgeFactura.Modules.Clientes.Features;
 
 namespace UgeFactura.Api
 {
@@ -6,7 +7,9 @@ namespace UgeFactura.Api
     {
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
-            app.MapGet("/", async (ObtenerClientesCommand dto, ObtenerClientesHandler handler) =>
+            app.MapGet("/", async (
+                [FromBody] ObtenerClientesCommand command, 
+                [FromServices] ObtenerClientesHandler handler) =>
             {
                 //var id = await handler.HandleAsync(dto);
                 //return Results.Created($"/api/clientes/{id}", new { Id = id });

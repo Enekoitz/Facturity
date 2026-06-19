@@ -1,5 +1,4 @@
-﻿
-namespace UgeFactura.Modules.Clientes.Domain
+﻿namespace UgeFactura.Modules.Clientes.Domain
 {
     internal static class CodesValidations
     {

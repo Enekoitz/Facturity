@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace UgeFactura.Modules.Clientes.Domain
+﻿namespace UgeFactura.Modules.Clientes.Domain
 {
     public static class TipoIdentificacionFiscalService
     {

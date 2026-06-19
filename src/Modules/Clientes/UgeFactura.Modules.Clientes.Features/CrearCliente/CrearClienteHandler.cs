@@ -35,16 +35,23 @@ namespace UgeFactura.Modules.Clientes.Features
 
             IdentificacionFiscal identificacionFiscal = identificacionFiscalResult.Value;
 
-            Result<Domicilio> domicilioResult = Domicilio.Crear(command.Direccion
-                                                                , command.CodigoPostal
-                                                                , command.Municipio
-                                                                , command.Provincia
-                                                                , command.Region
-                                                                , command.Pais);
-            if (domicilioResult.IsFailure)
-                return Result.Fail<Guid>(string.Join("; ", domicilioResult.Error));
 
-            Domicilio domicilio = domicilioResult.Value;
+            Result<Domicilio>? domicilioResult = null;
+            Domicilio? domicilio = null;
+            if (command.Direccion is not null)
+            {
+                domicilioResult = Domicilio.Crear(command.Direccion
+                                                , command.CodigoPostal
+                                                , command.Municipio
+                                                , command.Provincia
+                                                , command.Region
+                                                , command.Pais);
+
+                if (domicilioResult.IsFailure)
+                    return Result.Fail<Guid>(string.Join("; ", domicilioResult.Error));
+
+                domicilio = domicilioResult.Value;
+            }
 
             Result<Cliente> clienteResult = Cliente.Crear(command.Alias
                                                 , identificacionFiscal
