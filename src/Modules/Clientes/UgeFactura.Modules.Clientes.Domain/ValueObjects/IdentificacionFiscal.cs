@@ -1,5 +1,4 @@
 ﻿using UgeFactura.Common.Primitives;
-
 namespace UgeFactura.Modules.Clientes.Domain
 {
     public sealed class IdentificacionFiscal

@@ -1,40 +1,32 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <ItemGroup>
-    <Folder Include="ModificarCliente\" />
-    <Folder Include="ObtenerClientePorId\" />
-  </ItemGroup>
-
-	<ItemGroup>
-		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-			<_Parameter1>UgeFactura.Api</_Parameter1>
-		</AssemblyAttribute>
-	</ItemGroup>
-
-	<ItemGroup>
-		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-			<_Parameter1>UgeFactura.Modules.Clientes.Tests</_Parameter1>
-		</AssemblyAttribute>
-	</ItemGroup>
-
-	<ItemGroup>
-		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-			<_Parameter1>UgeFactura.Modules.Clientes.Infrastructure</_Parameter1>
-		</AssemblyAttribute>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.4" />
-	</ItemGroup>
-
-	<ItemGroup>
-      <ProjectReference Include="..\UgeFactura.Modules.Clientes.Domain\UgeFactura.Modules.Clientes.Domain.csproj" />
-    </ItemGroup>
+	<PropertyGroup>
+		<AssemblyName>UgeFactura.Modules.Clientes.Features</AssemblyName>
+	</PropertyGroup>
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="ModificarCliente\" />
+    <Folder Include="ObtenerClientePorId\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\UgeFactura.Common\UgeFactura.Common.csproj" />
+    <ProjectReference Include="..\UgeFactura.Modules.Clientes.Domain\UgeFactura.Modules.Clientes.Domain.csproj" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="UgeFactura.API" />
+		<InternalsVisibleTo Include="UgeFactura.Modules.Clientes.Infrastructure" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.4" />
+	</ItemGroup>
 
 </Project>

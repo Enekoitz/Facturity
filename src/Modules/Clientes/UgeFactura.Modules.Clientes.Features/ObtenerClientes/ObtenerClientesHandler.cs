@@ -1,66 +1,65 @@
 ﻿using UgeFactura.Common.Primitives;
 using UgeFactura.Modules.Clientes.Domain;
 
-namespace UgeFactura.Modules.Clientes.Features
+namespace UgeFactura.Modules.Clientes.Features;
+
+internal sealed class ObtenerClientesHandler
 {
-    internal sealed class ObtenerClientesHandler
+    private readonly IClientesRepository _repoCliente;
+
+    public ObtenerClientesHandler(IClientesRepository repoCliente)
     {
-        private readonly IClientesRepository _repoCliente;
+        _repoCliente = repoCliente;
+    }
 
-        public ObtenerClientesHandler(IClientesRepository repoCliente)
-        {
-            _repoCliente = repoCliente;
-        }
+    public async Task<Result<Guid>> HandleAsync(ObtenerClientesCommand command)
+    {
+        if (await _repoCliente.ExisteAliasAsync(command.Alias))
+            return Result.Fail<Guid>("Ya existe un cliente con el mismo alias.");
 
-        public async Task<Result<Guid>> HandleAsync(ObtenerClientesCommand command)
-        {
-            if (await _repoCliente.ExisteAliasAsync(command.Alias))
-                return Result.Fail<Guid>("Ya existe un cliente con el mismo alias.");
+        if (await _repoCliente.ExisteIdentificacionFiscalAsync(command.IdentificacionTipoCodigo
+                                                                , command.IdentificacionValor))
+            return Result.Fail<Guid>("Ya existe un cliente con la misma identificación fiscal.");
 
-            if (await _repoCliente.ExisteIdentificacionFiscalAsync(command.IdentificacionTipoCodigo
-                                                                    , command.IdentificacionValor))
-                return Result.Fail<Guid>("Ya existe un cliente con la misma identificación fiscal.");
+        TipoIdentificacionFiscal? tipoIdentificacion = await _repoCliente.ObtenerTipoIdentificacionAsync(command.IdentificacionTipoCodigo);
 
-            TipoIdentificacionFiscal? tipoIdentificacion = await _repoCliente.ObtenerTipoIdentificacionAsync(command.IdentificacionTipoCodigo);
+        if (tipoIdentificacion is null)
+            return Result.Fail<Guid>("El código de tipo de identificación no existe o es incorrecto.");
 
-            if (tipoIdentificacion is null)
-                return Result.Fail<Guid>("El código de tipo de identificación no existe o es incorrecto.");
+        Result<IdentificacionFiscal> identificacionFiscalResult = IdentificacionFiscal.Crear(command.IdentificacionTipoCodigo
+                                                                                            , tipoIdentificacion.Regla
+                                                                                            , command.IdentificacionValor
+                                                                                            , command.IdentificacionPais);
+        if (identificacionFiscalResult.IsFailure)
+            return Result.Fail<Guid>(string.Join("; ", identificacionFiscalResult.Error));
 
-            Result<IdentificacionFiscal> identificacionFiscalResult = IdentificacionFiscal.Crear(command.IdentificacionTipoCodigo
-                                                                                                , tipoIdentificacion.Regla
-                                                                                                , command.IdentificacionValor
-                                                                                                , command.IdentificacionPais);
-            if (identificacionFiscalResult.IsFailure)
-                return Result.Fail<Guid>(string.Join("; ", identificacionFiscalResult.Error));
+        IdentificacionFiscal identificacionFiscal = identificacionFiscalResult.Value;
 
-            IdentificacionFiscal identificacionFiscal = identificacionFiscalResult.Value;
+        Result<Domicilio> domicilioResult = Domicilio.Crear(command.Direccion
+                                                            , command.CodigoPostal
+                                                            , command.Municipio
+                                                            , command.Provincia
+                                                            , command.Region
+                                                            , command.Pais);
+        if (domicilioResult.IsFailure)
+            return Result.Fail<Guid>(string.Join("; ", domicilioResult.Error));
 
-            Result<Domicilio> domicilioResult = Domicilio.Crear(command.Direccion
-                                                                , command.CodigoPostal
-                                                                , command.Municipio
-                                                                , command.Provincia
-                                                                , command.Region
-                                                                , command.Pais);
-            if (domicilioResult.IsFailure)
-                return Result.Fail<Guid>(string.Join("; ", domicilioResult.Error));
+        Domicilio domicilio = domicilioResult.Value;
 
-            Domicilio domicilio = domicilioResult.Value;
+        Result<Cliente> clienteResult = Cliente.Crear(command.Alias
+                                            , identificacionFiscal
+                                            , command.RazonSocial
+                                            , command.Nombre
+                                            , command.PrimerApellido
+                                            , command.SegundoApellido
+                                            , domicilio);
+        if (clienteResult.IsFailure)
+            return Result.Fail<Guid>(string.Join("; ", clienteResult.Error));
 
-            Result<Cliente> clienteResult = Cliente.Crear(command.Alias
-                                                , identificacionFiscal
-                                                , command.RazonSocial
-                                                , command.Nombre
-                                                , command.PrimerApellido
-                                                , command.SegundoApellido
-                                                , domicilio);
-            if (clienteResult.IsFailure)
-                return Result.Fail<Guid>(string.Join("; ", clienteResult.Error));
+        Cliente cliente = clienteResult.Value;
 
-            Cliente cliente = clienteResult.Value;
+        await _repoCliente.GuardarAsync(cliente);
 
-            await _repoCliente.GuardarAsync(cliente);
-
-            return Result.Ok(cliente.Id);
-        }
+        return Result.Ok(cliente.Id);
     }
 }

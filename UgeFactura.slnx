@@ -1,21 +1,18 @@
 <Solution>
   <Folder Name="/Common/">
-    <Project Path="src/Common/UgeFactura.Common.Kernel/UgeFactura.Common.Kernel.csproj" Id="4032bf71-0cdd-4c13-890a-cb1a991ca561" />
-    <Project Path="src/Common/UgeFactura.Common.Primitives/UgeFactura.Common.Primitives.csproj" Id="c7abc5f8-b8fa-4a13-95d9-1939d07fa57b" />
+    <Project Path="src/Common/UgeFactura.Common/UgeFactura.Common.csproj" />
   </Folder>
   <Folder Name="/Host/">
     <Project Path="src/Host/UgeFactura.Api/UgeFactura.Api.csproj" />
   </Folder>
-  <Folder Name="/Infrastructure/">
-    <Project Path="src/Infrastructure/UgeFactura.Infrastructure/UgeFactura.Infrastructure.csproj" />
-  </Folder>
   <Folder Name="/Modules/">
-    <Project Path="UgeFactura.Modules.Bootstrapper/UgeFactura.Modules.Bootstrapper.csproj" Id="985ec35b-9634-447f-803b-2aedbcbfd8cc" />
+    <Project Path="src/Modules/UgeFactura.Modules.Bootstrapper/UgeFactura.Modules.Bootstrapper.csproj" />
   </Folder>
   <Folder Name="/Modules/Clientes/">
-    <Project Path="src/Modules/Clientes/UgeFactura.Modules.Clientes.Domain/UgeFactura.Modules.Clientes.Domain.csproj" />
-    <Project Path="src/Modules/Clientes/UgeFactura.Modules.Clientes.Features/UgeFactura.Modules.Clientes.Features.csproj" />
-    <Project Path="src/Modules/Clientes/UgeFactura.Modules.Clientes.Infrastructure/UgeFactura.Modules.Clientes.Infrastructure.csproj" Id="ee65c809-9152-4519-95a3-3296a25e1628" />
+    <Project Path="src/Modules/Clientes/UgeFactura.Modules.Clientes.Domain/UgeFactura.Modules.Clientes.Domain.csproj" Id="864266c9-86d8-406d-8e6a-90a018b42db9" />
+    <Project Path="src/Modules/Clientes/UgeFactura.Modules.Clientes.Features/UgeFactura.Modules.Clientes.Features.csproj" Id="ed65c0e1-1f68-4b38-88c1-b23fe16a2d21" />
     <Project Path="src/Modules/Clientes/UgeFactura.Modules.Clientes.Tests/UgeFactura.Modules.Clientes.Tests.csproj" />
+    <Project Path="src/Modules/Clientes/UgeFactura.Modules.Clientes/UgeFactura.Modules.Clientes.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/Modules/Facturacion/" />
 </Solution>

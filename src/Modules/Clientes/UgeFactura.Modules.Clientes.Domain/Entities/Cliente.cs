@@ -11,7 +11,7 @@ namespace UgeFactura.Modules.Clientes.Domain
         public string? Nombre { get; private set; }
         public string? PrimerApellido { get; private set; }
         public string? SegundoApellido { get; private set; }
-        public Domicilio Domicilio { get; private set; }
+        public Domicilio? Domicilio { get; private set; }
 
         protected Cliente() { }
 
@@ -21,7 +21,7 @@ namespace UgeFactura.Modules.Clientes.Domain
             string? nombre,
             string? primerApellido,
             string? segundoApellido,
-            Domicilio domicilio) 
+            Domicilio? domicilio) 
         {
             Id = Guid.NewGuid();
             Alias = alias;
@@ -40,7 +40,7 @@ namespace UgeFactura.Modules.Clientes.Domain
             string? nombre,
             string? primerApellido,
             string? segundoApellido,
-            Domicilio domicilio) 
+            Domicilio? domicilio) 
         {
             var errores = new List<string>();
 

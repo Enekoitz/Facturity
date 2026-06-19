@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<AssemblyName>UgeFactura.Modules.Clientes.Infrastructure</AssemblyName>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.4" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="10.0.4" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="10.0.4" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.4" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\Common\UgeFactura.Common\UgeFactura.Common.csproj" />
+		<ProjectReference Include="..\UgeFactura.Modules.Clientes.Domain\UgeFactura.Modules.Clientes.Domain.csproj" />
+		<ProjectReference Include="..\UgeFactura.Modules.Clientes.Features\UgeFactura.Modules.Clientes.Features.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="UgeFactura.API" />
+		<InternalsVisibleTo Include="UgeFactura.Modules.Clientes.Tests" />
+	</ItemGroup>
+	
+</Project>
