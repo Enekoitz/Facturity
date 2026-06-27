@@ -10,7 +10,7 @@ A nivel físico sigue siendo una única unidad de despliegue, ejecutándose como
 
 Además, nos permite que cada uno de los módulos implemente su tipo de arquitectura de software, sin estar obligados a que toda la aplicación implemente una única arquitectura. 
 
->NOTA: Se define la arquitectura de software de cada módulo en la siguiente página: [[Arquitectura_Software]]
+>NOTA: Se define la arquitectura de software de cada módulo en la siguiente página: [[Arquitectura de software]]
 
 Si en un futuro se decide refactorizar el proyecto a una arquitectura de microservicios, la transición desde un monolito modular es más natural y menos compleja. 
 
