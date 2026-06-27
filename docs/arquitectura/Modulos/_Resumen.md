@@ -1,4 +1,3 @@
-
 ### 1. Creación de facturas.
 
 Dos tipos:
