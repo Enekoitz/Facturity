@@ -1,10 +1,11 @@
-﻿namespace UgeFactura.Modules.Clientes.Domain
+﻿namespace UgeFactura.Modules.Clientes.Domain;
+
+public class Parametros
 {
-    internal class Parametros
-    {
-        internal const int AliasLongitudMaxima = 10;
-        internal const int NombreLongitudMaxima = 39;
-        internal const int ApellidoLongitudMaxima = 39;
-        internal const int RazonSocialLongitudMaxima = 120;
-    }
+    public const int AliasLongitudMaxima = 10;
+    public const int NombreLongitudMaxima = 39;
+    public const int ApellidoLongitudMaxima = 39;
+    public const int RazonSocialLongitudMaxima = 120;
+    public const int CodigoPostalLongitudExacta = 5;
+    public const int CodigoPais = 2;
 }
