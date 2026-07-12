@@ -1,41 +1,73 @@
+using Scalar.AspNetCore;
+using Serilog;
 using UgeFactura.Api;
 using UgeFactura.Modules.Bootstrapper;
 
-var builder = WebApplication.CreateBuilder(args);
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.Seq("http://localhost:5341")
+    .Enrich.FromLogContext()
+    .CreateBootstrapLogger();
 
-var connString = builder.Configuration.GetConnectionString("UgeFacturaDbConnection");
-// Inyección de dependencias de la aplicación completa: infraestructura, features de todos los módulos (clientes, facturación, productos...)
-builder.Services.AddAllModules(connString); 
-
-builder.Services.AddOpenApi();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+try
 {
-    app.MapOpenApi();
+    Log.Information("Iniciando el host de UgeFactura...");
+    var builder = WebApplication.CreateBuilder(args);
 
-    app.UseSwaggerUI(options =>
+    builder.Host.UseSerilog((context, services, configuration) => configuration
+        .ReadFrom.Configuration(context.Configuration)
+        .ReadFrom.Services(services));
+
+    builder.Services.AddControllers()
+        .AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.PropertyNamingPolicy = null;
+        });
+
+    builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+    builder.Services.AddProblemDetails();
+
+    builder.Services.AddOpenApi("v1");
+
+    var connectionString = builder.Configuration.GetConnectionString("UgeFacturaDbConnection")
+        ?? throw new InvalidOperationException("CRITICAL: La cadena de conexión 'UgeFacturaDbConnection' es nula.");
+
+    builder.Services.AddAllModules(connectionString);
+
+    var app = builder.Build();
+
+    app.UseCorrelationId();
+    app.UseExceptionHandler();
+
+    if (app.Environment.IsDevelopment())
     {
-        // Forzamos la ruta exacta donde .NET genera el JSON
-        options.SwaggerEndpoint("/openapi/v1.json", "API UgeFactura");
-        // Opcional: Esto hace que Swagger sea la página de inicio (http://localhost:XXXX/)
-        options.RoutePrefix = string.Empty;
-    });
+        app.MapOpenApi();
+
+        app.MapScalarApiReference(options =>
+        {
+            options.WithTitle("API UgeFactura")
+                   .WithTheme(ScalarTheme.DeepSpace);
+        });
+    }
+
+    app.UseHttpsRedirection();
+
+    //app.UseAuthentication();
+    //app.UseAuthorization();
+
+    app.MapClientesEndpoints();
+    // TODO: A medida que avancemos con los endpoints añadimos:
+    //app.MapProductosEndpoints();
+    //app.MapFacturacionEndpoints();
+    //app.MapMotorImpuestosEndpoints();
+
+    app.Run();
 }
-
-app.UseHttpsRedirection();
-
-// TODO: Implementar la autenticación y autorización:
-//app.UseAuthentication();
-//app.UseAuthorization();
-
-app.MapClientesEndpoints();
-
-// TODO: A medida que avancemos con los endpoints añadimos:
-//app.MapProductosEndpoints();
-//app.MapFacturacionEndpoints();
-//app.MapMotorImpuestosEndpoints();
-
-app.Run();
+catch (Exception ex)
+{
+    Log.Fatal(ex, "La aplicación falló durante el arranque.");
+}
+finally
+{
+    Log.CloseAndFlush();
+}
