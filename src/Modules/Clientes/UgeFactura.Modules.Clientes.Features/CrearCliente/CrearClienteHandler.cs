@@ -1,5 +1,5 @@
-﻿using UgeFactura.Common.Primitives;
-using UgeFactura.Modules.Clientes.Domain;
+﻿using UgeFactura.Modules.Clientes.Domain;
+using UgeFactura.Modules.DomainSharedKernel;
 
 namespace UgeFactura.Modules.Clientes.Features
 {
@@ -15,23 +15,23 @@ namespace UgeFactura.Modules.Clientes.Features
         public async Task<Result<Guid>> HandleAsync(CrearClienteCommand command)
         {
             if (await _repoCliente.ExisteAliasAsync(command.Alias))
-                return Result.Fail<Guid>("Ya existe un cliente con el mismo alias.");
+                return Result.Fail<Guid>(Error.Conflict("01", "Ya existe un cliente con el mismo alias."));
 
             if (await _repoCliente.ExisteIdentificacionFiscalAsync(command.IdentificacionTipoCodigo
                                                                     , command.IdentificacionValor))
-                return Result.Fail<Guid>("Ya existe un cliente con la misma identificación fiscal.");
+                return Result.Fail<Guid>(Error.Conflict("01", "Ya existe un cliente con la misma identificación fiscal."));
 
             TipoIdentificacionFiscal? tipoIdentificacion = await _repoCliente.ObtenerTipoIdentificacionAsync(command.IdentificacionTipoCodigo);
 
             if (tipoIdentificacion is null)
-                return Result.Fail<Guid>("El código de tipo de identificación no existe o es incorrecto.");
+                return Result.Fail<Guid>(Error.Validation("02", "El código de tipo de identificación no existe o es incorrecto."));
 
             Result<IdentificacionFiscal> identificacionFiscalResult = IdentificacionFiscal.Crear(command.IdentificacionTipoCodigo
                                                                                                 , tipoIdentificacion.Regla
                                                                                                 , command.IdentificacionValor
                                                                                                 , command.IdentificacionPais);
             if (identificacionFiscalResult.IsFailure)
-                return Result.Fail<Guid>(string.Join("; ", identificacionFiscalResult.Error));
+                return Result.Fail<Guid>(identificacionFiscalResult.Errors);
 
             IdentificacionFiscal identificacionFiscal = identificacionFiscalResult.Value;
 
@@ -48,12 +48,13 @@ namespace UgeFactura.Modules.Clientes.Features
                                                 , command.Pais);
 
                 if (domicilioResult.IsFailure)
-                    return Result.Fail<Guid>(string.Join("; ", domicilioResult.Error));
+                    return Result.Fail<Guid>(domicilioResult.Errors);
 
                 domicilio = domicilioResult.Value;
             }
 
-            Result<Cliente> clienteResult = Cliente.Crear(command.Alias
+            Result<Cliente> clienteResult = Cliente.Crear(Guid.NewGuid()
+                                                , command.Alias
                                                 , identificacionFiscal
                                                 , command.RazonSocial
                                                 , command.Nombre
@@ -61,7 +62,7 @@ namespace UgeFactura.Modules.Clientes.Features
                                                 , command.SegundoApellido
                                                 , domicilio);
             if (clienteResult.IsFailure)
-                return Result.Fail<Guid>(string.Join("; ", clienteResult.Error));
+                return Result.Fail<Guid>(clienteResult.Errors);
 
             Cliente cliente = clienteResult.Value;
 
