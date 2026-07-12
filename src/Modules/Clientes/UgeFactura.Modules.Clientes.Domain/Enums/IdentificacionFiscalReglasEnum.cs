@@ -2,7 +2,7 @@
 {
     public enum IdentificacionFiscalReglasEnum
     {
-        NifNieCif,
+        Nif,
         OtroDocumento,
         NifEntidadExtranjera,
         Desconocido
