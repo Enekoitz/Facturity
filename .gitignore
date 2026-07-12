@@ -432,4 +432,6 @@ FodyWeavers.xsd
 *.msp
 
 # Obsidian files
-.obsidian
+**/.obsidian/
+!**/.obsidian/plugins/
+!**/.obsidian/themes/
