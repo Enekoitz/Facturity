@@ -1,75 +1,83 @@
-﻿using UgeFactura.Common.Primitives;
+﻿using UgeFactura.Modules.DomainSharedKernel;
 
-namespace UgeFactura.Modules.Clientes.Domain
+namespace UgeFactura.Modules.Clientes.Domain;
+
+public sealed class Domicilio : ValueObject
 {
-    public sealed record Domicilio
+    public string Direccion { get; private set; }
+    public CodigoPostal? CodigoPostal { get; private set; }
+    public string? Municipio { get; private set; }
+    public string? Provincia { get; private set; }
+    public string? Region { get; private set; }
+    public string? Pais { get; private set; }
+
+    private Domicilio() { }
+
+    private Domicilio(
+        string direccion
+        , CodigoPostal? codigoPostal
+        , string? municipio
+        , string? provincia
+        , string? region
+        , string? pais)
     {
-        public string Direccion { get; private set; }
-        public CodigoPostal? CP { get; private set; }
-        public string? Municipio { get; private set; }
-        public string? Provincia { get; private set; }
-        public string? Region { get; private set; }
-        public string? Pais { get; private set; }
+        Direccion = direccion;
+        CodigoPostal = codigoPostal;
+        Municipio = municipio;
+        Provincia = provincia;
+        Region = region;
+        Pais = pais;
+    }
 
-        //EF Core
-        private Domicilio() { }
+    public static Result<Domicilio> Crear(
+        string direccion
+        , string? codigoPostal
+        , string? municipio                       
+        , string? provincia
+        , string? region
+        , string? pais)
+    {
+        var errores = new List<Error>();
 
-        private Domicilio(
-            string direccion
-            , CodigoPostal? cp
-            , string? municipio
-            , string? provincia
-            , string? region
-            , string? pais)
+        if (string.IsNullOrWhiteSpace(direccion))
+            errores.Add(Error.Validation(DomicilioCodigosError.Direccion_Vacio.ToString(), "La dirección no puede ser vacía."));
+
+        municipio = string.IsNullOrWhiteSpace(municipio) ? null : municipio.Trim();
+        provincia = string.IsNullOrWhiteSpace(provincia) ? null : provincia.Trim();
+        region = string.IsNullOrWhiteSpace(region) ? null : region.Trim();
+        pais = string.IsNullOrWhiteSpace(pais) ? null : pais.Trim();
+
+        CodigoPostal? codigoPostalVO = null;
+        if (!string.IsNullOrWhiteSpace(codigoPostal))
         {
-            Direccion = direccion; 
-            CP = cp;
-            Municipio = municipio;
-            Provincia = provincia;
-            Region = region;
-            Pais = pais;
+            var codigoPostalResult = CodigoPostal.Crear(codigoPostal);
+            if (codigoPostalResult.IsFailure)
+                errores.AddRange(codigoPostalResult.Errors);
+            else
+                codigoPostalVO = codigoPostalResult.Value;
         }
 
-        public static Result<Domicilio> Crear(
-            string direccion
-            , string? cp
-            , string? municipio                       
-            , string? provincia
-            , string? region
-            , string? pais)
-        {
-            var erroresCodigos = new List<string>();
+        if (errores.Count > 0)
+            return Result.Fail<Domicilio>(errores);
 
-            if (string.IsNullOrWhiteSpace(direccion))
-                erroresCodigos.Add(DomicilioCodigosError.Direccion_Vacio.ToString());
+        direccion = direccion.Trim();
 
-            municipio = string.IsNullOrWhiteSpace(municipio) ? null : municipio.Trim();
-            provincia = string.IsNullOrWhiteSpace(provincia) ? null : provincia.Trim();
-            region = string.IsNullOrWhiteSpace(region) ? null : region.Trim();
-            pais = string.IsNullOrWhiteSpace(pais) ? null : pais.Trim();
+        return Result.Ok(new Domicilio(
+            direccion,
+            codigoPostalVO, 
+            municipio, 
+            provincia, 
+            region, 
+            pais));
+    }
 
-            CodigoPostal? codigoPostalVO = null;
-            if (!string.IsNullOrWhiteSpace(cp))
-            {
-                var cpResult = CodigoPostal.Crear(cp);
-                if (cpResult.IsFailure)
-                    erroresCodigos.Add(cpResult.Error);
-                else
-                    codigoPostalVO = cpResult.Value;
-            }
-
-            if (erroresCodigos.Count > 0)
-                return Result.Fail<Domicilio>(string.Join("; ", erroresCodigos));
-
-            direccion = direccion.Trim();
-
-            return Result.Ok(new Domicilio(
-                direccion,
-                codigoPostalVO, 
-                municipio, 
-                provincia, 
-                region, 
-                pais));
-        }
+    protected override IEnumerable<object?> GetEqualityComponents()
+    {
+        yield return Direccion;
+        yield return CodigoPostal;
+        yield return Municipio;
+        yield return Provincia;
+        yield return Region;
+        yield return Pais;
     }
 }
