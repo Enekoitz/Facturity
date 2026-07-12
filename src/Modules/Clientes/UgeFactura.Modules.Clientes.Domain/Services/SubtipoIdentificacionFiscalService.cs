@@ -1,32 +1,34 @@
-﻿namespace UgeFactura.Modules.Clientes.Domain
+﻿namespace UgeFactura.Modules.Clientes.Domain;
+
+public enum SubtiposIdentificacionFiscalReglas
 {
-    public enum SubtiposIdentificacionFiscalReglas
+    DNI,
+    Nie,
+    Cif
+}
+
+public static class SubtipoIdentificacionFiscalService
+{
+    public static SubtiposIdentificacionFiscalReglas? ObtenerSubtipo(
+        IdentificacionFiscalReglasEnum IdentificacionFiscalReglas, 
+        string valorIdentificacion) 
     {
-        Nif,
-        Nie,
-        Cif
-    }
+        switch (IdentificacionFiscalReglas)
+        {
+            case IdentificacionFiscalReglasEnum.Nif:
+                if (IdentificacionFiscalValidaciones.EsDNI(valorIdentificacion))
+                    return SubtiposIdentificacionFiscalReglas.DNI;
 
-    public static class SubtipoIdentificacionFiscalService
-    {
-        public static SubtiposIdentificacionFiscalReglas? ObtenerSubtipo(IdentificacionFiscalReglasEnum IdentificacionFiscalReglas, string valorIdentificacion) {
-            switch (IdentificacionFiscalReglas)
-            {
-                case IdentificacionFiscalReglasEnum.NifNieCif:
-                    if (IdentificacionFiscalValidaciones.EsNif(valorIdentificacion))
-                        return SubtiposIdentificacionFiscalReglas.Nif;
+                if (IdentificacionFiscalValidaciones.EsNie(valorIdentificacion))
+                    return SubtiposIdentificacionFiscalReglas.Nie;
 
-                    if (IdentificacionFiscalValidaciones.EsNie(valorIdentificacion))
-                        return SubtiposIdentificacionFiscalReglas.Nie;
+                if (IdentificacionFiscalValidaciones.EsCif(valorIdentificacion))
+                    return SubtiposIdentificacionFiscalReglas.Cif;
 
-                    if (IdentificacionFiscalValidaciones.EsCif(valorIdentificacion))
-                        return SubtiposIdentificacionFiscalReglas.Cif;
+                return null;
 
-                    return null;
-
-                default:
-                    return null;
-            }
+            default:
+                return null;
         }
     }
 }
