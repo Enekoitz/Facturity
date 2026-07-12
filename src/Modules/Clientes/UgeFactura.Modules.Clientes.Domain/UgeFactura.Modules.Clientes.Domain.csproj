@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Common\UgeFactura.Common\UgeFactura.Common.csproj" />
+    <ProjectReference Include="..\..\UgeFactura.Modules.DomainSharedKernel\UgeFactura.Modules.DomainSharedKernel.csproj" />
   </ItemGroup>
 
 </Project>
