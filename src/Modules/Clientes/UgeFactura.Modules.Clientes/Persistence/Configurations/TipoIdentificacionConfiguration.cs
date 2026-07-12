@@ -11,7 +11,16 @@ public class TipoIdentificacionConfiguration : IEntityTypeConfiguration<TipoIden
         builder.ToTable("tipos_identificacion_fiscal");
 
         builder.HasKey(c => c.Codigo).HasName("codigo").HasName("id");
-        builder.Property(c => c.Nombre).IsRequired().HasMaxLength(250).HasColumnName("nombre");
+
+        builder.HasKey(c => c.Codigo);
+        builder.Property(c => c.Codigo)
+            .HasColumnName("id")
+            .ValueGeneratedNever();
+
+        builder.Property(c => c.Nombre)
+            .IsRequired()
+            .HasMaxLength(250)
+            .HasColumnName("nombre");
 
         builder.Property(e => e.Regla)
             .HasConversion(
@@ -25,11 +34,11 @@ public class TipoIdentificacionConfiguration : IEntityTypeConfiguration<TipoIden
         builder.Property(c => c.RequierePais).IsRequired().HasColumnName("requiere_pais");
 
         builder.HasData(
-            new TipoIdentificacionFiscal(TipoIdentificacionFiscalEnum.NIF.ToCodigo(), "NIF-IVA", false),
-            new TipoIdentificacionFiscal(TipoIdentificacionFiscalEnum.Pasaporte.ToCodigo(), "Pasaporte", false),
-            new TipoIdentificacionFiscal(TipoIdentificacionFiscalEnum.DocumentoExpedidoPaisResidencia.ToCodigo(), "Documento oficial de identificación expedido por el país o territorio de residencia", false),
-            new TipoIdentificacionFiscal(TipoIdentificacionFiscalEnum.CertificadoResidencia.ToCodigo(), "Certificado de residencia", false),
-            new TipoIdentificacionFiscal(TipoIdentificacionFiscalEnum.OtroDocumentoProbatorio.ToCodigo(), "Otro documento probatorio", false)
+            new TipoIdentificacionFiscal(TipoIdentificacionFiscalEnum.NIF.ToCodigo(), "NIF-IVA", IdentificacionFiscalReglasEnum.Nif, false),
+            new TipoIdentificacionFiscal(TipoIdentificacionFiscalEnum.Pasaporte.ToCodigo(), "Pasaporte", IdentificacionFiscalReglasEnum.OtroDocumento, false),
+            new TipoIdentificacionFiscal(TipoIdentificacionFiscalEnum.DocumentoExpedidoPaisResidencia.ToCodigo(), "Documento oficial de identificación expedido por el país o territorio de residencia", IdentificacionFiscalReglasEnum.OtroDocumento, false),
+            new TipoIdentificacionFiscal(TipoIdentificacionFiscalEnum.CertificadoResidencia.ToCodigo(), "Certificado de residencia", IdentificacionFiscalReglasEnum.OtroDocumento, false),
+            new TipoIdentificacionFiscal(TipoIdentificacionFiscalEnum.OtroDocumentoProbatorio.ToCodigo(), "Otro documento probatorio", IdentificacionFiscalReglasEnum.OtroDocumento, false)
         );
     }
 }
