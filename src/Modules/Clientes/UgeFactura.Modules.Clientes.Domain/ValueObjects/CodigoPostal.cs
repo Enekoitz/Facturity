@@ -1,32 +1,34 @@
-﻿using UgeFactura.Common.Primitives;
+﻿using UgeFactura.Modules.DomainSharedKernel;
 
-namespace UgeFactura.Modules.Clientes.Domain
+namespace UgeFactura.Modules.Clientes.Domain;
+
+public sealed class CodigoPostal : ValueObject
 {
-    public sealed record CodigoPostal
+    public string Valor { get; }
+
+    protected CodigoPostal() { }
+
+    private CodigoPostal(string value)
     {
-        public string Valor { get; }
+        Valor = value;
+    }
 
-        private CodigoPostal() { }
+    public static Result<CodigoPostal> Crear(string codigoPostal)
+    {
+        if (Validar.EsVacio(codigoPostal))
+            return Result.Fail<CodigoPostal>(Error.Validation(CodigoPostalCodigosError.CodigoPostal_Vacio.ToString(), "El código postal no puede ser vacío."));
 
-        private CodigoPostal(string value)
-        {
-            Valor = value;
-        }
+        if (Validar.NoEsLongitudExacta(codigoPostal, Parametros.CodigoPostalLongitudExacta))
+            return Result.Fail<CodigoPostal>(Error.Validation(CodigoPostalCodigosError.CodigoPostal_LongitudInvalida.ToString(), "El código postal no puede ser vacío."));
 
-        public static Result<CodigoPostal> Crear(string cp)
-        {
-            if (string.IsNullOrWhiteSpace(cp))
-                return Result.Fail<CodigoPostal>(CodigoPostalCodigosError.CodigoPostal_Vacio.ToString());
+        if (!codigoPostal.All(char.IsDigit))
+            return Result.Fail<CodigoPostal>(Error.Validation(CodigoPostalCodigosError.CodigoPostal_FormatoInvalido.ToString(), "El código postal no puede ser vacío."));
 
-            if (cp.Trim().Length != 5)
-                return Result.Fail<CodigoPostal>(CodigoPostalCodigosError.CodigoPostal_LongitudInvalida.ToString());
+        return Result<CodigoPostal>.Ok(new CodigoPostal(codigoPostal.Trim()));
+    }
 
-            if (!cp.All(char.IsDigit))
-                return Result.Fail<CodigoPostal>(CodigoPostalCodigosError.CodigoPostal_FormatoInvalido.ToString());
-
-            return Result.Ok(new CodigoPostal(cp.Trim()));
-        }
-
-        public override string ToString() => Valor;
+    protected override IEnumerable<object?> GetEqualityComponents()
+    {
+        yield return Valor;
     }
 }
