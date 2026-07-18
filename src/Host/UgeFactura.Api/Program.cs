@@ -3,15 +3,18 @@ using Serilog;
 using UgeFactura.Api;
 using UgeFactura.Modules.Bootstrapper;
 
+//Serilog.Debugging.SelfLog.Enable(Console.Error);
+
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
-    .WriteTo.Seq("http://localhost:5341")
+    .WriteTo.Seq("http://localhost:5341", apiKey: "[REDACTED]")
     .Enrich.FromLogContext()
     .CreateBootstrapLogger();
 
 try
 {
     Log.Information("Iniciando el host de UgeFactura...");
+
     var builder = WebApplication.CreateBuilder(args);
 
     builder.Host.UseSerilog((context, services, configuration) => configuration
