@@ -38,9 +38,9 @@ Con la siguiente instrucción de código en el archivo de configuración de EF C
 options.UseSqlServer(connectionString, x => 
     x.MigrationsHistoryTable("__EFMigrationsHistory", "clientes")); // <--- Tabla propia en su esquema
 
-// En el módulo de Facturacion
+// En el módulo de Facturas
 options.UseSqlServer(connectionString, x => 
-    x.MigrationsHistoryTable("__EFMigrationsHistory", "facturacion"));  // <--- Tabla propia en su otro esquema
+    x.MigrationsHistoryTable("__EFMigrationsHistory", "facturas"));  // <--- Tabla propia en su otro esquema
 ```
 
 ##### Ventajas
