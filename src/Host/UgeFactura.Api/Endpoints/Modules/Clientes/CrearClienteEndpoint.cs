@@ -1,19 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Serilog;
 using UgeFactura.Modules.Clientes.Features;
-namespace UgeFactura.Api
+namespace UgeFactura.Api;
+
+public class CrearClienteEndpoint : IEndpoint
 {
-    public class CrearClienteEndpoint : IEndpoint
+    public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        public void MapEndpoint(IEndpointRouteBuilder app)
+        app.MapPost("/", async (
+            [FromBody] CrearClienteCommand command, 
+            [FromServices] CrearClienteHandler handler) =>
         {
-            app.MapPost("/", async (
-                [FromBody] CrearClienteCommand command, 
-                [FromServices] CrearClienteHandler handler) =>
-            {
-                var id = await handler.HandleAsync(command);
-                return Results.Created($"/api/clientes/{id}", new { Id = id });
-            })
-            .WithName("CrearCliente");
-        }
+            Log.ForContext<Program>().Information("Creando cliente desde una minimal API, registrando con Serilog en Seq");
+            var id = await handler.HandleAsync(command);
+            return Results.Created($"/api/clientes/{id}", new { Id = id });
+        })
+        .WithName("CrearCliente");
     }
 }

@@ -1,7 +1,6 @@
-﻿namespace UgeFactura.Api
+﻿namespace UgeFactura.Api;
+
+public interface IEndpoint
 {
-    public interface IEndpoint
-    {
-        void MapEndpoint(IEndpointRouteBuilder app);
-    }
+    void MapEndpoint(IEndpointRouteBuilder app);
 }

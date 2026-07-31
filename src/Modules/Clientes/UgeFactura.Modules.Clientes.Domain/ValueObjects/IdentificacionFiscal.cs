@@ -31,14 +31,12 @@ public sealed class IdentificacionFiscal : ValueObject
         var errores = new List<Error>();
         
         if (string.IsNullOrWhiteSpace(tipoCodigo))
-        {
-            errores.Add(Error.Validation(IdentificacionFiscalCodigosError.TipoIdentificacionFiscal_Vacio.ToString(), "El código de tipo de identificación no puede estar vacío."));
-        }
+            errores.Add(Error.Validation(IdentificacionFiscalCodigosError.TipoIdentificacionFiscal_Vacio.ToString(), 
+                "El código de tipo de identificación no puede estar vacío."));
 
         if (string.IsNullOrWhiteSpace(valor))
-        {
-            errores.Add(Error.Validation(IdentificacionFiscalCodigosError.ValorIdentificacionFiscal_Vacio.ToString(), "El valor de la identificación no puede estar vacío."));
-        }
+            errores.Add(Error.Validation(IdentificacionFiscalCodigosError.ValorIdentificacionFiscal_Vacio.ToString(), 
+                "El valor de la identificación no puede estar vacío."));
 
         bool requierePais = codigoPais is not null;
         var tipoIdentificacionFiscal = new TipoIdentificacionFiscal(tipoCodigo, tipoRegla, requierePais);
@@ -47,23 +45,21 @@ public sealed class IdentificacionFiscal : ValueObject
         {
             if (codigoPais is null)
             {
-                errores.Add(Error.Validation(IdentificacionFiscalCodigosError.CodigoPais_Vacio.ToString(), "El código de país no puede estar vacío."));
+                errores.Add(Error.Validation(IdentificacionFiscalCodigosError.CodigoPais_Vacio.ToString(), 
+                    "El código de país no puede estar vacío."));
             }
             else if (codigoPais.Length != Parametros.CodigoPais)
             {
-                errores.Add(Error.Validation(IdentificacionFiscalCodigosError.CodigoPais_LongitudInvalida.ToString(), $"El código de país debe tener exactamente {Parametros.CodigoPais} caracteres."));
+                errores.Add(Error.Validation(IdentificacionFiscalCodigosError.CodigoPais_LongitudInvalida.ToString(), 
+                    $"El código de país debe tener exactamente {Parametros.CodigoPais} caracteres."));
             }
         }
 
         if (!tipoIdentificacionFiscal.EsValido(valor, out string codigoError, out string descripcionError))
-        {
             errores.Add(Error.Validation(codigoError, descripcionError));
-        }
 
         if (errores.Count > 0)
-        {
             return Result.Fail<IdentificacionFiscal>(errores);
-        }
 
         return Result.Ok(new IdentificacionFiscal(tipoIdentificacionFiscal, valor, codigoPais));
     }

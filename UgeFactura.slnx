@@ -1,18 +1,39 @@
 <Solution>
-  <Folder Name="/Common/">
-    <Project Path="src/Common/UgeFactura.Common/UgeFactura.Common.csproj" />
+  <Folder Name="/Elementos de la solución/">
+    <File Path=".gitignore" />
+    <File Path="docs/proyecto/README.md" />
+    <File Path="ROADMAP.md" />
   </Folder>
-  <Folder Name="/Host/">
+  <Folder Name="/host/">
     <Project Path="src/Host/UgeFactura.Api/UgeFactura.Api.csproj" />
   </Folder>
-  <Folder Name="/Modules/">
+  <Folder Name="/modules/">
     <Project Path="src/Modules/UgeFactura.Modules.Bootstrapper/UgeFactura.Modules.Bootstrapper.csproj" />
+    <Project Path="src/modules/UgeFactura.Modules.DomainSharedKernel/UgeFactura.Modules.DomainSharedKernel.csproj" Id="4a1a9ad2-284a-4df7-8ebe-86aa096a50f1" />
   </Folder>
-  <Folder Name="/Modules/Clientes/">
+  <Folder Name="/Modules/auditoria/">
+    <Project Path="src/modules/auditoria/UgeFactura.Modules.Auditoria.Domain/UgeFactura.Modules.Auditoria.Domain.csproj" />
+  </Folder>
+  <Folder Name="/Modules/clientes/">
     <Project Path="src/Modules/Clientes/UgeFactura.Modules.Clientes.Domain/UgeFactura.Modules.Clientes.Domain.csproj" Id="864266c9-86d8-406d-8e6a-90a018b42db9" />
     <Project Path="src/Modules/Clientes/UgeFactura.Modules.Clientes.Features/UgeFactura.Modules.Clientes.Features.csproj" Id="ed65c0e1-1f68-4b38-88c1-b23fe16a2d21" />
-    <Project Path="src/Modules/Clientes/UgeFactura.Modules.Clientes.Tests/UgeFactura.Modules.Clientes.Tests.csproj" />
     <Project Path="src/Modules/Clientes/UgeFactura.Modules.Clientes/UgeFactura.Modules.Clientes.Infrastructure.csproj" />
   </Folder>
-  <Folder Name="/Modules/Facturacion/" />
+  <Folder Name="/Modules/facturas/">
+    <Project Path="src/modules/facturas/UgeFactura.Modules.Facturacion.Domain/UgeFactura.Modules.Facturas.Domain.csproj" />
+  </Folder>
+  <Folder Name="/Modules/identidad/">
+    <Project Path="src/modules/identidad/UgeFactura.Modules.Identidad.Domain/UgeFactura.Modules.Identidad.Domain.csproj" Id="99ff5e3b-bd79-4ef7-97b4-18cccba0d59f" />
+  </Folder>
+  <Folder Name="/Modules/productos/">
+    <Project Path="src/modules/productos/UgeFactura.Modules.Productos.Domain/UgeFactura.Modules.Productos.Domain.csproj" Id="630e2c16-fad9-4a92-aadd-b0cb4b2183f7" />
+  </Folder>
+  <Folder Name="/tests/" />
+  <Folder Name="/tests/auditoria/" />
+  <Folder Name="/tests/clientes/">
+    <Project Path="tests/clientes/UgeFactura.Modules.Clientes.Tests/UgeFactura.Modules.Clientes.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/facturas/" />
+  <Folder Name="/tests/identidad/" />
+  <Folder Name="/tests/productos/" />
 </Solution>

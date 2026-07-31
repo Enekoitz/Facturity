@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Xml.XPath;
 using UgeFactura.Modules.Clientes.Domain;
 using UgeFactura.Modules.Clientes.Features;
 
@@ -16,7 +17,8 @@ public class ClientesRepository(ClientesDbContext context) : IClientesRepository
 
     public async Task<bool> ExisteIdentificacionFiscalAsync(string tipoCodigo, string valor, CancellationToken cancellationToken = default)
     {
-        var resultado = await _context.Clientes.AnyAsync(c => c.Identificacion.Tipo.Codigo == tipoCodigo && c.Identificacion.Valor == valor, cancellationToken: cancellationToken);
+        //var resultado = await _context.Clientes.AnyAsync(c => c.Identificacion.Tipo.Codigo == tipoCodigo && c.Identificacion.Valor == valor, cancellationToken: cancellationToken);
+        var resultado = await _context.Clientes.AnyAsync(c => c.Identificacion.Valor == valor, cancellationToken: cancellationToken);
         return resultado;
     }
 
@@ -27,7 +29,7 @@ public class ClientesRepository(ClientesDbContext context) : IClientesRepository
 
     public async Task<TipoIdentificacionFiscal?> ObtenerTipoIdentificacionAsync(string codigoTipoIdentificacion, CancellationToken cancellationToken = default)
     {
-        // TODO: Implementar persistencia en PostgreSQL
-        throw new NotImplementedException("Aún no he programado esto");
+        var resultado = await _context.TipoIdentificacionFiscal.FirstOrDefaultAsync(e => e.Codigo == codigoTipoIdentificacion, cancellationToken: cancellationToken);
+        return resultado;
     }
 }
