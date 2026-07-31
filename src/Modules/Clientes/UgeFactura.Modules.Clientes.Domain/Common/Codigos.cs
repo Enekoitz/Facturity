@@ -1,6 +1,6 @@
 ﻿namespace UgeFactura.Modules.Clientes.Domain;
 
-internal enum ClienteCodigosError
+public enum ClienteCodigosError
 {
     Id_Vacio,
     Alias_Vacio,
@@ -14,7 +14,7 @@ internal enum ClienteCodigosError
     RazonSocial_DemasiadoLargo,
 }
 
-internal enum IdentificacionFiscalCodigosError
+public enum IdentificacionFiscalCodigosError
 {
     TipoIdentificacionFiscal_Vacio,
     ValorIdentificacionFiscal_Vacio,
@@ -25,14 +25,14 @@ internal enum IdentificacionFiscalCodigosError
     IdentificacionFiscalReglas_Desconocido
 }
 
-internal enum NIFCodigosError
+public enum NIFCodigosError
 {
     NIF_Vacio,
     NIF_LongitudInvalida,
     NIF_FormatoInvalido,
 }
 
-internal enum DNICodigosError
+public enum DNICodigosError
 {
     DNI_Vacio,
     DNI_PrimerosCaracteresInvalidos,
@@ -41,7 +41,7 @@ internal enum DNICodigosError
     DNI_LetraIncorrecta,
 }
 
-internal enum NIECodigosError
+public enum NIECodigosError
 {
     NIE_Vacio,
     NIE_PrimeraLetraInvalida,
@@ -50,7 +50,7 @@ internal enum NIECodigosError
     NIE_UltimaLetraInvalida,
 }
 
-internal enum CIFCodigosError
+public enum CIFCodigosError
 {
     CIF_Vacio,
     CIF_LongitudInvalida,
@@ -58,7 +58,7 @@ internal enum CIFCodigosError
     CIF_PrimeraLetraInvalida,
 }
 
-internal enum OtrosTiposIdentificacionCodigosError
+public enum OtrosTiposIdentificacionCodigosError
 {
     NIFEntidadExtranjera_Vacio,
     NIFEntidadExtranjera_LongitudInvalida,
@@ -67,7 +67,7 @@ internal enum OtrosTiposIdentificacionCodigosError
     NIFEntidadExtranjera_PrimeraLetraInvalida,
 }
 
-internal enum DomicilioCodigosError
+public enum DomicilioCodigosError
 {
     Direccion_Vacio,
     CodigoPostal_Vacio,
@@ -77,7 +77,7 @@ internal enum DomicilioCodigosError
     Pais_Vacio,
 }
 
-internal enum CodigoPostalCodigosError
+public enum CodigoPostalCodigosError
 {
     CodigoPostal_Vacio,
     CodigoPostal_LongitudInvalida,
