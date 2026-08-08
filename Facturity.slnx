@@ -1,0 +1,34 @@
+<Solution>
+  <Folder Name="/Elementos de la solución/">
+    <File Path=".gitignore" />
+    <File Path="docs/proyecto/README.md" />
+    <File Path="ROADMAP.md" />
+  </Folder>
+  <Folder Name="/Host/">
+    <Project Path="src/host/Facturity.Api/Facturity.Api.csproj" />
+  </Folder>
+  <Folder Name="/Modules/">
+    <Project Path="src/modules/Facturity.Modules.Bootstrapper/Facturity.Modules.Bootstrapper.csproj" />
+    <Project Path="src/modules/Facturity.Modules.SharedKernel/Facturity.Modules.SharedKernel.csproj" />
+  </Folder>
+  <Folder Name="/Modules/Audit/">
+    <Project Path="src/modules/audit/Facturity.Modules.Audit/Facturity.Modules.Audit.csproj" />
+  </Folder>
+  <Folder Name="/Modules/Catalog/" />
+  <Folder Name="/Modules/Customer/">
+    <Project Path="src/modules/customer/Facturity.Modules.Customer/Facturity.Modules.Customer.csproj" />
+  </Folder>
+  <Folder Name="/Modules/Invoicing/">
+    <Project Path="src/modules/invoicing/Facturity.Modules.Invoicing.Domain/Facturity.Modules.Invoicing.csproj" />
+  </Folder>
+  <Folder Name="/Modules/Identity/">
+    <Project Path="src/modules/identity/Facturity.Modules.Identity.Domain/Facturity.Modules.Identity.csproj" />
+  </Folder>
+  <Folder Name="/Tests/" />
+  <Folder Name="/Tests/Audit/" />
+  <Folder Name="/Tests/Customer/">
+    <Project Path="tests/customer/Facturity.Modules.Customer.Tests/Facturity.Modules.Customer.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Tests/Invoicing/" />
+  <Folder Name="/Tests/Identity/" />
+</Solution>

@@ -1,0 +1,70 @@
+﻿using Facturity.Modules.Customer.Infrastructure.Persistence.Records;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace Facturity.Modules.Customer.Infrastructure;
+
+public class ClienteConfiguration : IEntityTypeConfiguration<ClienteRecord>
+{
+    public void Configure(EntityTypeBuilder<ClienteRecord> builder)
+    {
+        builder.ToTable("clientes");
+
+        builder.HasKey(c => c.Id);
+        builder.Property(c => c.Id)
+            .HasColumnName("id")
+            .ValueGeneratedNever();
+
+        builder.Property(c => c.Alias)
+            .IsRequired()
+            .HasMaxLength(50)
+            .HasColumnName("alias");
+
+        builder.Property(c => c.TipoIdentificacionFiscal)
+            .HasColumnType("tinyint")
+            .IsRequired()
+            .HasColumnName("identificacion_fiscal_tipo");
+
+        builder.Property(c => c.Nif)
+            .IsRequired(false)
+            .HasMaxLength(9)
+            .HasColumnName("identificacion_fiscal_nif");
+
+        builder.Property(c => c.IdOtroExtranjeroValor)
+            .IsRequired(false)
+            .HasMaxLength(20)
+            .HasColumnName("identificacion_fiscal_extranjero_valor");
+
+        builder.Property(c => c.IdOtroExtranjeroTipo)
+            .HasColumnType("tinyint")
+            .IsRequired(false)
+            .HasColumnName("identificacion_fiscal_extranjero_tipo");
+
+        builder.Property(c => c.IdOtroExtranjeroCodigoPais)
+            .IsRequired(false)
+            .HasMaxLength(2)
+            .HasColumnName("identificacion_fiscal_extranjero_codigo_pais");
+
+        builder.Property(c => c.RazonSocial).HasMaxLength(100).HasColumnName("razon_social");
+        builder.Property(c => c.Nombre).HasMaxLength(50).HasColumnName("nombre");
+        builder.Property(c => c.PrimerApellido).HasMaxLength(50).HasColumnName("primer_apellido");
+        builder.Property(c => c.SegundoApellido).HasMaxLength(50).HasColumnName("segundo_apellido");
+
+        builder.OwnsOne(c => c.Domicilio, d =>
+        {
+            d.Property(x => x.Direccion).HasColumnName("domicilio_direccion").IsRequired();
+            d.Property(x => x.Municipio).HasColumnName("domicilio_municipio");
+            d.Property(x => x.Provincia).HasColumnName("domicilio_provincia");
+            d.Property(x => x.Region).HasColumnName("domicilio_region");
+            d.Property(x => x.Pais).HasColumnName("domicilio_pais");
+
+            d.OwnsOne(x => x.CodigoPostal, cp =>
+            {
+                cp.Property(c => c.Valor)
+                    .HasColumnName("domicilio_codigo_postal")
+                    .IsRequired();
+            });
+        });
+
+    }
+}
