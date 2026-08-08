@@ -2,7 +2,7 @@
 status: accepted
 date: 2026-01-26
 ---
-# ADR 001: Adopción de Arquitectura Monolítica Modular
+# ADR 01: Adopción de Arquitectura Monolítica Modular
 ## Contexto
 Durante la fase de diseño de la aplicación, tras haber definido los requerimientos del sistema, nos surge la necesidad de decidir la arquitectura de sistema o despliegue que se va a emplear. 
 
@@ -12,7 +12,7 @@ Es fundamental tener en cuenta que hasta que no salga a producción una primera 
 
 ¿Qué arquitectura es la más adecuada para el contexto actual de diseño inicial de la aplicación?
 ## Decisión
-**Arquitectura monolítica modular**. Elegimos esta opción porque minimiza la complejidad operativa inicial y el costo de infraestructura, garantizando al mismo tiempo un camino de migración limpio hacia microservicios si el negocio lo requiere.
+**Arquitectura monolítica modular**. Elegimos esta opción porque minimiza la complejidad operativa inicial y el costo de infraestructura, garantizando al mismo tiempo un camino de migración limpio hacia microservicios.
 ## Alternativas consideradas
 - **Microservicios**. La aplicación estaría compuesta por microservicios independientes comunicados entre sí por distintos mecanismos de infraestructura y red. Un sistema altamente distribuido.
 ## Consecuencias
