@@ -1,5 +1,5 @@
 ## **Descripción**
-**UgeFactura** es una API REST multi-tenant de gestión de facturación diseñada para cubrir las obligaciones fiscales de cualquier empresa, física o jurídica. Construida con .NET sobre una arquitectura limpia con organización vertical por features y orientada al dominio, expone un conjunto de módulos cohesionados que cubren desde la gestión de clientes y series de facturación hasta la emisión de facturas y el cálculo de impuestos, con soporte nativo para múltiples tenants, trazabilidad completa de operaciones y un sistema de identidad y permisos por tenant.
+**Facturity** es una API REST multi-tenant de gestión de facturación diseñada para cubrir las obligaciones fiscales de cualquier empresa, física o jurídica. Construida con .NET sobre una arquitectura limpia con organización vertical por features y orientada al dominio, expone un conjunto de módulos cohesionados que cubren desde la gestión de clientes y series de facturación hasta la emisión de facturas y el cálculo de impuestos, con soporte nativo para múltiples tenants, trazabilidad completa de operaciones y un sistema de identidad y permisos por tenant.
 
 ```mermaid
 flowchart TD
@@ -9,18 +9,18 @@ flowchart TD
     usuario("👤 Usuario")
 
     %% Sistema
-    ugefactura["🏢 UgeFactura API REST multi-tenant"]
+    facturity["🏢 Facturity API REST multi-tenant"]
 
     %% Externos
     hacienda[("🏛️ TicketBAI Hacienda")]
     db[("🗄️ PostgreSQL")]
 
     %% Relaciones
-    superAdmin -->|Gestiona tenants| ugefactura
-    tenantAdmin -->|Configura tenant| ugefactura
-    usuario -->|Opera facturas y otras gestiones varias| ugefactura
-    ugefactura -->|Envía XML firmado| hacienda
-    ugefactura -->|Persistencia de datos| db
+    superAdmin -->|Gestiona tenants| facturity
+    tenantAdmin -->|Configura tenant| facturity
+    usuario -->|Opera facturas y otras gestiones varias| facturity
+    facturity -->|Envía XML firmado| hacienda
+    facturity -->|Persistencia de datos| db
 ```
 
 ---
@@ -120,27 +120,27 @@ flowchart TD
 ## **Estructura de la solución**
 
 ```text
-UgeFactura/
+Facturity/
 ├── src/
 │   ├── host/
-│   │   └── UgeFactura.API/
+│   │   └── Facturity.API/
 │   ├── modules/
 │   │   ├── [module_x]
-│   │   │   ├── UgeFactura.[module_x].Domain/
-│   │   │   ├── UgeFactura.[module_x].Features/
-│   │   │   ├── UgeFactura.[module_x].Infrastructure/
+│   │   │   ├── Facturity.[module_x].Domain/
+│   │   │   ├── Facturity.[module_x].Features/
+│   │   │   ├── Facturity.[module_x].Infrastructure/
 │   │   │   └── ...
-│   │	└── UgeFactura.Modules.DomainSharedKernel
+│   │	└── Facturity.Modules.SharedKernel.Domain
 ├── tests/
-│   ├── UgeFactura.UnitTests/
+│   ├── Facturity.UnitTests/
 │   │   ├── [module_x]/
 │   │   └── ...
-│   ├── UgeFactura.IntegrationTests/
+│   ├── Facturity.IntegrationTests/
 │   │   ├── [module_x]/
 │   │   └── ...
-│   └── UgeFactura.ArchitectureTests/
+│   └── Facturity.ArchitectureTests/
 ├── docs/
 ├── docker-compose.yml
 ├── README.md
-└── UgeFactura.sln
+└── Facturity.slnx
 ```
