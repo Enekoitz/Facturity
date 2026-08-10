@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Facturity.Modules.Customer.Features;
-using Facturity.Modules.Customer.Infrastructure.Persistence;
+
 namespace Facturity.Modules.Customer.Infrastructure;
 public static class DependencyInjection
 {

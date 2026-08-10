@@ -4,9 +4,9 @@ using Facturity.Modules.Customer.Domain;
 
 namespace Facturity.Modules.Customer.Infrastructure;
 
-public class CatalogSubtipoIdentificacionFiscalConfiguration : IEntityTypeConfiguration<SubtipoIdentificacionFiscal>
+public class TiposIdentificacionFiscalConfiguration : IEntityTypeConfiguration<TipoIdentificacionFiscal>
 {
-    public void Configure(EntityTypeBuilder<SubtipoIdentificacionFiscal> builder)
+    public void Configure(EntityTypeBuilder<TipoIdentificacionFiscal> builder)
     {
         builder.ToTable("catalogo_tipos_identificacion_fiscal");
 
@@ -34,12 +34,12 @@ public class CatalogSubtipoIdentificacionFiscalConfiguration : IEntityTypeConfig
             .HasColumnName("codigo_ticketbai_bizkaia");
 
         builder.HasData(
-            SubtipoIdentificacionFiscal.Nif,
-            SubtipoIdentificacionFiscal.NifIvaComunitario,
-            SubtipoIdentificacionFiscal.Pasaporte,
-            SubtipoIdentificacionFiscal.DocumentoIdentidadPaisOrigen,
-            SubtipoIdentificacionFiscal.CertificadoResidencia,
-            SubtipoIdentificacionFiscal.OtroDocumentoProbatorio
+            TipoIdentificacionFiscal.Nif,
+            TipoIdentificacionFiscal.NifIvaComunitario,
+            TipoIdentificacionFiscal.Pasaporte,
+            TipoIdentificacionFiscal.DocumentoIdentidadPaisOrigen,
+            TipoIdentificacionFiscal.CertificadoResidencia,
+            TipoIdentificacionFiscal.OtroDocumentoProbatorio
         );
     }
 }

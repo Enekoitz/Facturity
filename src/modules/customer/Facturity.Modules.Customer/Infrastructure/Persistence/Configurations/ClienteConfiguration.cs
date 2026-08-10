@@ -1,5 +1,4 @@
-﻿using Facturity.Modules.Customer.Infrastructure.Persistence.Records;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Facturity.Modules.Customer.Infrastructure;
@@ -20,30 +19,20 @@ public class ClienteConfiguration : IEntityTypeConfiguration<ClienteRecord>
             .HasMaxLength(50)
             .HasColumnName("alias");
 
-        builder.Property(c => c.TipoIdentificacionFiscal)
+        builder.Property(c => c.IdentificacionFiscalTipo)
             .HasColumnType("tinyint")
             .IsRequired()
             .HasColumnName("identificacion_fiscal_tipo");
 
-        builder.Property(c => c.Nif)
-            .IsRequired(false)
-            .HasMaxLength(9)
-            .HasColumnName("identificacion_fiscal_nif");
+        builder.Property(c => c.IdentificacionFiscalValor)
+            .IsRequired()
+            .HasMaxLength(30)
+            .HasColumnName("identificacion_fiscal_valor");
 
-        builder.Property(c => c.IdOtroExtranjeroValor)
-            .IsRequired(false)
-            .HasMaxLength(20)
-            .HasColumnName("identificacion_fiscal_extranjero_valor");
-
-        builder.Property(c => c.IdOtroExtranjeroTipo)
-            .HasColumnType("tinyint")
-            .IsRequired(false)
-            .HasColumnName("identificacion_fiscal_extranjero_tipo");
-
-        builder.Property(c => c.IdOtroExtranjeroCodigoPais)
+        builder.Property(c => c.IdentificacionFiscalCodigoPais)
             .IsRequired(false)
             .HasMaxLength(2)
-            .HasColumnName("identificacion_fiscal_extranjero_codigo_pais");
+            .HasColumnName("identificacion_fiscal_codigo_pais");
 
         builder.Property(c => c.RazonSocial).HasMaxLength(100).HasColumnName("razon_social");
         builder.Property(c => c.Nombre).HasMaxLength(50).HasColumnName("nombre");

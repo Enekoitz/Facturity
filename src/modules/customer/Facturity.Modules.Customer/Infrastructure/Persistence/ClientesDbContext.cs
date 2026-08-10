@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Facturity.Modules.Customer.Domain;
+using Microsoft.EntityFrameworkCore;
 
-namespace Facturity.Modules.Customer.Infrastructure.Persistence;
+namespace Facturity.Modules.Customer.Infrastructure;
 
 public class ClientesDbContext : DbContext
 {
@@ -8,7 +9,7 @@ public class ClientesDbContext : DbContext
         : base(options) { }
 
     public DbSet<ClienteRecord> Clientes { get; set; }
-    //public DbSet<TipoIdentificacionFiscal> TipoIdentificacionFiscal { get; set; }
+    public DbSet<TipoIdentificacionFiscal> TipoIdentificacionFiscal { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -5,7 +5,7 @@ public static class DependencyInjection
     public static IServiceCollection AddClientesFeatures(this IServiceCollection services)
     {
         services.AddScoped<CrearClienteHandler>();
-        services.AddScoped<ObtenerClientesHandler>();
+        services.AddScoped<ListarClientesHandler>();
         return services;
     }
 }

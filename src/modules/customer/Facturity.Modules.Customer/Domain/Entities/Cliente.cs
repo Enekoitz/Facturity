@@ -34,13 +34,13 @@ public class Cliente : AggregateRoot<Guid>
         Domicilio = domicilio;
     }
 
-    public TiposIdentificacionFiscal ObtenerTipoIdentificacionFiscal() => IdentificacionFiscal switch
-    {
-        NifEspañol => TiposIdentificacionFiscal.NifEspañol,
-        IdOtroExtranjero => TiposIdentificacionFiscal.IdOtroExtranjero,
-        null => throw new ArgumentNullException(nameof(IdentificacionFiscal), "La identificación fiscal no puede ser nula."),
-        _ => throw new InvalidOperationException($"El tipo de identificación fiscal '{IdentificacionFiscal.GetType().Name}' no es soportado.")
-    };
+    //public TiposIdentificacionFiscal ObtenerTipoIdentificacionFiscal() => IdentificacionFiscal switch
+    //{
+    //    NifEspañol => TiposIdentificacionFiscal.NifEspañol,
+    //    IdOtroExtranjero => TiposIdentificacionFiscal.IdOtroExtranjero,
+    //    null => throw new ArgumentNullException(nameof(IdentificacionFiscal), "La identificación fiscal no puede ser nula."),
+    //    _ => throw new InvalidOperationException($"El tipo de identificación fiscal '{IdentificacionFiscal.GetType().Name}' no es soportado.")
+    //};
 
     public static Result<Cliente> Crear(
         Guid id,

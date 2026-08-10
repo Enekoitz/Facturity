@@ -4,16 +4,11 @@ using Facturity.Modules.SharedKernel.Domain;
 
 namespace Facturity.Modules.Customer.Features;
 
-public sealed class CrearClienteHandler : ICommandHandler<CrearClienteCommand, Result<Guid>>
+public sealed class CrearClienteHandler(IClientesRepository repoCliente, IIdentificacionFiscalFactory identificacionFiscalFactory) 
+    : ICommandHandler<CrearClienteCommand, Result<Guid>>
 {
-    private readonly IClientesRepository _repoCliente;
-    private readonly IIdentificacionFiscalFactory _identificacionFiscalFactory;
-
-    public CrearClienteHandler(IClientesRepository repoCliente, IIdentificacionFiscalFactory identificacionFiscalFactory)
-    {
-        _repoCliente = repoCliente;
-        _identificacionFiscalFactory = identificacionFiscalFactory;
-    }
+    private readonly IClientesRepository _repoCliente = repoCliente;
+    private readonly IIdentificacionFiscalFactory _identificacionFiscalFactory = identificacionFiscalFactory;
 
     public async Task<Result<Guid>> HandleAsync(CrearClienteCommand command, CancellationToken ct)
     {
@@ -39,8 +34,8 @@ public sealed class CrearClienteHandler : ICommandHandler<CrearClienteCommand, R
         if (await _repoCliente.ExisteAliasAsync(command.Alias, ct))
             return Result.Fail<Guid>(Error.Conflict("AliasExistente", "Ya existe un cliente con el mismo alias."));
 
-        //if (await _repoCliente.ExisteIdentificacionFiscalAsync(command.IdentificacionTipoCodigo, command.IdentificacionValor, ct))
-        //    return Result.Fail<Guid>(Error.Conflict("IdentificacionFiscalExistente", "Ya existe un cliente con la misma identificación fiscal."));
+        if (await _repoCliente.ExisteIdentificacionFiscalAsync(command.Valor, command.IdentificacionValor, ct))
+           return Result.Fail<Guid>(Error.Conflict("IdentificacionFiscalExistente", "Ya existe un cliente con la misma identificación fiscal."));
 
         Cliente cliente = clienteResult.Value;
 
