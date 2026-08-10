@@ -2,6 +2,10 @@
 
 public enum TiposIdentificacionFiscal
 {
-    NifEspañol = 1,
-    IdOtroExtranjero = 2
+    Nif = 1,
+    NifIvaComunitario = 2,
+    Pasaporte = 3,
+    DocumentoIdentidadPaisOrigen = 4,
+    CertificadoResidencia = 5,
+    OtroDocumentoProbatorio = 6
 }

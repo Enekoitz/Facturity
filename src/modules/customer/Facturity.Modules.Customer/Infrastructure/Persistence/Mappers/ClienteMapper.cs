@@ -1,5 +1,4 @@
 ﻿using Facturity.Modules.Customer.Domain;
-using Facturity.Modules.Customer.Infrastructure;
 
 namespace Facturity.Modules.Customer.Infrastructure;
 

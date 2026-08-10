@@ -14,7 +14,6 @@
   <Folder Name="/Modules/Audit/">
     <Project Path="src/modules/audit/Facturity.Modules.Audit/Facturity.Modules.Audit.csproj" />
   </Folder>
-  <Folder Name="/Modules/Catalog/" />
   <Folder Name="/Modules/Customer/">
     <Project Path="src/modules/customer/Facturity.Modules.Customer/Facturity.Modules.Customer.csproj" />
   </Folder>
