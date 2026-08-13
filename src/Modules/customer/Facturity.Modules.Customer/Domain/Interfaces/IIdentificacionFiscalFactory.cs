@@ -5,8 +5,7 @@ namespace Facturity.Modules.Customer.Domain;
 public interface IIdentificacionFiscalFactory
 {
     Result<IIdentificacionFiscal> Crear(
-        string? nif,
-        string? idOtroExtranjeroValor,
-        string? idOtroExtranjeroTipo,
-        string? idOtroExtranjeroCodigoPais);
+        string identificacionFiscalValor,
+        string identificacionFiscalTipo,
+        string? identificacionFiscalCodigoPais);
 }
