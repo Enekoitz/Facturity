@@ -49,7 +49,7 @@ public class Cliente : AggregateRoot<Guid>
         var errores = new List<Error>();
 
         if (id == Guid.Empty)
-            errores.Add(Error.Validation(ClienteCodigosError.Id_Vacio.ToString(), "El identificador del cliente no es válido."));
+            errores.Add(Error.Validation(ClienteCodigosError.IdVacio.ToString(), "El identificador del cliente no es válido."));
 
         if (tenantId.Value <= 0)
             errores.Add(Error.Validation("TenantIdInvalido", "El TenantId no es válido."));
@@ -77,12 +77,12 @@ public class Cliente : AggregateRoot<Guid>
         List<Error> errores)
     {
         if (Validate.EsVacio(alias))
-            errores.Add(Error.Validation(ClienteCodigosError.Alias_Vacio.ToString(), "El alias no puede ser vacío."));
+            errores.Add(Error.Validation(nameof(ClienteCodigosError.AliasVacio), "El alias no puede ser vacío."));
 
-        if (Validate.SuperaLongitudMaxima(alias, Parametros.AliasLongitudMaxima))
+        if (Validate.SuperaLongitudMaxima(alias, ClienteParametros.AliasMaxLength))
             errores.Add(Error.Validation(
-                ClienteCodigosError.Alias_DemasiadoLargo.ToString(), 
-                $"El alias no puede superar los {Parametros.AliasLongitudMaxima} caracteres."));
+                nameof(ClienteCodigosError.AliasDemasiadoLargo), 
+                $"El alias no puede superar los {ClienteParametros.AliasMaxLength} caracteres."));
     }
 
     private static void ValidarNombresApellidosRazonSocial(
@@ -126,28 +126,28 @@ public class Cliente : AggregateRoot<Guid>
 
         if(Validate.EsVacio(nombre))
             errores.Add(Error.Validation(
-                ClienteCodigosError.Nombre_Vacio.ToString(), 
+                nameof(ClienteCodigosError.NombreVacio), 
                 "El nombre no puede ser vacío."));
 
-        if (Validate.SuperaLongitudMaxima(nombre, Parametros.NombreLongitudMaxima))
+        if (Validate.SuperaLongitudMaxima(nombre, ClienteParametros.NombreMaxLength))
             errores.Add(Error.Validation(
-                ClienteCodigosError.Nombre_DemasiadoLargo.ToString(),
-                $"El nombre no puede superar los {Parametros.NombreLongitudMaxima} caracteres."));
+                nameof(ClienteCodigosError.NombreDemasiadoLargo),
+                $"El nombre no puede superar los {ClienteParametros.NombreMaxLength} caracteres."));
 
         if (Validate.EsVacio(primerApellido))
             errores.Add(Error.Validation(
-                ClienteCodigosError.PrimerApellido_Vacio.ToString(), 
+                nameof(ClienteCodigosError.PrimerApellidoVacio), 
                 "El primer apellido no puede ser vacío."));
 
-        if (Validate.SuperaLongitudMaxima(primerApellido, Parametros.ApellidoLongitudMaxima))
+        if (Validate.SuperaLongitudMaxima(primerApellido, ClienteParametros.ApellidoMaxLength))
             errores.Add(Error.Validation(
-                ClienteCodigosError.PrimerApellido_DemasiadoLargo.ToString(),
-                $"El primer apellido no puede superar los {Parametros.ApellidoLongitudMaxima} caracteres."));
+                nameof(ClienteCodigosError.PrimerApellidoDemasiadoLargo),
+                $"El primer apellido no puede superar los {ClienteParametros.ApellidoMaxLength} caracteres."));
 
-        if (Validate.SuperaLongitudMaxima(segundoApellido, Parametros.ApellidoLongitudMaxima))
+        if (Validate.SuperaLongitudMaxima(segundoApellido, ClienteParametros.ApellidoMaxLength))
             errores.Add(Error.Validation(
-                ClienteCodigosError.SegundoApellido_DemasiadoLargo.ToString(),
-                $"El segundo apellido no puede superar los {Parametros.ApellidoLongitudMaxima} caracteres."));
+                nameof(ClienteCodigosError.SegundoApellidoDemasiadoLargo),
+                $"El segundo apellido no puede superar los {ClienteParametros.ApellidoMaxLength} caracteres."));
     }
 
     private static void ValidarRazonSocial(
@@ -156,12 +156,12 @@ public class Cliente : AggregateRoot<Guid>
     {
         if (Validate.EsVacio(razonSocial))
             errores.Add(Error.Validation(
-                ClienteCodigosError.RazonSocial_Vacio.ToString(), 
+                nameof(ClienteCodigosError.RazonSocialVacio), 
                 "La razon social no puede ser vacío."));
 
-        if (Validate.SuperaLongitudMaxima(razonSocial, Parametros.RazonSocialLongitudMaxima))
+        if (Validate.SuperaLongitudMaxima(razonSocial, ClienteParametros.RazonSocialMaxLength))
             errores.Add(Error.Validation(
-                ClienteCodigosError.RazonSocial_DemasiadoLargo.ToString(),
-                $"La razon social no puede superar los {Parametros.RazonSocialLongitudMaxima} caracteres."));
+                nameof(ClienteCodigosError.RazonSocialDemasiadoLargo),
+                $"La razon social no puede superar los {ClienteParametros.RazonSocialMaxLength} caracteres."));
     }
 }
