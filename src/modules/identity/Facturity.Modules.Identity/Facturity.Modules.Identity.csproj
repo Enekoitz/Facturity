@@ -6,8 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Facturity.Modules.DomainSharedKernel\Facturity.Modules.DomainSharedKernel.csproj" />
-  </ItemGroup>
-
 </Project>
