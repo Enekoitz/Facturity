@@ -2,11 +2,11 @@
 
 namespace Facturity.Modules.Customer.Domain;
 
-public sealed class CodigoPostal : ValueObject
+public sealed record CodigoPostal
 {
     public string Valor { get; }
 
-    protected CodigoPostal() { }
+    private CodigoPostal() { }
 
     private CodigoPostal(string value)
     {
@@ -16,19 +16,14 @@ public sealed class CodigoPostal : ValueObject
     public static Result<CodigoPostal> Crear(string codigoPostal)
     {
         if (Validate.EsVacio(codigoPostal))
-            return Result.Fail<CodigoPostal>(Error.Validation(CodigoPostalCodigosError.CodigoPostal_Vacio.ToString(), "El código postal no puede ser vacío."));
+            return Result.Fail<CodigoPostal>(Error.Validation(nameof(CodigoPostalCodigosError.CodigoPostalVacio), "El código postal no puede ser vacío."));
 
-        if (Validate.NoEsLongitudExacta(codigoPostal, Parametros.CodigoPostalLongitudExacta))
-            return Result.Fail<CodigoPostal>(Error.Validation(CodigoPostalCodigosError.CodigoPostal_LongitudInvalida.ToString(), "El código postal no puede ser vacío."));
+        if (Validate.NoEsLongitudExacta(codigoPostal, DomicilioParametros.CodigoPostalLength))
+            return Result.Fail<CodigoPostal>(Error.Validation(nameof(CodigoPostalCodigosError.CodigoPostalLongitudInvalida), "El código postal no puede ser vacío."));
 
         if (!codigoPostal.All(char.IsDigit))
-            return Result.Fail<CodigoPostal>(Error.Validation(CodigoPostalCodigosError.CodigoPostal_FormatoInvalido.ToString(), "El código postal no puede ser vacío."));
+            return Result.Fail<CodigoPostal>(Error.Validation(nameof(CodigoPostalCodigosError.CodigoPostalFormatoInvalido), "El código postal no puede ser vacío."));
 
         return Result<CodigoPostal>.Ok(new CodigoPostal(codigoPostal.Trim()));
-    }
-
-    protected override IEnumerable<object?> GetEqualityComponents()
-    {
-        yield return Valor;
     }
 }
