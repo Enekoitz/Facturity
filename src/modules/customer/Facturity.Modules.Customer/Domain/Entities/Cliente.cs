@@ -34,14 +34,6 @@ public class Cliente : AggregateRoot<Guid>
         Domicilio = domicilio;
     }
 
-    //public TiposIdentificacionFiscal ObtenerTipoIdentificacionFiscal() => IdentificacionFiscal switch
-    //{
-    //    NifEspañol => TiposIdentificacionFiscal.NifEspañol,
-    //    IdOtroExtranjero => TiposIdentificacionFiscal.IdOtroExtranjero,
-    //    null => throw new ArgumentNullException(nameof(IdentificacionFiscal), "La identificación fiscal no puede ser nula."),
-    //    _ => throw new InvalidOperationException($"El tipo de identificación fiscal '{IdentificacionFiscal.GetType().Name}' no es soportado.")
-    //};
-
     public static Result<Cliente> Crear(
         Guid id,
         TenantId tenantId,
@@ -101,23 +93,26 @@ public class Cliente : AggregateRoot<Guid>
         string? segundoApellido,
         List<Error> errores)
     {
-        if (esPersonaJuridica == true)
+        switch (esPersonaJuridica)
         {
-            ValidarNombreApellido(nombre, primerApellido, segundoApellido, errores);
-        }
-        else if (esPersonaJuridica == false)
-        {
-            ValidarRazonSocial(razonSocial, errores);
-        }
-        else
-        {
-            if (!string.IsNullOrWhiteSpace(razonSocial))
-            {
-                ValidarRazonSocial(razonSocial, errores);
-            }
-            else
-            {
+            case false:
                 ValidarNombreApellido(nombre, primerApellido, segundoApellido, errores);
+                break;
+            case true:
+                ValidarRazonSocial(razonSocial, errores);
+                break;
+            default:
+            {
+                if (!string.IsNullOrWhiteSpace(razonSocial))
+                {
+                    ValidarRazonSocial(razonSocial, errores);
+                }
+                else
+                {
+                    ValidarNombreApellido(nombre, primerApellido, segundoApellido, errores);
+                }
+
+                break;
             }
         }
     }

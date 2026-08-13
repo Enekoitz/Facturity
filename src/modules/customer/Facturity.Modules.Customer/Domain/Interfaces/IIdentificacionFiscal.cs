@@ -2,6 +2,5 @@
 
 public interface IIdentificacionFiscal
 {
-    TiposIdentificacionFiscal TipoIdentificacionFiscal { get; }
     bool? EsPersonaJuridica { get; }
 }

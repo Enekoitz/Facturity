@@ -6,35 +6,26 @@ namespace Facturity.Modules.Customer.Domain;
 public class IdentificacionFiscalFactory : IIdentificacionFiscalFactory
 {
     public Result<IIdentificacionFiscal> Crear(
-        string? nif,
-        string? idOtroExtranjeroValor,
-        string? idOtroExtranjeroTipo,
-        string? idOtroExtranjeroCodigoPais)
+        string identificacionFiscalValor,
+        string identificacionFiscalTipo,
+        string? identificacionFiscalCodigoPais)
     {
-        if (!string.IsNullOrWhiteSpace(nif) 
-            && string.IsNullOrWhiteSpace(idOtroExtranjeroValor) 
-            && string.IsNullOrWhiteSpace(idOtroExtranjeroTipo) 
-            && string.IsNullOrWhiteSpace(idOtroExtranjeroCodigoPais))
-        {
-            var nifEspañol = NifEspañol.Crear(nif);
-            return nifEspañol.IsSuccess
-                ? Result.Ok<IIdentificacionFiscal>(nifEspañol.Value)
-                : Result.Fail<IIdentificacionFiscal>(nifEspañol.Errors);
-        }
+        if (!Enum.TryParse(identificacionFiscalTipo, out TiposIdentificacionFiscal tipoIdentificacionFiscal))
+            Result.Fail<IIdentificacionFiscal>(Error.Validation("TipoIdentificacionFiscalInvalido", "El tipo de identificación fiscal proporcionado es inválido."));
 
-        else if (!string.IsNullOrWhiteSpace(nif) 
-            && !string.IsNullOrWhiteSpace(idOtroExtranjeroValor) 
-            && !string.IsNullOrWhiteSpace(idOtroExtranjeroTipo) 
-            && !string.IsNullOrWhiteSpace(idOtroExtranjeroCodigoPais))
+        if (tipoIdentificacionFiscal == TiposIdentificacionFiscal.Nif)
         {
-            TiposIdsOtrosExtranjeros? tipoIdentificacionFiscal = idOtroExtranjeroTipo.ParseToNullableEnum<TiposIdsOtrosExtranjeros>();
-            if (tipoIdentificacionFiscal is not null)
-            {
-                var idOtroExtranjero = IdOtroExtranjero.Crear(idOtroExtranjeroValor, (TiposIdsOtrosExtranjeros)tipoIdentificacionFiscal, idOtroExtranjeroCodigoPais);
-                return idOtroExtranjero.IsSuccess
-                    ? Result.Ok<IIdentificacionFiscal>(idOtroExtranjero.Value)
-                    : Result.Fail<IIdentificacionFiscal>(idOtroExtranjero.Errors);
-            }
+            var nifEspanol = NifEspanol.Crear(identificacionFiscalValor);
+            return nifEspanol.IsSuccess
+                ? Result.Ok<IIdentificacionFiscal>(nifEspanol.Value)
+                : Result.Fail<IIdentificacionFiscal>(nifEspanol.Errors);
+        }
+        else if (identificacionFiscalCodigoPais is not null)
+        {
+            var idOtroExtranjero = IdOtroExtranjero.Crear(identificacionFiscalValor, tipoIdentificacionFiscal, identificacionFiscalCodigoPais);
+            return idOtroExtranjero.IsSuccess
+                ? Result.Ok<IIdentificacionFiscal>(idOtroExtranjero.Value)
+                : Result.Fail<IIdentificacionFiscal>(idOtroExtranjero.Errors);
         }
 
         return Result.Fail<IIdentificacionFiscal>(Error.NotFound("IdentificacionFiscalInvalida", "No se ha detectado un tipo de identificación fiscal para los parámetros proporcionados."));

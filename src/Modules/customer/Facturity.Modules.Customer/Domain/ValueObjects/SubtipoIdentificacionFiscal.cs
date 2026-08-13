@@ -1,6 +1,6 @@
 ﻿namespace Facturity.Modules.Customer.Domain;
 
-public class TipoIdentificacionFiscal
+public sealed record TipoIdentificacionFiscal
 {
     public static readonly TipoIdentificacionFiscal Nif = new((int)TiposIdentificacionFiscal.Nif, "NIF".ToUpper(), "NIF", "Número de identificación fiscal", "01");
     public static readonly TipoIdentificacionFiscal NifIvaComunitario = new((int)TiposIdentificacionFiscal.NifIvaComunitario, "NIF_IVA".ToUpper(), "NIF-IVA", "NIF-IVA Comunitario", "02");
