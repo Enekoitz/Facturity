@@ -4,7 +4,7 @@ using Facturity.Modules.SharedKernel.Domain;
 
 namespace Facturity.Modules.Customer.Features;
 
-public sealed class CrearClienteHandler(IClientesRepository repoCliente, IIdentificacionFiscalFactory identificacionFiscalFactory) 
+internal sealed class CrearClienteHandler(IClientesRepository repoCliente, IIdentificacionFiscalFactory identificacionFiscalFactory) 
     : ICommandHandler<CrearClienteCommand, Result<Guid>>
 {
     private readonly IClientesRepository _repoCliente = repoCliente;
@@ -12,8 +12,7 @@ public sealed class CrearClienteHandler(IClientesRepository repoCliente, IIdenti
 
     public async Task<Result<Guid>> HandleAsync(CrearClienteCommand command, CancellationToken ct)
     {
-        var identificacionFiscalResult = _identificacionFiscalFactory.Crear(command.Nif, command.IdOtroExtranjero, 
-                                                                            command.IdOtroExtranjeroTipo, command.IdOtroExtranjeroCodigoPais);
+        var identificacionFiscalResult = _identificacionFiscalFactory.Crear(command.IdentificacionValor, command.IdentificacionTipo, command.IdentificacionCodigoPais);
         if (identificacionFiscalResult.IsFailure)
             return Result.Fail<Guid>(identificacionFiscalResult.Errors);
 
@@ -31,10 +30,11 @@ public sealed class CrearClienteHandler(IClientesRepository repoCliente, IIdenti
         if (clienteResult.IsFailure)
             return Result.Fail<Guid>(clienteResult.Errors);
 
-        if (await _repoCliente.ExisteAliasAsync(command.Alias, ct))
+        if (await _repoCliente.AliasEnUsoAsync(command.Alias, ct))
             return Result.Fail<Guid>(Error.Conflict("AliasExistente", "Ya existe un cliente con el mismo alias."));
 
-        if (await _repoCliente.ExisteIdentificacionFiscalAsync(command.Valor, command.IdentificacionValor, ct))
+        if (Enum.TryParse(command.IdentificacionTipo, out TiposIdentificacionFiscal tipoIdentificacionFiscal) 
+            && await _repoCliente.IdentificacionFiscalEnUsoAsync(command.IdentificacionValor, tipoIdentificacionFiscal, command.IdentificacionCodigoPais, ct))
            return Result.Fail<Guid>(Error.Conflict("IdentificacionFiscalExistente", "Ya existe un cliente con la misma identificación fiscal."));
 
         Cliente cliente = clienteResult.Value;

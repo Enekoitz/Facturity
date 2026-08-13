@@ -3,12 +3,11 @@ using Facturity.Modules.SharedKernel.Domain;
 
 namespace Facturity.Modules.Customer.Features;
 
-public record CrearClienteCommand(
+internal record CrearClienteCommand(
     string Alias,
-    string? Nif,
-    string? IdOtroExtranjero,
-    string? IdOtroExtranjeroTipo,
-    string? IdOtroExtranjeroCodigoPais,
+    string IdentificacionValor,
+    string IdentificacionTipo,
+    string? IdentificacionCodigoPais,
     string? RazonSocial,
     string? Nombre,
     string? PrimerApellido,

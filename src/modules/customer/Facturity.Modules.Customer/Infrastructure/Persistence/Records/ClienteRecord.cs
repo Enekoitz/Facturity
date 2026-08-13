@@ -8,7 +8,7 @@ public class ClienteRecord
     public string Alias { get; set; }
     public string IdentificacionFiscalValor { get; set; }
     public TiposIdentificacionFiscal IdentificacionFiscalTipo { get; set; }
-    public string? IdentificacionFiscalCodigoPais { get; set; }
+    public string IdentificacionFiscalCodigoPais { get; set; }
     public string? RazonSocial { get; set; }
     public string? Nombre { get; set; }
     public string? PrimerApellido { get; set; }
