@@ -1,7 +1,7 @@
 <Solution>
   <Folder Name="/Elementos de la solución/">
     <File Path=".gitignore" />
-    <File Path="docs/proyecto/README.md" />
+    <File Path="README.md" />
     <File Path="ROADMAP.md" />
   </Folder>
   <Folder Name="/Host/">
@@ -18,10 +18,10 @@
     <Project Path="src/modules/customer/Facturity.Modules.Customer/Facturity.Modules.Customer.csproj" />
   </Folder>
   <Folder Name="/Modules/Invoicing/">
-    <Project Path="src/modules/invoicing/Facturity.Modules.Invoicing.Domain/Facturity.Modules.Invoicing.csproj" />
+    <Project Path="src/modules/invoicing/Facturity.Modules.Invoicing/Facturity.Modules.Invoicing.csproj" />
   </Folder>
   <Folder Name="/Modules/Identity/">
-    <Project Path="src/modules/identity/Facturity.Modules.Identity.Domain/Facturity.Modules.Identity.csproj" />
+    <Project Path="src/modules/identity/Facturity.Modules.Identity/Facturity.Modules.Identity.csproj" />
   </Folder>
   <Folder Name="/Tests/" />
   <Folder Name="/Tests/Audit/" />

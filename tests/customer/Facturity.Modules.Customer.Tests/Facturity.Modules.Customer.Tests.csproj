@@ -25,4 +25,8 @@
       <Folder Include="Domain\Services\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\src\modules\customer\Facturity.Modules.Customer\Facturity.Modules.Customer.csproj" />
+    </ItemGroup>
+
 </Project>
