@@ -12,7 +12,7 @@ flowchart TD
     facturity["🏢 Facturity API REST multi-tenant"]
 
     %% Externos
-    hacienda[("🏛️ TicketBAI Hacienda")]
+    hacienda[("🏛️ TicketBAI Hacienda (simulación)")]
     db[("🗄️ PostgreSQL")]
 
     %% Relaciones
@@ -30,7 +30,6 @@ flowchart TD
 | ---------------------- | ------------------------------------------------------------------- |
 | **Identity**           | Autenticación JWT, refresh tokens y permisos por tenant             |
 | **Clientes**           | Gestión de clientes con validaciones y reglas de negocio            |
-| **Productos**          | Gestión de productos o servicios                                    |
 | **Facturas**           | Emisión, estados, transiciones y numeración correlativa de facturas |
 | **Motor de impuestos** | Cálculo de impuestos configurable y aislado por tenant              |
 | **Auditoría**          | Trazabilidad completa de operaciones por tenant                     |
@@ -46,7 +45,6 @@ flowchart TD
 
 ### v1
 - Gestión de clientes
-- Gestión de productos
 - Gestión de series
 - Gestión y consultas avanzadas de facturas
 - Generación de XML válido TicketBAI
@@ -125,12 +123,15 @@ Facturity/
 │   ├── host/
 │   │   └── Facturity.API/
 │   ├── modules/
-│   │   ├── [module_x]
-│   │   │   ├── Facturity.[module_x].Domain/
-│   │   │   ├── Facturity.[module_x].Features/
-│   │   │   ├── Facturity.[module_x].Infrastructure/
+│   │   ├── [module_x]/
+│   │   │   ├── Facturity.Modules.[module_x]
+|   |   |   |   |
+|   |   |   |   ├── Domain/
+|   |   |   |   ├── Features/
+|   |   |   |   ├── Infrastructure/
 │   │   │   └── ...
-│   │	└── Facturity.Modules.SharedKernel.Domain
+│   │	├── Facturity.Modules.Bootstrapper
+│   │	└── Facturity.Modules.SharedKernel
 ├── tests/
 │   ├── Facturity.UnitTests/
 │   │   ├── [module_x]/
