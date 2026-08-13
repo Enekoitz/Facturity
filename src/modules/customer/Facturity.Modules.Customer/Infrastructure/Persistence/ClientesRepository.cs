@@ -9,15 +9,15 @@ public class ClientesRepository(ClientesDbContext context) : IClientesRepository
 {
     private readonly ClientesDbContext _context = context;
 
-    public async Task<bool> ExisteAliasAsync(string alias, CancellationToken ct = default)
+    public async Task<bool> AliasEnUsoAsync(string alias, CancellationToken ct = default)
     {
         var resultado = await _context.Clientes.AnyAsync(c => c.Alias == alias, cancellationToken: ct);
         return resultado;
     }
 
-    public async Task<bool> ExisteIdentificacionFiscalAsync(string valor, string tipo, string? codigoPais, CancellationToken ct = default)
+    public async Task<bool> IdentificacionFiscalEnUsoAsync(string valor, TiposIdentificacionFiscal tipo, string? codigoPais, CancellationToken ct = default)
     {
-        var resultado = await _context.Clientes.AnyAsync(c => c.Nif == valor || (c.IdOtroExtranjeroValor == valor && c.IdOtroExtranjeroTipo == subTipo && c.IdOtroExtranjeroCodigoPais == codigoPais), cancellationToken: ct);
+        var resultado = await _context.Clientes.AnyAsync(c => c.IdentificacionFiscalValor == valor && c.IdentificacionFiscalTipo == tipo && c.IdentificacionFiscalCodigoPais == codigoPais, cancellationToken: ct);
         return resultado;
     }
 
@@ -26,10 +26,4 @@ public class ClientesRepository(ClientesDbContext context) : IClientesRepository
         var clienteRecord = cliente.ToRecord();
         await _context.Clientes.AddAsync(clienteRecord, ct);
     }
-
-    //public async Task<TipoIdentificacionFiscal?> ObtenerTipoIdentificacionAsync(string codigoTipoIdentificacion, CancellationToken cancellationToken = default)
-    //{
-    //    var resultado = await _context.TipoIdentificacionFiscal.FirstOrDefaultAsync(e => e.Codigo == codigoTipoIdentificacion, cancellationToken: cancellationToken);
-    //    return resultado;
-    //}
 }

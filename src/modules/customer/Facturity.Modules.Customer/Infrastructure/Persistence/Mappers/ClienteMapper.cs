@@ -6,38 +6,21 @@ public static class ClienteMapper
 {
     public static ClienteRecord ToRecord(this Cliente cliente)
     {
-        TiposIdentificacionFiscal tipoIdentificacionFiscal;
-        string? nif = null;
-        string? idOtroExtranjeroValor = null;
-        TiposIdsOtrosExtranjeros? idOtroExtranjeroTipo = null;
-        string? idOtroExtranjeroCodigoPais = null;
 
-        if (cliente.IdentificacionFiscal is NifEspañol nifEspañol)
+        var (valor, tipo, codigoPais) = cliente.IdentificacionFiscal switch
         {
-            tipoIdentificacionFiscal = TiposIdentificacionFiscal.NifEspañol;
-            nif = nifEspañol.Valor;
-        } 
-        else if (cliente.IdentificacionFiscal is IdOtroExtranjero idOtroExtranjero)
-        {
-            tipoIdentificacionFiscal = TiposIdentificacionFiscal.IdOtroExtranjero;
-            idOtroExtranjeroValor = idOtroExtranjero.Valor;
-            idOtroExtranjeroTipo = idOtroExtranjero.Tipo;
-            idOtroExtranjeroCodigoPais = idOtroExtranjero.CodigoPais;
-        }
-        else
-        {
-            throw new Exception("No ha sido posible determinar el tipo de identificación fiscal del cliente.");
-        }
+            NifEspanol identificacion => (identificacion.Valor, TiposIdentificacionFiscal.Nif, "ES"),
+            IdOtroExtranjero identificacion => (identificacion.Valor, identificacion.Tipo, identificacion.CodigoPais),
+            _ => throw new InvalidOperationException($"Tipo de identificación fiscal no soportado: {cliente.IdentificacionFiscal?.GetType().Name}")
+        };
 
         return new ClienteRecord()
         {
             Id = cliente.Id,
             Alias = cliente.Alias,
-            TipoIdentificacionFiscal = tipoIdentificacionFiscal,
-            Nif = nif,
-            IdOtroExtranjeroValor = idOtroExtranjeroValor,
-            IdOtroExtranjeroTipo = idOtroExtranjeroTipo,
-            IdOtroExtranjeroCodigoPais = idOtroExtranjeroCodigoPais,
+            IdentificacionFiscalValor = valor,
+            IdentificacionFiscalTipo = tipo,
+            IdentificacionFiscalCodigoPais = codigoPais,
             RazonSocial = cliente.RazonSocial,
             Nombre = cliente.Nombre,
             PrimerApellido = cliente.PrimerApellido,
@@ -45,4 +28,5 @@ public static class ClienteMapper
             Domicilio = cliente.Domicilio
         };
     }
+    
 }

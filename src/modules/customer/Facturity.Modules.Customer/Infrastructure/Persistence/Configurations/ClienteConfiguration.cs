@@ -15,8 +15,8 @@ public class ClienteConfiguration : IEntityTypeConfiguration<ClienteRecord>
             .ValueGeneratedNever();
 
         builder.Property(c => c.Alias)
-            .IsRequired()
             .HasMaxLength(50)
+            .IsRequired()
             .HasColumnName("alias");
 
         builder.Property(c => c.IdentificacionFiscalTipo)
@@ -34,22 +34,23 @@ public class ClienteConfiguration : IEntityTypeConfiguration<ClienteRecord>
             .HasMaxLength(2)
             .HasColumnName("identificacion_fiscal_codigo_pais");
 
-        builder.Property(c => c.RazonSocial).HasMaxLength(100).HasColumnName("razon_social");
+        builder.Property(c => c.RazonSocial).HasMaxLength(150).HasColumnName("razon_social");
         builder.Property(c => c.Nombre).HasMaxLength(50).HasColumnName("nombre");
         builder.Property(c => c.PrimerApellido).HasMaxLength(50).HasColumnName("primer_apellido");
         builder.Property(c => c.SegundoApellido).HasMaxLength(50).HasColumnName("segundo_apellido");
 
         builder.OwnsOne(c => c.Domicilio, d =>
         {
-            d.Property(x => x.Direccion).HasColumnName("domicilio_direccion").IsRequired();
-            d.Property(x => x.Municipio).HasColumnName("domicilio_municipio");
-            d.Property(x => x.Provincia).HasColumnName("domicilio_provincia");
-            d.Property(x => x.Region).HasColumnName("domicilio_region");
-            d.Property(x => x.Pais).HasColumnName("domicilio_pais");
+            d.Property(x => x.Direccion).HasMaxLength(200).HasColumnName("domicilio_direccion").IsRequired();
+            d.Property(x => x.Municipio).HasMaxLength(100).HasColumnName("domicilio_municipio");
+            d.Property(x => x.Provincia).HasMaxLength(50).HasColumnName("domicilio_provincia");
+            d.Property(x => x.Region).HasMaxLength(50).HasColumnName("domicilio_region");
+            d.Property(x => x.Pais).HasMaxLength(60).HasColumnName("domicilio_pais");
 
             d.OwnsOne(x => x.CodigoPostal, cp =>
             {
                 cp.Property(c => c.Valor)
+                    .HasMaxLength(5)
                     .HasColumnName("domicilio_codigo_postal")
                     .IsRequired();
             });
