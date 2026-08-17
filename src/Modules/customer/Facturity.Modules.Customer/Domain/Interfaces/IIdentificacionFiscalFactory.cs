@@ -6,6 +6,6 @@ public interface IIdentificacionFiscalFactory
 {
     Result<IIdentificacionFiscal> Crear(
         string identificacionFiscalValor,
-        string identificacionFiscalTipo,
+        TiposIdentificacionFiscal identificacionFiscalTipo,
         string? identificacionFiscalCodigoPais);
 }

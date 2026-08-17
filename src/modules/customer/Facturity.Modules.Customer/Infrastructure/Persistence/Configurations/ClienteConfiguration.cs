@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Facturity.Modules.Customer.Domain;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Facturity.Modules.Customer.Infrastructure;
@@ -20,9 +21,14 @@ public class ClienteConfiguration : IEntityTypeConfiguration<ClienteRecord>
             .HasColumnName("alias");
 
         builder.Property(c => c.IdentificacionFiscalTipo)
-            .HasColumnType("tinyint")
+            .HasColumnType("smallint")
             .IsRequired()
             .HasColumnName("identificacion_fiscal_tipo");
+
+        builder.HasOne<TipoIdentificacionFiscal>()
+            .WithMany()
+            .HasForeignKey(c => (int)c.IdentificacionFiscalTipo)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.Property(c => c.IdentificacionFiscalValor)
             .IsRequired()

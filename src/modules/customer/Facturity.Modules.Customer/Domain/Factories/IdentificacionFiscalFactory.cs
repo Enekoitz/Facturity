@@ -7,13 +7,10 @@ public class IdentificacionFiscalFactory : IIdentificacionFiscalFactory
 {
     public Result<IIdentificacionFiscal> Crear(
         string identificacionFiscalValor,
-        string identificacionFiscalTipo,
+        TiposIdentificacionFiscal identificacionFiscalTipo,
         string? identificacionFiscalCodigoPais)
     {
-        if (!Enum.TryParse(identificacionFiscalTipo, out TiposIdentificacionFiscal tipoIdentificacionFiscal))
-            Result.Fail<IIdentificacionFiscal>(Error.Validation("TipoIdentificacionFiscalInvalido", "El tipo de identificación fiscal proporcionado es inválido."));
-
-        if (tipoIdentificacionFiscal == TiposIdentificacionFiscal.Nif)
+        if (identificacionFiscalTipo == TiposIdentificacionFiscal.Nif)
         {
             var nifEspanol = NifEspanol.Crear(identificacionFiscalValor);
             return nifEspanol.IsSuccess
@@ -22,7 +19,7 @@ public class IdentificacionFiscalFactory : IIdentificacionFiscalFactory
         }
         else if (identificacionFiscalCodigoPais is not null)
         {
-            var idOtroExtranjero = IdOtroExtranjero.Crear(identificacionFiscalValor, tipoIdentificacionFiscal, identificacionFiscalCodigoPais);
+            var idOtroExtranjero = IdOtroExtranjero.Crear(identificacionFiscalValor, identificacionFiscalTipo, identificacionFiscalCodigoPais);
             return idOtroExtranjero.IsSuccess
                 ? Result.Ok<IIdentificacionFiscal>(idOtroExtranjero.Value)
                 : Result.Fail<IIdentificacionFiscal>(idOtroExtranjero.Errors);

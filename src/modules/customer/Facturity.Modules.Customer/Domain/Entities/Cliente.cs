@@ -2,7 +2,7 @@
 
 namespace Facturity.Modules.Customer.Domain;
 
-public class Cliente : AggregateRoot<Guid>
+public sealed class Cliente : AggregateRoot<Guid>
 {
     public string Alias { get; private set; }
     public IIdentificacionFiscal IdentificacionFiscal { get; private set; }
@@ -12,7 +12,7 @@ public class Cliente : AggregateRoot<Guid>
     public string? SegundoApellido { get; private set; }
     public Domicilio? Domicilio { get; private set; }
 
-    protected Cliente() { }
+    private Cliente() { }
 
     private Cliente(
         Guid id,
@@ -49,10 +49,10 @@ public class Cliente : AggregateRoot<Guid>
         var errores = new List<Error>();
 
         if (id == Guid.Empty)
-            errores.Add(Error.Validation(ClienteCodigosError.IdVacio.ToString(), "El identificador del cliente no es válido."));
+            errores.Add(Error.Validation(nameof(ClienteCodigosError.IdVacio), "El identificador del cliente no es válido."));
 
         if (tenantId.Value <= 0)
-            errores.Add(Error.Validation("TenantIdInvalido", "El TenantId no es válido."));
+            errores.Add(Error.Validation(nameof(TenantCodigos.TenantIdInvalido), "El TenantId no es válido."));
 
         ValidarAlias(alias, errores);
 

@@ -9,7 +9,7 @@ public sealed record IdOtroExtranjero : IIdentificacionFiscal
     public string CodigoPais { get; }
     public bool? EsPersonaJuridica { get; } = null;
 
-    protected IdOtroExtranjero() { }
+    private IdOtroExtranjero() { }
 
     private IdOtroExtranjero(string valorIdOtroExtranjero, TiposIdentificacionFiscal tipoIdOtroExtranjero, string codigoPais)
     {

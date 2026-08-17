@@ -16,5 +16,4 @@ public class ClienteRecord
     public Domicilio? Domicilio { get; set; }
 
     public ClienteRecord() { }
-
 }
