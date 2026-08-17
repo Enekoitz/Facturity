@@ -14,8 +14,10 @@ public class ClientesDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema("clientes");
-        //modelBuilder.ApplyConfiguration(new TipoIdentificacionConfiguration());
+        
+        modelBuilder.ApplyConfiguration(new TiposIdentificacionFiscalConfiguration());
         modelBuilder.ApplyConfiguration(new ClienteConfiguration());
+        
         base.OnModelCreating(modelBuilder);
     }
 }

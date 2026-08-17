@@ -10,27 +10,29 @@ public class TiposIdentificacionFiscalConfiguration : IEntityTypeConfiguration<T
     {
         builder.ToTable("catalogo_tipos_identificacion_fiscal");
 
-        builder.HasKey(c => c.Id).HasName("id");
+        builder.HasKey(c => c.Id);
+        builder.Property(c => c.Id)
+            .HasColumnType("smallint")
+            .HasColumnName("id")
+            .ValueGeneratedNever();
 
-        builder.HasKey(c => c.Codigo);
         builder.Property(c => c.Codigo)
-            .ValueGeneratedNever()
             .IsRequired()
+            .HasMaxLength(20)
             .HasColumnName("codigo");
 
         builder.Property(c => c.Nombre)
             .IsRequired()
-            .HasMaxLength(250)
+            .HasMaxLength(100)
             .HasColumnName("nombre");
 
         builder.Property(c => c.NombreCompleto)
             .IsRequired()
-            .HasMaxLength(450)
+            .HasMaxLength(200)
             .HasColumnName("nombre_completo");
 
         builder.Property(e => e.CodigoTicketBai)
             .HasMaxLength(3)
-            .IsRequired()
             .HasColumnName("codigo_ticketbai_bizkaia");
 
         builder.HasData(

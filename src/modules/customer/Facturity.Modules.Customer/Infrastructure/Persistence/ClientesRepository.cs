@@ -25,5 +25,6 @@ public class ClientesRepository(ClientesDbContext context) : IClientesRepository
     {
         var clienteRecord = cliente.ToRecord();
         await _context.Clientes.AddAsync(clienteRecord, ct);
+        await _context.SaveChangesAsync(ct);
     }
 }
