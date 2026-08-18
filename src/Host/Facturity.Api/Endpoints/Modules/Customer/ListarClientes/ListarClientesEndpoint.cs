@@ -1,16 +1,14 @@
-﻿using Serilog;
-using Facturity.Modules.Customer.Features;
+﻿using Facturity.Modules.Customer.Features;
 
 namespace Facturity.Api.Endpoints.Modules.Customer;
 
-public class ListarClientesEndpoint : IEndpoint
+public class ListarClientesEndpoint : IClientesEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("/", async (ListarClientesCommand command,ListarClientesHandler handler) =>
+        app.MapGet("/", async ([AsParameters] ListarClientesQuery query,ListarClientesHandler handler) =>
         {
-            Log.ForContext<Program>().Information("Creando cliente desde una minimal API, registrando con Serilog en Seq");
-            var clientes = await handler.HandleAsync(command);
+            var clientes = await handler.HandleAsync(query);
             return Results.Ok(clientes);
         })
         .WithName("ObtenerClientes");
