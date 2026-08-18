@@ -12,7 +12,7 @@ internal sealed class CrearClienteHandler(IClientesRepository repoCliente, IIden
 
     public async Task<Result<Guid>> HandleAsync(CrearClienteCommand command, CancellationToken ct)
     {
-        var identificacionFiscalResult = _identificacionFiscalFactory.Crear(command.IdentificacionValor, command.IdentificacionTipo, command.IdentificacionCodigoPais);
+        var identificacionFiscalResult = _identificacionFiscalFactory.Crear(command.IdentificacionFiscalValor, command.IdentificacionFiscalTipo, command.IdentificacionFiscalCodigoPais);
         if (identificacionFiscalResult.IsFailure)
             return Result.Fail<Guid>(identificacionFiscalResult.Errors);
 
@@ -24,7 +24,7 @@ internal sealed class CrearClienteHandler(IClientesRepository repoCliente, IIden
         // TODO: Pendiente de quitar de aquí e implementar tenantId desde claims con seguridad vía JWT access token, etc.
         var tenantIdResult = TenantId.Crear(3);
 
-        Guid id = Guid.NewGuid();
+        var id = Guid.NewGuid();
         var clienteResult = Cliente.Crear(id, tenantIdResult.Value, command.Alias, identificacionFiscalResult.Value, command.RazonSocial,
                                             command.Nombre, command.PrimerApellido, command.SegundoApellido, domicilioResult.Value);
         if (clienteResult.IsFailure)
@@ -33,13 +33,12 @@ internal sealed class CrearClienteHandler(IClientesRepository repoCliente, IIden
         if (await _repoCliente.AliasEnUsoAsync(command.Alias, ct))
             return Result.Fail<Guid>(Error.Conflict("AliasExistente", "Ya existe un cliente con el mismo alias."));
 
-        if (Enum.TryParse(command.IdentificacionTipo, out TiposIdentificacionFiscal tipoIdentificacionFiscal) 
-            && await _repoCliente.IdentificacionFiscalEnUsoAsync(command.IdentificacionValor, tipoIdentificacionFiscal, command.IdentificacionCodigoPais, ct))
-           return Result.Fail<Guid>(Error.Conflict("IdentificacionFiscalExistente", "Ya existe un cliente con la misma identificación fiscal."));
+        if (await _repoCliente.IdentificacionFiscalEnUsoAsync(command.IdentificacionFiscalValor, command.IdentificacionFiscalTipo, command.IdentificacionFiscalCodigoPais, ct))
+            return Result.Fail<Guid>(Error.Conflict("IdentificacionFiscalExistente", "Ya existe un cliente con la misma identificación fiscal."));
 
-        Cliente cliente = clienteResult.Value;
+        var cliente = clienteResult.Value;
 
-        await _repoCliente.GuardarAsync(cliente);
+        await _repoCliente.GuardarAsync(cliente, ct);
 
         return Result.Ok(cliente.Id);
     }
