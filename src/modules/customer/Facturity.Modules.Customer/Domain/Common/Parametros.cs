@@ -11,11 +11,11 @@ public static class ClienteParametros
 public static class DomicilioParametros
 {
     public const int CodigoPostalLength = 5;
-    public const int DireccionMaxLength = 255;
-    public const int MunicipioMaxLength = 2;
-    public const int ProvinciaMaxLength = 2;
-    public const int RegionMaxLength = 2;
-    public const int PaisMaxLength = 2;
+    public const int DireccionMaxLength = 200;
+    public const int MunicipioMaxLength = 100;
+    public const int ProvinciaMaxLength = 50;
+    public const int RegionMaxLength = 50;
+    public const int PaisMaxLength = 60;
 }
 
 public static class NifEspanolParametros
