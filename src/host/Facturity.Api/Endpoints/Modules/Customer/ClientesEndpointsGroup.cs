@@ -1,4 +1,4 @@
-﻿namespace Facturity.Api;
+﻿namespace Facturity.Api.Endpoints;
 
 public static class ClientesEndpointsGroup
 {
@@ -9,11 +9,11 @@ public static class ClientesEndpointsGroup
         //TODO: .RequireAuthorization()
 
         var endpointTypes = typeof(ClientesEndpointsGroup).Assembly.GetTypes()
-        .Where(t => typeof(IEndpoint).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
+        .Where(t => typeof(IClientesEndpoint).IsAssignableFrom(t) && t is { IsInterface: false, IsAbstract: false });
 
         foreach (var type in endpointTypes)
         {
-            var endpoint = (IEndpoint)Activator.CreateInstance(type)!;
+            var endpoint = (IClientesEndpoint)Activator.CreateInstance(type)!;
             endpoint.MapEndpoint(clientesGroup);
         }
 

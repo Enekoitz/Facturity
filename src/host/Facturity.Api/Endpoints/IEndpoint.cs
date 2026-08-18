@@ -1,4 +1,4 @@
-﻿namespace Facturity.Api;
+﻿namespace Facturity.Api.Endpoints;
 
 public interface IEndpoint
 {
