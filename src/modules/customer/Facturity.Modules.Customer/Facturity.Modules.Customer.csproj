@@ -16,6 +16,7 @@
 
 	<ItemGroup>
 		<InternalsVisibleTo Include="Facturity.API" />
+		<InternalsVisibleTo Include="Facturity.Modules.Bootstrapper" />
 		<InternalsVisibleTo Include="Facturity.Modules.Customer.Tests" />
 	</ItemGroup>
 
