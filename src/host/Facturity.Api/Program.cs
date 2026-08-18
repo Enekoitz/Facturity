@@ -33,27 +33,35 @@ try
     builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
     builder.Services.AddProblemDetails();
 
-    builder.Services.AddOpenApi("v1");
+    builder.Services.AddOpenApi("FacturityAPI-v1");
 
     var connectionString = builder.Configuration.GetConnectionString("FacturityDbConnectionString")
         ?? throw new InvalidOperationException("CRITICAL: La cadena de conexión 'FacturityDbConnectionString' es nula.");
 
     builder.Services.AddCustomerModuleServices(connectionString);
+    
+    Log.Information("Todas las configuraciones, servicios y detalles de la aplicación han sido adheridas y se procede a crear la WebApplication");
 
     var app = builder.Build();
 
+    Log.Information("WebApplication construida");
+    
     app.UseCorrelationId();
     app.UseExceptionHandler();
 
+    Log.Information("Middlewares personalizados para el tracking de peticiones HTTP con CorrelationId y manejador de excepciones global implementado en la aplicación.");
+    
     if (app.Environment.IsDevelopment())
     {
         app.MapOpenApi();
-
         app.MapScalarApiReference(options =>
         {
-            options.WithTitle("API Facturity")
+            options.WithTitle("FacturityAPI")
                    .WithTheme(ScalarTheme.DeepSpace);
         });
+        
+        app.MapGet("/", () => Results.Redirect("/scalar/FacturityAPI-v1"))
+            .ExcludeFromDescription();
     }
 
     app.UseHttpsRedirection();
@@ -62,11 +70,9 @@ try
     //app.UseAuthorization();
 
     app.MapClientesEndpoints();
-    // TODO: A medida que avancemos con los endpoints añadimos:
-    //app.MapProductosEndpoints();
-    //app.MapFacturacionEndpoints();
-    //app.MapMotorImpuestosEndpoints();
-
+    
+    Log.Information("Arranca al aplicación FacturityAPI con todas las configuraciones y servicios antes definidos");
+    
     app.Run();
 }
 catch (Exception ex) when (ex is not HostAbortedException)
