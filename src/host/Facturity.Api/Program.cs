@@ -1,8 +1,11 @@
 using Facturity.Api;
+using Facturity.Api.Endpoints;
 using Facturity.Modules.Bootstrapper;
+using Facturity.Modules.Customer.Features;
 using Scalar.AspNetCore;
 using Serilog;
 using System.Text.Json.Serialization;
+using FluentValidation;
 
 //Serilog.Debugging.SelfLog.Enable(Console.Error);
 
@@ -29,6 +32,8 @@ try
             options.JsonSerializerOptions.Converters.Add(
             new JsonStringEnumConverter());
         });
+    
+    builder.Services.AddValidatorsFromAssemblyContaining<CrearClienteCommand>();
 
     builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
     builder.Services.AddProblemDetails();
@@ -38,6 +43,12 @@ try
     var connectionString = builder.Configuration.GetConnectionString("FacturityDbConnectionString")
         ?? throw new InvalidOperationException("CRITICAL: La cadena de conexión 'FacturityDbConnectionString' es nula.");
 
+    builder.Services.AddValidatorsFromAssemblies(
+        [
+            typeof(CrearClienteCommand).Assembly
+        ], 
+        includeInternalTypes: true);
+    
     builder.Services.AddCustomerModuleServices(connectionString);
     
     Log.Information("Todas las configuraciones, servicios y detalles de la aplicación han sido adheridas y se procede a crear la WebApplication");

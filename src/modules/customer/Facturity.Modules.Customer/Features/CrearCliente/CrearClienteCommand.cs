@@ -1,13 +1,14 @@
-﻿using Facturity.Modules.SharedKernel.Abstractions;
+﻿using Facturity.Modules.Customer.Domain;
+using Facturity.Modules.SharedKernel.Abstractions;
 using Facturity.Modules.SharedKernel.Domain;
 
 namespace Facturity.Modules.Customer.Features;
 
 internal record CrearClienteCommand(
     string Alias,
-    string IdentificacionValor,
-    string IdentificacionTipo,
-    string? IdentificacionCodigoPais,
+    string IdentificacionFiscalValor,
+    TiposIdentificacionFiscal IdentificacionFiscalTipo,
+    string? IdentificacionFiscalCodigoPais,
     string? RazonSocial,
     string? Nombre,
     string? PrimerApellido,
