@@ -4,10 +4,11 @@ public enum ErrorType
 {
     None,
     Validation,
-    NotFound,
-    Business,
-    Conflict,
+    Forbidden,
     Unauthorized,
+    NotFound,
+    Conflict,
+    Business,
     Unexpected
 }
 
@@ -18,7 +19,10 @@ public sealed record Error(string Code, string Description, ErrorType Type)
 
     public static Error Validation(string code, string description) =>
         new(code, description, ErrorType.Validation);
-
+    
+    public static Error Forbidden(string code, string description) =>
+        new(code, description, ErrorType.Forbidden);
+    
     public static Error NotFound(string code, string description) =>
         new(code, description, ErrorType.NotFound);
 
