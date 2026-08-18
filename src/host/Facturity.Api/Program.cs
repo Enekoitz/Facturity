@@ -7,7 +7,7 @@ using System.Text.Json.Serialization;
 //Serilog.Debugging.SelfLog.Enable(Console.Error);
 
 Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
+    .WriteTo.Console(outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] [{Application}/{MachineName}] [CorrelationId: {CorrelationId}] {Message:lj}{NewLine}{Exception}")
     .WriteTo.Seq("http://localhost:5341", apiKey: "[REDACTED]")
     .Enrich.FromLogContext()
     .CreateBootstrapLogger();
@@ -21,7 +21,7 @@ try
     builder.Host.UseSerilog((context, services, configuration) => configuration
         .ReadFrom.Configuration(context.Configuration)
         .ReadFrom.Services(services));
-
+    
     builder.Services.AddControllers()
         .AddJsonOptions(options =>
         {
