@@ -7,44 +7,44 @@ public static class ResultExtensions
     /// <summary>
     /// Mapear objeto Result a ProblemDetails para la HTTP response adecuada
     /// </summary>
-    public static IResult ToProblemDetails(this Result result)
-              {
-                  // 1. Si el resultado es exitoso o no hay errores guardados se lanza excepción
-                  if (result.IsSuccess || result.Errors is null || !result.Errors.Any())
-                  {
-                      throw new InvalidOperationException("No se puede generar un ProblemDetail de un Result exitoso.");
-                  }
+    public static IResult ToProblemDetails(this IResultBase result)
+    {
+        // 1. Si el resultado es exitoso o no hay errores guardados se lanza excepción
+        if (result.IsSuccess || result.Errors is null || !result.Errors.Any())
+        {
+            throw new InvalidOperationException("No se puede generar un ProblemDetail de un Result exitoso.");
+        }
           
-                  // 2. Obtener el error y su código de estado HTTP correspondiente con mayor prioridad de severidad
-                  var mostSeverePriorityError = GetMostSeverePriorityError(result.Errors);
-                  int primaryStatusCode = GetStatusCode(mostSeverePriorityError.Type);
+        // 2. Obtener el error y su código de estado HTTP correspondiente con mayor prioridad de severidad
+        var mostSeverePriorityError = GetMostSeverePriorityError(result.Errors);
+        int primaryStatusCode = GetStatusCode(mostSeverePriorityError.Type);
                   
-                  // 3. Obtener el texto para el 'detail' en base al tipo de error más prioritario
-                  string detailText = mostSeverePriorityError.Type switch
-                  {
-                      ErrorType.Validation => result.Errors.Count == 1 
-                          ? mostSeverePriorityError.Description 
-                          : $"Se encontraron {result.Errors.Count} errores de validación en la solicitud.",
+        // 3. Obtener el texto para el 'detail' en base al tipo de error más prioritario
+        string detailText = mostSeverePriorityError.Type switch
+        {
+            ErrorType.Validation => result.Errors.Count == 1 
+                ? mostSeverePriorityError.Description 
+                : $"Se encontraron {result.Errors.Count} errores de validación en la solicitud.",
           
-                      ErrorType.NotFound or 
-                      ErrorType.Conflict or 
-                      ErrorType.Forbidden or 
-                      ErrorType.Unauthorized or 
-                      ErrorType.Business => mostSeverePriorityError.Description,
+            ErrorType.NotFound or 
+            ErrorType.Conflict or 
+            ErrorType.Forbidden or 
+            ErrorType.Unauthorized or 
+            ErrorType.Business => mostSeverePriorityError.Description,
           
-                      _ => "Ocurrió un error interno al procesar la solicitud. Inténtelo más tarde."
-                  };
+            _ => "Ocurrió un error interno al procesar la solicitud. Inténtelo más tarde."
+        };
                   
-                  // 4. Devolver la respuesta HTTP result.
-                  return Results.Problem(
-                      statusCode: primaryStatusCode,
-                      title: GetTitle(primaryStatusCode),
-                      detail: detailText,
-                      extensions: new Dictionary<string, object?>
-                      {
-                          { "errors", result.Errors.Select(e => new { e.Code, e.Description, Type = e.Type.ToString() }) }
-                      }
-                  );
+        // 4. Devolver la respuesta HTTP result.
+        return Results.Problem(
+            statusCode: primaryStatusCode,
+            title: GetTitle(primaryStatusCode),
+            detail: detailText,
+            extensions: new Dictionary<string, object?>
+            {
+                { "errors", result.Errors.Select(e => new { e.Code, e.Description, Type = e.Type.ToString() }) }
+            }
+        );
     }
 
     /// <summary>

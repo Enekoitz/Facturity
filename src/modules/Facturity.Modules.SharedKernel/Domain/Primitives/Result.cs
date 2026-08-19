@@ -1,6 +1,14 @@
 ﻿namespace Facturity.Modules.SharedKernel.Domain;
 
-public sealed class Result
+public interface IResultBase
+{
+    bool IsSuccess { get; }
+    bool IsFailure { get; }
+    IReadOnlyList<Error> Errors { get; }
+    Error FirstError { get; }
+}
+
+public sealed class Result : IResultBase
 {
     private readonly List<Error> _errors;
 
@@ -45,7 +53,7 @@ public sealed class Result
         Result<TValue>.Fail(errors);
 }
 
-public sealed class Result<TValue>
+public sealed class Result<TValue> : IResultBase
 {
     private readonly List<Error> _errors;
     private readonly TValue? _value;
