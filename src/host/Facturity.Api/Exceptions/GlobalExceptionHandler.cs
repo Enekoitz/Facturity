@@ -1,37 +1,59 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace Facturity.Api;
 
 /// <summary>
-/// Catches application global exceptions, handle them in a proper way and logs it with Serilog.
-/// <param name="problemDetailsService"></param>
+/// Captura excepción desde cualquier punto no controlado de la aplicación, loggea lo necesario y devuelve 
+/// ProblemDetail para la respuesta HTTP
 /// <param name="logger"></param>
+/// <param name="env"></param>
 /// </summary>
-internal sealed class GlobalExceptionHandler(IProblemDetailsService problemDetailsService, ILogger<GlobalExceptionHandler> logger) : IExceptionHandler
+internal sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger, IHostEnvironment env) 
+    : IExceptionHandler
 {
+    private readonly IHostEnvironment _env = env;
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
-        logger.LogError(exception, "Ha ocurrido una excepción no controlada");
-
-        httpContext.Response.StatusCode = exception switch
+        bool logged = false;
+        try
         {
-            ApplicationException => StatusCodes.Status400BadRequest,
-            _ => StatusCodes.Status500InternalServerError
-        };
+            // - Pendiente analizar si merece la pena definir excepción más específica y código de estado no 500
 
-        var problemDetailsContext = new ProblemDetailsContext
-        {
-            HttpContext = httpContext,
-            Exception = exception,
-            ProblemDetails = new ProblemDetails
+            //httpContext.Response.StatusCode = exception switch
+            //{
+            //    ApplicationException => StatusCodes.Status400BadRequest,
+            //    _ => StatusCodes.Status500InternalServerError
+            //};
+
+            var isDev = _env.IsDevelopment();
+
+            var problemDetails = new ProblemDetails
             {
-                Type = exception.GetType().Name,
-                Title = "Ha ocurrido un error",
-                Detail = exception.Message
-            }
-        };
+                Status = StatusCodes.Status500InternalServerError,
+                Title = isDev ? exception.GetType().Name : "Error interno del servidor",
+                Type = isDev ? exception.GetType().FullName : "https://tools.ietf.org/html/rfc7231#section-6.6.1",
+                Detail = isDev
+                    ? exception.Message
+                    : "Se ha producido un error procesando su solicitud. Contacte al administrador con el Trace ID.",
+                Instance = httpContext.Request.Path
+            };
 
-        return await problemDetailsService.TryWriteAsync(problemDetailsContext);
+            problemDetails.Extensions["traceId"] = Activity.Current?.Id ?? httpContext.TraceIdentifier;
+
+            logger.LogError(exception: exception, message: "Ha ocurrido una excepción no controlada", args: [problemDetails]);
+
+
+            httpContext.Response.StatusCode = problemDetails.Status.Value;
+            await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
+
+            return true;
+        }
+        finally
+        {
+            if(logged)
+                logger.LogError(exception: exception, message: "Ha ocurrido una excepción no controlada");
+        }
     }
 }
