@@ -11,6 +11,7 @@ public static class DependencyInjection
         services.AddScoped<ICommandHandler<CrearClienteCommand, Result<Guid>>, CrearClienteHandler>();
         services.AddScoped<ListarClientesHandler>();
         // services.AddScoped<ICommandHandler<ListarClientesCommand, Result<Guid>>, ListarClientesHandler>();
+        services.AddScoped<IQueryHandler<ObtenerClientePorIdQuery, Result<ClienteDto>>, ObtenerClientePorIdHandler>();
         return services;
     }
 }

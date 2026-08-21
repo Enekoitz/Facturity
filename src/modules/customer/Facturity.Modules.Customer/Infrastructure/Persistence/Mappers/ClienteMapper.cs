@@ -1,4 +1,5 @@
 ﻿using Facturity.Modules.Customer.Domain;
+using Facturity.Modules.Customer.Features;
 using Facturity.Modules.SharedKernel.Domain;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
@@ -9,12 +10,7 @@ public static class ClienteMapper
     public static ClienteRecord ToRecord(this Cliente cliente)
     {
 
-        var (valor, tipo, codigoPais) = cliente.IdentificacionFiscal switch
-        {
-            NifEspanol identificacion => (identificacion.Valor, TiposIdentificacionFiscal.Nif, "ES"),
-            IdOtroExtranjero identificacion => (identificacion.Valor, identificacion.Tipo, identificacion.CodigoPais),
-            _ => throw new InvalidOperationException($"Tipo de identificación fiscal no soportado: {cliente.IdentificacionFiscal?.GetType().Name}")
-        };
+        (string valor, TiposIdentificacionFiscal tipo, string codigoPais) = cliente.IdentificacionFiscal.ObtenerValoresComunes();
 
         return new ClienteRecord()
         {
@@ -44,7 +40,7 @@ public static class ClienteMapper
         var clienteResult = Cliente.Crear(id, tenantIdResult.Value, clienteRecord.Alias, identificacionFiscalResult.Value, clienteRecord.RazonSocial,
                                             clienteRecord.Nombre, clienteRecord.PrimerApellido, clienteRecord.SegundoApellido, clienteRecord.Domicilio);
 
-        return clien
+        return clienteResult.Value;
     }
 
 }

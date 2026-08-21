@@ -9,17 +9,18 @@ public class ObtenerClientePorId : IClientesEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("/", async (CrearClienteCommand command,
-                                        ICommandHandler<CrearClienteCommand, Result<Guid>> handler,
-                                        CancellationToken ct) =>
+        app.MapGet("/{id}", async (
+                [AsParameters] ObtenerClientePorIdQuery query,
+                IQueryHandler<ObtenerClientePorIdQuery, Result<ClienteDto>> handler,
+                CancellationToken ct) =>
             {
-                var result = await handler.HandleAsync(command, ct);
+                var result = await handler.HandleAsync(query, ct);
                 
                 return result.IsSuccess
-                    ? Results.Created($"/api/clientes/{result.Value}", new { Id = result.Value })
+                    ? Results.Ok(result.Value)
                     : result.ToProblemDetails();
             })
-            .WithName("CrearCliente")
-            .WithValidation<CrearClienteCommand>();
+            .WithName("ObtenerClientePorId")
+            .WithValidation<ObtenerClientePorIdQuery>();
     }
 }

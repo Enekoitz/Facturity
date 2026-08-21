@@ -5,19 +5,16 @@ using Facturity.Modules.SharedKernel.Domain;
 
 namespace Facturity.Modules.Customer.Features;
 
-internal sealed class ObtenerClientePorIdHandler(IClientesRepository repoCliente, IIdentificacionFiscalFactory identificacionFiscalFactory) 
-    : IQueryHandler<ObtenerClientePorIdQuery, Result<Cliente>>
+internal sealed class ObtenerClientePorIdHandler(
+    IClientesRepository repo) 
+    : IQueryHandler<ObtenerClientePorIdQuery, Result<ClienteDto>>
 {
-    private readonly IClientesRepository _repoCliente = repoCliente;
-    private readonly IIdentificacionFiscalFactory _identificacionFiscalFactory = identificacionFiscalFactory;
-
-    public async Task<Result<ClienteDto>> HandleAsync(ObtenerClienteQuery request, CancellationToken ct)
+    public async Task<Result<ClienteDto>> HandleAsync(ObtenerClientePorIdQuery request, CancellationToken ct)
     {
-        var cliente = await _clienteRepository.ObtenerPorIdAsync(request.Id, ct);
+        var cliente = await repo.ObtenerClientePorIdAsync(request.Id, ct);
 
-        if (cliente is null)
-            return Result<ClienteDto>.Failure("Cliente no encontrado"); // Controlado (404)
-
-        return Result<ClienteDto>.Success(cliente.ToDto());
+        return cliente is null 
+            ? Result<ClienteDto>.Fail(ErroresCliente.NoEncontrado) 
+            : Result<ClienteDto>.Ok(cliente.ToDto());
     }
 }

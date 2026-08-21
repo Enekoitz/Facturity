@@ -7,9 +7,8 @@ internal class ObtenerClientePorIdValidator : AbstractValidator<ObtenerClientePo
 {
     public ObtenerClientePorIdValidator()
     {
-        // Datos del Cliente
         RuleFor(c => c.Id)
-            .NotEmpty()
-            .MaximumLength(ClienteParametros.AliasMaxLength);
+            .Must(id => id != Guid.Empty)
+            .WithMessage("El identificador no es válido");
     }
 }
