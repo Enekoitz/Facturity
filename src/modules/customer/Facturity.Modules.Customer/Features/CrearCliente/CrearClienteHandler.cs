@@ -38,7 +38,7 @@ internal sealed class CrearClienteHandler(IClientesRepository repoCliente, IIden
 
         var cliente = clienteResult.Value;
 
-        await _repoCliente.GuardarAsync(cliente, ct);
+        await _repoCliente.GuardarNuevoClienteAsync(cliente, ct);
 
         return Result.Ok(cliente.Id);
     }
