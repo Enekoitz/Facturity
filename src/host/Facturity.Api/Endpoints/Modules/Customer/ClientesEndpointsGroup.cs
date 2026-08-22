@@ -4,18 +4,13 @@ internal static class ClientesEndpointsGroup
 {
     internal static IEndpointRouteBuilder MapClientesEndpoints(this IEndpointRouteBuilder app)
     {
-        var clientesGroup = app.MapGroup("/api/clientes")
-                                .WithTags("Clientes");
-        //TODO: .RequireAuthorization()
+        var clientesGroup = app
+            .MapGroup("/api/clientes")
+            .WithTags("Clientes");
 
-        var endpointTypes = typeof(ClientesEndpointsGroup).Assembly.GetTypes()
-        .Where(t => typeof(IClientesEndpoint).IsAssignableFrom(t) && t is { IsInterface: false, IsAbstract: false });
-
-        foreach (var type in endpointTypes)
-        {
-            var endpoint = (IClientesEndpoint)Activator.CreateInstance(type)!;
-            endpoint.MapEndpoint(clientesGroup);
-        }
+        new ObtenerClientePorIdEndpoint().MapEndpoint(clientesGroup);
+        new CrearClienteEndpoint().MapEndpoint(clientesGroup);
+        new ListarClientesEndpoint().MapEndpoint(clientesGroup);
 
         return app;
     }
