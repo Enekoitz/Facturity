@@ -1,3 +1,3 @@
-﻿namespace Facturity.Api.Endpoints;
+﻿namespace Facturity.Api.Endpoints.Modules.Customer;
 
-public interface IClientesEndpoint : IEndpoint { }
+internal interface IClientesEndpoint : IEndpoint { }

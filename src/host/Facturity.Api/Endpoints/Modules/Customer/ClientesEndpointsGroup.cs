@@ -1,8 +1,8 @@
-﻿namespace Facturity.Api.Endpoints;
+﻿namespace Facturity.Api.Endpoints.Modules.Customer;
 
-public static class ClientesEndpointsGroup
+internal static class ClientesEndpointsGroup
 {
-    public static IEndpointRouteBuilder MapClientesEndpoints(this IEndpointRouteBuilder app)
+    internal static IEndpointRouteBuilder MapClientesEndpoints(this IEndpointRouteBuilder app)
     {
         var clientesGroup = app.MapGroup("/api/clientes")
                                 .WithTags("Clientes");
