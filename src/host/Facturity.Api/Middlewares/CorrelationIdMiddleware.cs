@@ -1,6 +1,6 @@
 ﻿using Serilog.Context;
 
-namespace Facturity.Api;
+namespace Facturity.Api.Middlewares;
 
 /// <summary>
 /// Middleware that manage correlation ID in incoming requests.

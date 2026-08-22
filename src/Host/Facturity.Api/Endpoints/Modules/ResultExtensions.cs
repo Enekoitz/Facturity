@@ -1,13 +1,17 @@
-﻿using Facturity.Modules.SharedKernel.Domain;
+﻿using System.Diagnostics;
+using Facturity.Modules.SharedKernel.Domain;
+using Facturity.Api.Helpers;
 
 namespace Facturity.Api.Endpoints;
 
-public static class ResultExtensions
+internal static class ResultExtensions
 {
     /// <summary>
     /// Mapear objeto Result a ProblemDetails para la HTTP response adecuada
     /// </summary>
-    public static IResult ToProblemDetails(this IResultBase result)
+    internal static IResult ToProblemDetails(
+        this IResultBase result,
+        HttpContext httpContext)
     {
         // 1. Si el resultado es exitoso o no hay errores guardados se lanza excepción
         if (result.IsSuccess || result.Errors is null || !result.Errors.Any())
@@ -35,14 +39,16 @@ public static class ResultExtensions
             _ => "Ocurrió un error interno al procesar la solicitud. Inténtelo más tarde."
         };
                   
-        // 4. Devolver la respuesta HTTP result.
-        return Results.Problem(
+        // 4. Devolver la respuesta HTTP
+        return TypedResults.Problem(
             statusCode: primaryStatusCode,
-            title: GetTitle(primaryStatusCode),
+            title: primaryStatusCode.GetTitle(),
             detail: detailText,
+            instance: httpContext.Request.Path,
             extensions: new Dictionary<string, object?>
             {
-                { "errors", result.Errors.Select(e => new { e.Code, e.Description, Type = e.Type.ToString() }) }
+                ["errors"] =  result.Errors.Select(e => new { e.Code, e.Description, Type = e.Type.ToString() }),
+                ["traceId"] = Activity.Current?.Id ?? httpContext.TraceIdentifier
             }
         );
     }
@@ -83,20 +89,5 @@ public static class ResultExtensions
         ErrorType.Business => StatusCodes.Status422UnprocessableEntity,
         ErrorType.Validation => StatusCodes.Status400BadRequest,
         _ => StatusCodes.Status400BadRequest
-    };
-
-    /// <summary>
-    /// Devolver título según el código de estado HTTP proporcionado
-    /// </summary>
-    private static string GetTitle(int httpStatusCode) => httpStatusCode switch
-    {
-        StatusCodes.Status500InternalServerError => "Error interno del servidor",
-        StatusCodes.Status401Unauthorized => "No autorizado",
-        StatusCodes.Status403Forbidden => "Acceso prohibido",
-        StatusCodes.Status404NotFound => "Recurso no encontrado",
-        StatusCodes.Status409Conflict => "Conflicto con el estado actual",
-        StatusCodes.Status422UnprocessableEntity => "Operación no permitida",
-        StatusCodes.Status400BadRequest => "Error de validación",
-        _ => "Error en la operación"
     };
 }
