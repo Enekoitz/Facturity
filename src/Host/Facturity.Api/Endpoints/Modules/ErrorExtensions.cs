@@ -1,6 +1,6 @@
 ﻿using Facturity.Modules.SharedKernel.Domain;
 
-namespace Facturity.Api.Modules;
+namespace Facturity.Api.Endpoints;
 
 public static class ErrorExtensions
 {
