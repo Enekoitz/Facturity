@@ -1,11 +1,13 @@
-using Facturity.Api;
 using Facturity.Api.Endpoints;
+using Facturity.Api.Exceptions;
+using Facturity.Api.Middlewares;
 using Facturity.Modules.Bootstrapper;
 using Facturity.Modules.Customer.Features;
 using Scalar.AspNetCore;
 using Serilog;
 using System.Text.Json.Serialization;
 using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 
 //Serilog.Debugging.SelfLog.Enable(Console.Error);
 
@@ -17,8 +19,6 @@ Log.Logger = new LoggerConfiguration()
 
 try
 {
-    Log.Information("Iniciando el host de Facturity...");
-
     var builder = WebApplication.CreateBuilder(args);
 
     builder.Host.UseSerilog((context, services, configuration) => configuration
@@ -51,12 +51,8 @@ try
     
     builder.Services.AddCustomerModuleServices(connectionString);
     
-    Log.Information("Todas las configuraciones, servicios y detalles de la aplicación han sido adheridas y se procede a crear la WebApplication");
-
     var app = builder.Build();
 
-    Log.Information("WebApplication construida");
-    
     app.UseCorrelationId();
     app.UseExceptionHandler();
 
@@ -80,9 +76,7 @@ try
     //app.UseAuthentication();
     //app.UseAuthorization();
 
-    app.MapClientesEndpoints();
-    
-    Log.Information("Arranca al aplicación FacturityAPI con todas las configuraciones y servicios antes definidos");
+    app.UseApplicationEndpoints();
     
     app.Run();
 }

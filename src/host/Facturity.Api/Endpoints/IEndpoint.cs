@@ -1,6 +1,6 @@
 ﻿namespace Facturity.Api.Endpoints;
 
-public interface IEndpoint
+internal interface IEndpoint
 {
     void MapEndpoint(IEndpointRouteBuilder app);
 }
