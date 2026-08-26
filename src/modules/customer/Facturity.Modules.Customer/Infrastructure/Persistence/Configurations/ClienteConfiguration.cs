@@ -61,6 +61,10 @@ public class ClienteConfiguration : IEntityTypeConfiguration<ClienteRecord>
                     .IsRequired();
             });
         });
-
+        
+        builder.Property(c => c.DeletedAtUtc)
+            .HasColumnName("deleted_at_utc")
+            .HasColumnType("timestamptz")
+            .HasDefaultValueSql(null);
     }
 }

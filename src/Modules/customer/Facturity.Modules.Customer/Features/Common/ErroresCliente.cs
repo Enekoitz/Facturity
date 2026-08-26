@@ -9,4 +9,8 @@ internal static class ErroresCliente
 
     internal static readonly Error CorreoDuplicado =
         Error.Conflict("Cliente.CorreoDuplicado", "Ya existe un cliente registrado con este correo.");
+    
+    internal static readonly Error EliminadoPreviamente =
+        Error.NotFound("Cliente.EliminadoPreviamente", "El cliente ha sido eliminado previamente.");
+    
 }

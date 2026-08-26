@@ -11,6 +11,7 @@ internal static class ClientesEndpointsGroup
         new ObtenerClientePorIdEndpoint().MapEndpoint(clientesGroup);
         new CrearClienteEndpoint().MapEndpoint(clientesGroup);
         new ListarClientesEndpoint().MapEndpoint(clientesGroup);
+        new EliminarClienteEndpoint().MapEndpoint(clientesGroup);
 
         return app;
     }

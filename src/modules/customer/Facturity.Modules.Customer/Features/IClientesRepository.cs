@@ -1,4 +1,5 @@
 ﻿using Facturity.Modules.Customer.Domain;
+using Facturity.Modules.SharedKernel.Abstractions;
 
 namespace Facturity.Modules.Customer.Features;
 
@@ -11,4 +12,6 @@ public interface IClientesRepository
     Task GuardarNuevoClienteAsync(Cliente cliente, CancellationToken ct = default);
 
     Task<Cliente?> ObtenerClientePorIdAsync(Guid id, CancellationToken ct = default);
+    
+    Task<SoftDeleteResult> EliminarClienteSoftDeleteAsync(Guid id, CancellationToken ct = default);
 }

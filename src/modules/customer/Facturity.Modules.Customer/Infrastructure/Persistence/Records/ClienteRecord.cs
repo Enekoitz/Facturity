@@ -14,6 +14,7 @@ public class ClienteRecord
     public string? PrimerApellido { get; set; }
     public string? SegundoApellido { get; set; }
     public Domicilio? Domicilio { get; set; }
+    public DateTime? DeletedAtUtc { get; set; }
 
     public ClienteRecord() { }
 }
