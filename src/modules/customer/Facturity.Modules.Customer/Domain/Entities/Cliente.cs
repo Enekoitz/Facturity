@@ -1,4 +1,5 @@
-﻿using Facturity.Modules.SharedKernel.Domain;
+﻿using System.Runtime.CompilerServices;
+using Facturity.Modules.SharedKernel.Domain;
 
 namespace Facturity.Modules.Customer.Domain;
 
@@ -11,7 +12,8 @@ public sealed class Cliente : AggregateRoot<Guid>
     public string? PrimerApellido { get; private set; }
     public string? SegundoApellido { get; private set; }
     public Domicilio? Domicilio { get; private set; }
-
+    public DateTime? DeletedAtUtc { get; private set; }
+    
     private Cliente() { }
 
     private Cliente(
@@ -70,6 +72,34 @@ public sealed class Cliente : AggregateRoot<Guid>
                                     primerApellido,
                                     segundoApellido,
                                     domicilio));
+    }
+    
+    public static Result<Cliente> Reconstruir(
+        Guid id,
+        TenantId tenantId,
+        string alias,
+        IIdentificacionFiscal identificacionFiscal,
+        string? razonSocial,
+        string? nombre,
+        string? primerApellido,
+        string? segundoApellido,
+        Domicilio? domicilio,
+        DateTime? deletedAtUtc) 
+    {
+        var clienteResult = Crear(id, tenantId, alias, identificacionFiscal, razonSocial, nombre, primerApellido,segundoApellido, domicilio);
+
+        if (deletedAtUtc is not null && deletedAtUtc > DateTime.UtcNow)
+            return Result<Cliente>.Fail(Error.Unexpected("Clientes.FechaInvalida",
+                "La fecha de eliminación no puede ser futura."));
+        
+        if (clienteResult.IsFailure)
+            return clienteResult;
+        
+        var cliente = clienteResult.Value;
+        
+        cliente.DeletedAtUtc = deletedAtUtc;
+            
+        return Result.Ok(cliente);
     }
 
     private static void ValidarAlias(

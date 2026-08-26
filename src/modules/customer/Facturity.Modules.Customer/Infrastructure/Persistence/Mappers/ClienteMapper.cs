@@ -23,22 +23,26 @@ public static class ClienteMapper
             Nombre = cliente.Nombre,
             PrimerApellido = cliente.PrimerApellido,
             SegundoApellido = cliente.SegundoApellido,
-            Domicilio = cliente.Domicilio
+            Domicilio = cliente.Domicilio,
+            DeletedAtUtc = cliente.DeletedAtUtc,
         };
     }
 
     public static Cliente? FromRecord(this ClienteRecord clienteRecord, IIdentificacionFiscalFactory identificacionFiscalFactory)
     {
 
-        var identificacionFiscalResult = identificacionFiscalFactory.Crear(clienteRecord.IdentificacionFiscalValor, clienteRecord.IdentificacionFiscalTipo, clienteRecord.IdentificacionFiscalCodigoPais);
+        var identificacionFiscalResult = identificacionFiscalFactory.Crear(clienteRecord.IdentificacionFiscalValor, 
+            clienteRecord.IdentificacionFiscalTipo, clienteRecord.IdentificacionFiscalCodigoPais);
+        
         if (identificacionFiscalResult.IsFailure)
             return null;
 
         var tenantIdResult = TenantId.Crear(3);
 
         var id = Guid.NewGuid();
-        var clienteResult = Cliente.Crear(id, tenantIdResult.Value, clienteRecord.Alias, identificacionFiscalResult.Value, clienteRecord.RazonSocial,
-                                            clienteRecord.Nombre, clienteRecord.PrimerApellido, clienteRecord.SegundoApellido, clienteRecord.Domicilio);
+        var clienteResult = Cliente.Reconstruir(id, tenantIdResult.Value, clienteRecord.Alias, identificacionFiscalResult.Value, 
+            clienteRecord.RazonSocial,clienteRecord.Nombre, clienteRecord.PrimerApellido, clienteRecord.SegundoApellido, 
+            clienteRecord.Domicilio, clienteRecord.DeletedAtUtc);
 
         return clienteResult.Value;
     }
