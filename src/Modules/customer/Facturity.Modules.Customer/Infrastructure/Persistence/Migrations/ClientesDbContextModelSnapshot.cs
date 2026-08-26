@@ -120,6 +120,10 @@ namespace Facturity.Modules.Customer.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(50)")
                         .HasColumnName("alias");
 
+                    b.Property<DateTime?>("DeletedAtUtc")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("deleted_at_utc");
+
                     b.Property<string>("IdentificacionFiscalCodigoPais")
                         .HasMaxLength(2)
                         .HasColumnType("character varying(2)")
