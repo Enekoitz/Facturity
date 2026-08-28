@@ -23,6 +23,7 @@ public class IdOtroExtranjeroTests
         Assert.Equal(identificacionFiscalValor, result.Value.Valor);
         Assert.Equal(identificacionFiscalTipo, result.Value.Tipo);
         Assert.Equal(identificacionFiscalCodigoPais, result.Value.CodigoPais);
+        Assert.Null(result.Value.EsPersonaJuridica);
     }
 
     [Theory]
