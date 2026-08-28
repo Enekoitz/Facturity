@@ -17,8 +17,8 @@ internal static class ClienteErrors
         "Cliente.AliasDemasiadoLargo",
         $"El alias no puede superar los {ClienteParametros.AliasMaxLength} caracteres.");
 
-    internal static readonly Error NombreInvalido = Error.Validation(
-        "Cliente.NombreInvalido",
+    internal static readonly Error NombreVacio = Error.Validation(
+        "Cliente.NombreVacio",
         "El nombre no puede ser vacío.");
     
     internal static readonly Error NombreDemasiadoLargo = Error.Validation(
@@ -44,6 +44,10 @@ internal static class ClienteErrors
     internal static readonly Error RazonSocialDemasiadoLargo = Error.Validation(
         "Cliente.RazonSocialDemasiadoLargo",
         $"La razon social no puede superar los {ClienteParametros.RazonSocialMaxLength} caracteres.");
+    
+    internal static readonly Error NiRazonSocialNiNombreApellido = Error.Validation(
+        "Cliente.NiRazonSocialNiNombreApellido",
+        "No se ha informado la razón social ni el nombre y apellido.");
     
     internal static readonly Error NoEncontrado =
         Error.NotFound("Cliente.NoEncontrado", "El cliente especificado no existe en el sistema.");
