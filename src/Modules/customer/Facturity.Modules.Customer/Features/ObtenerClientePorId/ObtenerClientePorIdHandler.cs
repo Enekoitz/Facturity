@@ -14,7 +14,7 @@ internal sealed class ObtenerClientePorIdHandler(
         var cliente = await repo.ObtenerClientePorIdAsync(request.Id, ct);
 
         return cliente is null 
-            ? Result<ClienteDto>.Fail(ErroresCliente.NoEncontrado) 
+            ? Result<ClienteDto>.Fail(ClienteErrors.NoEncontrado) 
             : Result<ClienteDto>.Ok(cliente.ToDto());
     }
 }
