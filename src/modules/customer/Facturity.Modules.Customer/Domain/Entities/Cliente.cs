@@ -134,14 +134,18 @@ public sealed class Cliente : AggregateRoot<Guid>
                 {
                     ValidarRazonSocial(razonSocial, errores);
                 }
-                else
+                else if(!string.IsNullOrWhiteSpace(nombre))
                 {
                     ValidarNombreApellido(nombre, primerApellido, segundoApellido, errores);
+                }
+                else
+                {
+                    errores.Add(ClienteErrors.NiRazonSocialNiNombreApellido);
                 }
 
                 break;
             }
-        }
+        }   
     }
 
     private static void ValidarNombreApellido(
@@ -151,7 +155,7 @@ public sealed class Cliente : AggregateRoot<Guid>
         List<Error> errores)
     {
         if(Validate.EsVacio(nombre))
-            errores.Add(ClienteErrors.NombreInvalido);
+            errores.Add(ClienteErrors.NombreVacio);
 
         if (Validate.SuperaLongitudMaxima(nombre, ClienteParametros.NombreMaxLength))
             errores.Add(ClienteErrors.NombreDemasiadoLargo);
