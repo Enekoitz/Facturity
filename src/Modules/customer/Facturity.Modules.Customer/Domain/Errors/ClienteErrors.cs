@@ -7,8 +7,8 @@ internal static class ClienteErrors
     internal static readonly Error IdInvalido =
         Error.Validation("Cliente.IdInvalido", "El identificador del cliente no es válido.");
 
-    internal static readonly Error FechaInvalida = Error.Unexpected("Cliente.FechaInvalida",
-        "La fecha de eliminación no puede ser futura.");
+    internal static readonly Error FechaFutura = Error.Unexpected("Cliente.FechaFutura",
+        "La fecha no puede ser futura.");
 
     internal static readonly Error AliasInvalido =
         Error.Validation("Cliente.AliasInvalido", "El alias no puede ser vacío.");
