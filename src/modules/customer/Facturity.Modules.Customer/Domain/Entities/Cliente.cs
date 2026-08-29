@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using Facturity.Modules.SharedKernel.Domain;
+﻿using Facturity.Modules.SharedKernel.Domain;
 
 namespace Facturity.Modules.Customer.Domain;
 
@@ -84,12 +83,13 @@ public sealed class Cliente : AggregateRoot<Guid>
         string? primerApellido,
         string? segundoApellido,
         Domicilio? domicilio,
-        DateTime? deletedAtUtc) 
+        DateTime? deletedAtUtc,
+        TimeProvider timeProvider) 
     {
-        var clienteResult = Crear(id, tenantId, alias, identificacionFiscal, razonSocial, nombre, primerApellido,segundoApellido, domicilio);
+        var clienteResult = Crear(id, tenantId, alias, identificacionFiscal, razonSocial, nombre, primerApellido, segundoApellido, domicilio);
 
-        if (deletedAtUtc is not null && deletedAtUtc > DateTime.UtcNow)
-            return Result<Cliente>.Fail(ClienteErrors.FechaInvalida);
+        if (deletedAtUtc is not null && deletedAtUtc > timeProvider.GetUtcNow().UtcDateTime)
+            return Result<Cliente>.Fail(ClienteErrors.FechaFutura);
         
         if (clienteResult.IsFailure)
             return clienteResult;
@@ -160,13 +160,13 @@ public sealed class Cliente : AggregateRoot<Guid>
         if (Validate.SuperaLongitudMaxima(nombre, ClienteParametros.NombreMaxLength))
             errores.Add(ClienteErrors.NombreDemasiadoLargo);
 
-        if (Validate.EsVacio(primerApellido))
+        if (string.IsNullOrWhiteSpace(primerApellido))
             errores.Add(ClienteErrors.PrimerApellidoVacio);
 
         if (Validate.SuperaLongitudMaxima(primerApellido, ClienteParametros.ApellidoMaxLength))
             errores.Add(ClienteErrors.PrimerApellidoDemasiadoLargo);
 
-        if (Validate.SuperaLongitudMaxima(segundoApellido, ClienteParametros.ApellidoMaxLength))
+        if (!string.IsNullOrWhiteSpace(segundoApellido) && Validate.SuperaLongitudMaxima(segundoApellido, ClienteParametros.ApellidoMaxLength))
             errores.Add(ClienteErrors.SegundoApellidoDemasiadoLargo);
     }
 

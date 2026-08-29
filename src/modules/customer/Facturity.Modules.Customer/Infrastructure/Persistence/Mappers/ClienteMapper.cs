@@ -1,7 +1,6 @@
 ﻿using Facturity.Modules.Customer.Domain;
 using Facturity.Modules.Customer.Features;
 using Facturity.Modules.SharedKernel.Domain;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Facturity.Modules.Customer.Infrastructure;
 
@@ -42,7 +41,7 @@ public static class ClienteMapper
         var id = Guid.NewGuid();
         var clienteResult = Cliente.Reconstruir(id, tenantIdResult.Value, clienteRecord.Alias, identificacionFiscalResult.Value, 
             clienteRecord.RazonSocial,clienteRecord.Nombre, clienteRecord.PrimerApellido, clienteRecord.SegundoApellido, 
-            clienteRecord.Domicilio, clienteRecord.DeletedAtUtc);
+            clienteRecord.Domicilio, clienteRecord.DeletedAtUtc, TimeProvider.System);
 
         return clienteResult.Value;
     }
