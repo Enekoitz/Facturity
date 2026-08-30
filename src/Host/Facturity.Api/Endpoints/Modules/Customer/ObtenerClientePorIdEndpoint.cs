@@ -1,4 +1,5 @@
-﻿using Facturity.Modules.Customer.Features;
+﻿using Facturity.Api.Helpers;
+using Facturity.Modules.Customer.Features;
 using Facturity.Modules.SharedKernel.Abstractions;
 using Facturity.Modules.SharedKernel.Domain;
 
@@ -21,6 +22,8 @@ public class ObtenerClientePorIdEndpoint : IClientesEndpoint
                     : result.ToProblemDetails(httpContext);
             })
             .WithName("ObtenerClientePorId")
+            .WithSummary("Obtener cliente por Id")
+            .WithDescription("Devuelve los datos de un cliente existente.")
             .WithValidation<ObtenerClientePorIdQuery>();
     }
 }

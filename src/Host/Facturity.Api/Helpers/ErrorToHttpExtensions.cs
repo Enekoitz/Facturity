@@ -1,8 +1,8 @@
 ﻿using Facturity.Modules.SharedKernel.Domain;
 
-namespace Facturity.Api.Endpoints;
+namespace Facturity.Api.Helpers;
 
-public static class ErrorExtensions
+public static class ErrorToHttpExtensions
 {
     /// <summary>
     /// Mapear elementos del enumerador ErrorType a códigos HTTP adecuados.

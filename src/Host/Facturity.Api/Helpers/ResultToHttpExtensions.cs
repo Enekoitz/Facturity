@@ -2,9 +2,9 @@
 using Facturity.Modules.SharedKernel.Domain;
 using Facturity.Api.Helpers;
 
-namespace Facturity.Api.Endpoints;
+namespace Facturity.Api.Helpers;
 
-internal static class ResultExtensions
+internal static class ResultToHttpExtensions
 {
     /// <summary>
     /// Mapear objeto Result a ProblemDetails para la HTTP response adecuada

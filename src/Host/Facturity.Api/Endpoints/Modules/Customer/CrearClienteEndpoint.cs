@@ -1,7 +1,7 @@
-﻿using Facturity.Modules.Customer.Features;
+﻿using Facturity.Api.Helpers;
+using Facturity.Modules.Customer.Features;
 using Facturity.Modules.SharedKernel.Abstractions;
 using Facturity.Modules.SharedKernel.Domain;
-using Facturity.Api.Endpoints;
 
 namespace Facturity.Api.Endpoints.Modules.Customer;
 
@@ -21,6 +21,8 @@ public class CrearClienteEndpoint : IClientesEndpoint
                     : result.ToProblemDetails(httpContext);
             })
             .WithName("CrearCliente")
+            .WithSummary("Crear nuevo cliente")
+            .WithDescription("Crea y guarda un nuevo cliente.")
             .WithValidation<CrearClienteCommand>();
     }
 }

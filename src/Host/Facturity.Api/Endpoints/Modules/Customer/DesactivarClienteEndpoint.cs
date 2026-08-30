@@ -1,4 +1,5 @@
-﻿using Facturity.Modules.Customer.Features;
+﻿using Facturity.Api.Helpers;
+using Facturity.Modules.Customer.Features;
 using Facturity.Modules.SharedKernel.Abstractions;
 using Facturity.Modules.SharedKernel.Domain;
 
@@ -20,6 +21,8 @@ public class DesactivarClienteEndpoint : IClientesEndpoint
                     : result.ToProblemDetails(httpContext);
             })
             .WithName("DesactivarCliente")
+            .WithSummary("Desactivar cliente")
+            .WithDescription("Cambia el estado del cliente a inactivo y registra la fecha de desactivación.")
             .WithValidation<DesactivarClienteCommand>();
     }
 }

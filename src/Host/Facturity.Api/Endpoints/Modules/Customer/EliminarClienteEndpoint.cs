@@ -1,4 +1,5 @@
-﻿using Facturity.Modules.Customer.Features;
+﻿using Facturity.Api.Helpers;
+using Facturity.Modules.Customer.Features;
 using Facturity.Modules.SharedKernel.Abstractions;
 using Facturity.Modules.SharedKernel.Domain;
 
@@ -20,6 +21,8 @@ public class EliminarClienteEndpoint : IClientesEndpoint
                     : result.ToProblemDetails(httpContext);
             })
             .WithName("EliminarCliente")
+            .WithSummary("Eliminar cliente existente")
+            .WithDescription("Elimina un cliente existente.")
             .WithValidation<EliminarClienteCommandValidator>();
     }
 }

@@ -11,6 +11,8 @@ public class ListarClientesEndpoint : IClientesEndpoint
             var clientes = await handler.HandleAsync(query);
             return Results.Ok(clientes);
         })
-        .WithName("ObtenerClientes");
+        .WithName("ListarClientes")
+        .WithSummary("Listar clientes")
+        .WithDescription("Devuelve un listado de clientes con datos básicos según los filtros proporcionados.");
     }
 }
