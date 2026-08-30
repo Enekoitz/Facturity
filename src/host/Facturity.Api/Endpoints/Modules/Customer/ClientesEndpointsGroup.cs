@@ -8,10 +8,11 @@ internal static class ClientesEndpointsGroup
             .MapGroup("/api/clientes")
             .WithTags("Clientes");
 
-        new ObtenerClientePorIdEndpoint().MapEndpoint(clientesGroup);
         new CrearClienteEndpoint().MapEndpoint(clientesGroup);
+        new ObtenerClientePorIdEndpoint().MapEndpoint(clientesGroup);
         new ListarClientesEndpoint().MapEndpoint(clientesGroup);
-        new EliminarClienteEndpoint().MapEndpoint(clientesGroup);
         new DesactivarClienteEndpoint().MapEndpoint(clientesGroup);
+        new ActivarClienteEndpoint().MapEndpoint(clientesGroup);
+        new EliminarClienteEndpoint().MapEndpoint(clientesGroup);
     }
 }
