@@ -13,6 +13,7 @@ public static class DependencyInjection
         services.AddScoped<ICommandHandler<EliminarClienteCommand, Result>, EliminarClienteHandler>();
         services.AddScoped<IQueryHandler<ObtenerClientePorIdQuery, Result<ClienteDto>>, ObtenerClientePorIdHandler>();
         services.AddScoped<ICommandHandler<DesactivarClienteCommand, Result>, DesactivarClienteHandler>();
+        services.AddScoped<ICommandHandler<ActivarClienteCommand, Result>, ActivarClienteHandler>();
         return services;
     }
 }
