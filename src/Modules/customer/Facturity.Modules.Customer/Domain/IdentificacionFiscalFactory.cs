@@ -17,7 +17,8 @@ public class IdentificacionFiscalFactory : IIdentificacionFiscalFactory
                 ? Result.Ok<IIdentificacionFiscal>(nifEspanol.Value)
                 : Result.Fail<IIdentificacionFiscal>(nifEspanol.Errors);
         }
-        else if (identificacionFiscalCodigoPais is not null)
+        
+        if (identificacionFiscalCodigoPais is not null)
         {
             var idOtroExtranjero = IdOtroExtranjero.Crear(identificacionFiscalValor, identificacionFiscalTipo, identificacionFiscalCodigoPais);
             return idOtroExtranjero.IsSuccess
@@ -25,6 +26,6 @@ public class IdentificacionFiscalFactory : IIdentificacionFiscalFactory
                 : Result.Fail<IIdentificacionFiscal>(idOtroExtranjero.Errors);
         }
 
-        return Result.Fail<IIdentificacionFiscal>(Error.NotFound("IdentificacionFiscalInvalida", "No se ha detectado un tipo de identificación fiscal para los parámetros proporcionados."));
+        return Result.Fail<IIdentificacionFiscal>(IdentificacionFiscalErrors.IdentificacionFiscalInvalida);
     }
 }
