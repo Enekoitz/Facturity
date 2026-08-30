@@ -46,7 +46,7 @@ public class ClientesRepository(ClientesDbContext context, IIdentificacionFiscal
     
     public async Task<SoftDeleteResult> EliminarClienteSoftDeleteAsync(Guid id, CancellationToken ct = default)
     {
-        var deletedAtUtc = DateTime.UtcNow;
+        var deletedAtUtc = DateTimeOffset.UtcNow.UtcDateTime;
         
         var affectedRow = await context.Clientes
             .Where(c => c.Id == id && c.DeletedAtUtc == null)
@@ -61,10 +61,19 @@ public class ClientesRepository(ClientesDbContext context, IIdentificacionFiscal
             .Select(c => new { c.DeletedAtUtc })
             .SingleOrDefaultAsync(cancellationToken: ct);
         
-        //
-        
         return clienteExistente?.DeletedAtUtc != null 
             ? SoftDeleteResult.AlreadyDeleted(clienteExistente.DeletedAtUtc.Value) 
             : SoftDeleteResult.NotFound();
+    }
+    public async Task DesactivarClienteAsync(Guid id, CancellationToken ct = default)
+    {
+        DateTimeOffset? nullActivatedAtUtc = null;
+        DateTimeOffset? newDeactivatedAtUtc = DateTimeOffset.UtcNow.UtcDateTime;
+
+        await context.Clientes
+            .Where(c => c.Id == id && c.DeactivatedAtUtc == null && c.ActivatedAtUtc != null)
+            .ExecuteUpdateAsync(setter => setter
+                .SetProperty(c => c.ActivatedAtUtc, nullActivatedAtUtc)
+                .SetProperty(c => c.DeactivatedAtUtc, newDeactivatedAtUtc), cancellationToken:ct);
     }
 }
