@@ -14,4 +14,6 @@ public interface IClientesRepository
     Task<Cliente?> ObtenerClientePorIdAsync(Guid id, CancellationToken ct = default);
     
     Task<SoftDeleteResult> EliminarClienteSoftDeleteAsync(Guid id, CancellationToken ct = default);
+    
+    Task DesactivarClienteAsync(Guid id, CancellationToken ct = default);
 }

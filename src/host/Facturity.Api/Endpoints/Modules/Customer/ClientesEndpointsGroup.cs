@@ -2,7 +2,7 @@
 
 internal static class ClientesEndpointsGroup
 {
-    internal static IEndpointRouteBuilder MapClientesEndpoints(this IEndpointRouteBuilder app)
+    internal static void MapClientesEndpoints(this IEndpointRouteBuilder app)
     {
         var clientesGroup = app
             .MapGroup("/api/clientes")
@@ -12,7 +12,6 @@ internal static class ClientesEndpointsGroup
         new CrearClienteEndpoint().MapEndpoint(clientesGroup);
         new ListarClientesEndpoint().MapEndpoint(clientesGroup);
         new EliminarClienteEndpoint().MapEndpoint(clientesGroup);
-
-        return app;
+        new DesactivarClienteEndpoint().MapEndpoint(clientesGroup);
     }
 }
