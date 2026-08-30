@@ -8,7 +8,7 @@ public class EliminarClienteEndpoint : IClientesEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("/{id}", async ([AsParameters] EliminarClienteCommand command,
+        app.MapDelete("/{id}", async ([AsParameters] EliminarClienteCommand command,
                                             ICommandHandler<EliminarClienteCommand, Result> handler,
                                             HttpContext httpContext,
                                             CancellationToken ct) =>
