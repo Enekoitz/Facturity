@@ -11,7 +11,10 @@ public sealed class Cliente : AggregateRoot<Guid>
     public string? PrimerApellido { get; private set; }
     public string? SegundoApellido { get; private set; }
     public Domicilio? Domicilio { get; private set; }
-    public DateTime? DeletedAtUtc { get; private set; }
+    public DateTimeOffset? ActivatedAtUtc { get; private set; }
+    public DateTimeOffset? DeactivatedAtUtc { get; private set; }
+    public bool IsActive => ActivatedAtUtc is not null && DeactivatedAtUtc is null;
+    public DateTimeOffset? DeletedAtUtc { get; private set; }
     
     private Cliente() { }
 
@@ -83,20 +86,31 @@ public sealed class Cliente : AggregateRoot<Guid>
         string? primerApellido,
         string? segundoApellido,
         Domicilio? domicilio,
-        DateTime? deletedAtUtc,
+        DateTimeOffset? activatedAtUtc,
+        DateTimeOffset? deactivatedAtUtc,
+        DateTimeOffset? deletedAtUtc,
         TimeProvider timeProvider) 
     {
         var clienteResult = Crear(id, tenantId, alias, identificacionFiscal, razonSocial, nombre, primerApellido, segundoApellido, domicilio);
 
-        if (deletedAtUtc is not null && deletedAtUtc > timeProvider.GetUtcNow().UtcDateTime)
-            return Result<Cliente>.Fail(ClienteErrors.FechaFutura);
-        
         if (clienteResult.IsFailure)
             return clienteResult;
+        
+        if (deletedAtUtc is not null && deletedAtUtc > timeProvider.GetUtcNow().UtcDateTime)
+            return Result<Cliente>.Fail(ClienteErrors.FechaFutura);
         
         var cliente = clienteResult.Value;
         
         cliente.DeletedAtUtc = deletedAtUtc;
+
+        var errores = new List<Error>();
+        ValidarActivacionDesactivacion(activatedAtUtc, deactivatedAtUtc, errores, timeProvider);
+        
+        if(errores.Count > 0)
+            return Result.Fail<Cliente>(errores);
+       
+        cliente.ActivatedAtUtc =  activatedAtUtc;
+        cliente.DeactivatedAtUtc = deactivatedAtUtc;
             
         return Result.Ok(cliente);
     }
@@ -179,5 +193,23 @@ public sealed class Cliente : AggregateRoot<Guid>
 
         if (Validate.SuperaLongitudMaxima(razonSocial, ClienteParametros.RazonSocialMaxLength))
             errores.Add(ClienteErrors.RazonSocialDemasiadoLargo);
+    }
+
+    private static void ValidarActivacionDesactivacion(
+        DateTimeOffset? activatedAtUtc, 
+        DateTimeOffset? deactivatedAtUtc,
+        List<Error> errores,
+        TimeProvider timeProvider)
+    {
+        if (activatedAtUtc is not null && deactivatedAtUtc is not null)
+        {
+            errores.Add(ClienteErrors.ActivacionDesactivacionSimultanea);
+        }
+        else if ((activatedAtUtc is not null && activatedAtUtc > timeProvider.GetUtcNow().UtcDateTime) 
+                 || 
+                 (deactivatedAtUtc is not null && deactivatedAtUtc > timeProvider.GetUtcNow().UtcDateTime))
+        {
+            errores.Add(ClienteErrors.FechaFutura);
+        }
     }
 }

@@ -114,13 +114,21 @@ namespace Facturity.Modules.Customer.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<DateTimeOffset?>("ActivatedAtUtc")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("activated_at_utc");
+
                     b.Property<string>("Alias")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
                         .HasColumnName("alias");
 
-                    b.Property<DateTime?>("DeletedAtUtc")
+                    b.Property<DateTimeOffset?>("DeactivatedAtUtc")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("deactivated_at_utc");
+
+                    b.Property<DateTimeOffset?>("DeletedAtUtc")
                         .HasColumnType("timestamptz")
                         .HasColumnName("deleted_at_utc");
 

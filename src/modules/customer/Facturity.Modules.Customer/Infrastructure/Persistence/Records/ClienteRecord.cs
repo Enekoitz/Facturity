@@ -2,7 +2,7 @@
 
 namespace Facturity.Modules.Customer.Infrastructure;
 
-public class ClienteRecord
+public sealed class ClienteRecord
 {
     public Guid Id { get; set; }
     public string Alias { get; set; }
@@ -14,7 +14,9 @@ public class ClienteRecord
     public string? PrimerApellido { get; set; }
     public string? SegundoApellido { get; set; }
     public Domicilio? Domicilio { get; set; }
-    public DateTime? DeletedAtUtc { get; set; }
+    public DateTimeOffset? ActivatedAtUtc { get; set; }
+    public DateTimeOffset? DeactivatedAtUtc { get; set; }
+    public DateTimeOffset? DeletedAtUtc { get; set; }
 
     public ClienteRecord() { }
 }
