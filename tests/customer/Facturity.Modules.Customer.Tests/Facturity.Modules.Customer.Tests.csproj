@@ -23,6 +23,8 @@
     <ItemGroup>
       <Folder Include="Domain\Enums\" />
       <Folder Include="Domain\Common\" />
+      <Folder Include="Domain\Errors\" />
+      <Folder Include="Domain\Factories\" />
       <Folder Include="Domain\Interfaces\" />
       <Folder Include="Domain\Services\" />
     </ItemGroup>

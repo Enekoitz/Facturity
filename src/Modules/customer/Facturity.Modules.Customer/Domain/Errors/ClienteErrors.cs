@@ -7,9 +7,6 @@ internal static class ClienteErrors
     internal static readonly Error IdInvalido =
         Error.Validation("Cliente.IdInvalido", "El identificador del cliente no es válido.");
 
-    internal static readonly Error FechaFutura = Error.Unexpected("Cliente.FechaFutura",
-        "La fecha no puede ser futura.");
-
     internal static readonly Error AliasInvalido =
         Error.Validation("Cliente.AliasInvalido", "El alias no puede ser vacío.");
 
@@ -57,5 +54,11 @@ internal static class ClienteErrors
     
     internal static readonly Error EliminadoPreviamente =
         Error.NotFound("Cliente.EliminadoPreviamente", "El cliente ha sido eliminado previamente.");
+    
+    internal static readonly Error FechaFutura = Error.Unexpected("Cliente.FechaFutura",
+        "La fecha no puede ser futura.");
+    
+    internal static readonly Error ActivacionDesactivacionSimultanea = Error.Unexpected("Cliente.ActivacionDesactivacionSimultanea",
+        "No se puede informar de las fechas de activación y desactivación simultáneamente.");
     
 }

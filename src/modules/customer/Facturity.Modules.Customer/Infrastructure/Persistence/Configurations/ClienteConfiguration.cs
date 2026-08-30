@@ -62,6 +62,16 @@ public class ClienteConfiguration : IEntityTypeConfiguration<ClienteRecord>
             });
         });
         
+        builder.Property(c => c.ActivatedAtUtc)
+            .HasColumnName("activated_at_utc")
+            .HasColumnType("timestamptz")
+            .HasDefaultValueSql(null);
+        
+        builder.Property(c => c.DeactivatedAtUtc)
+            .HasColumnName("deactivated_at_utc")
+            .HasColumnType("timestamptz")
+            .HasDefaultValueSql(null);
+        
         builder.Property(c => c.DeletedAtUtc)
             .HasColumnName("deleted_at_utc")
             .HasColumnType("timestamptz")

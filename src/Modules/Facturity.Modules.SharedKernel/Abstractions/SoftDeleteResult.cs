@@ -7,15 +7,15 @@ public enum SoftDeleteResultTypes
     AlreadyDeleted
 }
 
-public sealed record SoftDeleteResult(SoftDeleteResultTypes Result, DateTime? DeletedAtUtc = null)
+public sealed record SoftDeleteResult(SoftDeleteResultTypes Result, DateTimeOffset? DeletedAtUtc = null)
 
 {
-    public static SoftDeleteResult Deleted(DateTime deletedAtUtc) =>
+    public static SoftDeleteResult Deleted(DateTimeOffset deletedAtUtc) =>
         new(SoftDeleteResultTypes.Deleted, deletedAtUtc);
 
     public static SoftDeleteResult NotFound() =>
         new(SoftDeleteResultTypes.NotFound);
 
-    public static SoftDeleteResult AlreadyDeleted(DateTime deletedAtUtc) =>
+    public static SoftDeleteResult AlreadyDeleted(DateTimeOffset deletedAtUtc) =>
         new(SoftDeleteResultTypes.AlreadyDeleted, deletedAtUtc);
 }

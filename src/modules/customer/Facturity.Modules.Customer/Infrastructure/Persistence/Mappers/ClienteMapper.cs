@@ -23,6 +23,8 @@ public static class ClienteMapper
             PrimerApellido = cliente.PrimerApellido,
             SegundoApellido = cliente.SegundoApellido,
             Domicilio = cliente.Domicilio,
+            ActivatedAtUtc = cliente.ActivatedAtUtc,
+            DeactivatedAtUtc = cliente.DeactivatedAtUtc,
             DeletedAtUtc = cliente.DeletedAtUtc,
         };
     }
@@ -39,9 +41,22 @@ public static class ClienteMapper
         var tenantIdResult = TenantId.Crear(3);
 
         var id = Guid.NewGuid();
-        var clienteResult = Cliente.Reconstruir(id, tenantIdResult.Value, clienteRecord.Alias, identificacionFiscalResult.Value, 
-            clienteRecord.RazonSocial,clienteRecord.Nombre, clienteRecord.PrimerApellido, clienteRecord.SegundoApellido, 
-            clienteRecord.Domicilio, clienteRecord.DeletedAtUtc, TimeProvider.System);
+        
+        var clienteResult = Cliente.Reconstruir(
+            id, 
+            tenantIdResult.Value, 
+            clienteRecord.Alias, 
+            identificacionFiscalResult.Value, 
+            clienteRecord.RazonSocial,
+            clienteRecord.Nombre, 
+            clienteRecord.PrimerApellido, 
+            clienteRecord.SegundoApellido,
+            clienteRecord.Domicilio, 
+            clienteRecord.ActivatedAtUtc,
+            clienteRecord.DeactivatedAtUtc, 
+            clienteRecord.DeletedAtUtc, 
+            TimeProvider.System
+        );
 
         return clienteResult.Value;
     }
