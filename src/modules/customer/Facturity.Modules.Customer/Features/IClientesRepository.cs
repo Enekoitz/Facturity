@@ -15,5 +15,7 @@ public interface IClientesRepository
     
     Task<SoftDeleteResult> EliminarClienteSoftDeleteAsync(Guid id, CancellationToken ct = default);
     
+    Task ActivarClienteAsync(Guid id, CancellationToken ct = default);
+    
     Task DesactivarClienteAsync(Guid id, CancellationToken ct = default);
 }

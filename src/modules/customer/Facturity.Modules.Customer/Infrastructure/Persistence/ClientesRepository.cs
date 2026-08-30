@@ -65,6 +65,19 @@ public class ClientesRepository(ClientesDbContext context, IIdentificacionFiscal
             ? SoftDeleteResult.AlreadyDeleted(clienteExistente.DeletedAtUtc.Value) 
             : SoftDeleteResult.NotFound();
     }
+
+    public async Task ActivarClienteAsync(Guid id, CancellationToken ct = default)
+    {
+        DateTimeOffset? newActivatedAtUtc = DateTimeOffset.UtcNow.UtcDateTime;
+        DateTimeOffset? nullDeactivatedAtUtc = null;
+
+        await context.Clientes
+            .Where(c => c.Id == id && c.DeactivatedAtUtc != null && c.ActivatedAtUtc == null)
+            .ExecuteUpdateAsync(setter => setter
+                .SetProperty(c => c.ActivatedAtUtc, newActivatedAtUtc)
+                .SetProperty(c => c.DeactivatedAtUtc, nullDeactivatedAtUtc), cancellationToken:ct);
+    }
+
     public async Task DesactivarClienteAsync(Guid id, CancellationToken ct = default)
     {
         DateTimeOffset? nullActivatedAtUtc = null;
