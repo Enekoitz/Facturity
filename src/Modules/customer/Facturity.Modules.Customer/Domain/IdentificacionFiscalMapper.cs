@@ -1,6 +1,4 @@
-﻿using Facturity.Modules.Customer.Domain;
-
-namespace Facturity.Modules.Customer.Features;
+﻿namespace Facturity.Modules.Customer.Domain;
 
 internal static class IdentificacionFiscalMapper
 {

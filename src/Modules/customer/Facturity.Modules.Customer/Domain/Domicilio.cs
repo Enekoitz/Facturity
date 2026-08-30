@@ -40,7 +40,7 @@ public sealed record Domicilio
         var errores = new List<Error>();
 
         if (string.IsNullOrWhiteSpace(direccion))
-            errores.Add(Error.Validation(nameof(DomicilioCodigosError.DireccionVacio), "La dirección no puede ser vacía."));
+            errores.Add(DomicilioErrors.DireccionVacio);
 
         municipio = string.IsNullOrWhiteSpace(municipio) ? null : municipio.Trim();
         provincia = string.IsNullOrWhiteSpace(provincia) ? null : provincia.Trim();

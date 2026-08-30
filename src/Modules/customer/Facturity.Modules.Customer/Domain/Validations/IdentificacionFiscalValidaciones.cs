@@ -20,7 +20,7 @@ public static partial class IdentificacionFiscalValidaciones
 
         if (string.IsNullOrWhiteSpace(valor))
         {
-            codigoError = nameof(NifCodigosError.NifVacio);
+            codigoError = "Cliente.IdentificacionFiscal.NifVacio";
             descripcionError = "El Nif está vacío.";
             return false;
         }
@@ -29,7 +29,7 @@ public static partial class IdentificacionFiscalValidaciones
 
         if (valor.Length != 9)
         {
-            codigoError = nameof(NifCodigosError.NifLongitudInvalida);
+            codigoError = "Cliente.IdentificacionFiscal.NifLongitudInvalida";
             descripcionError = "El Nif debe tener 9 caracteres.";
             return false;
         }
@@ -46,7 +46,7 @@ public static partial class IdentificacionFiscalValidaciones
         if (EsCif(valor))
             return EsCifValido(valor, out codigoError, out descripcionError);
 
-        codigoError = nameof(NifCodigosError.NifFormatoInvalido);
+        codigoError = "Cliente.IdentificacionFiscal.NifFormatoInvalido";
         descripcionError = "El Nif no tiene un formato o dígito de control válido";
         return false;
     }
@@ -60,21 +60,21 @@ public static partial class IdentificacionFiscalValidaciones
 
         if (string.IsNullOrWhiteSpace(nif))
         {
-            codigoError = nameof(DniCodigosError.DniVacio);
+            codigoError = "Cliente.IdentificacionFiscal.DniVacio";
             descripcionError = "El Dni es vacío.";
             return false;
         }
 
         if (!int.TryParse(nif[..8], out _))
         {
-            codigoError = nameof(DniCodigosError.DniPrimerosCaracteresInvalidos);
+            codigoError = "Cliente.IdentificacionFiscal.DniPrimerosCaracteresInvalidos";
             descripcionError = "Los 8 primeros caracteres del Dni son inválidos.";
             return false;
         }
 
         if (nif.Trim().Length != 9)
         {
-            codigoError = nameof(DniCodigosError.DniLongitudInvalida);
+            codigoError = "Cliente.IdentificacionFiscal.DniLongitudInvalida";
             descripcionError = "El Dni debe tener 9 caracteres.";
             return false;
         }
@@ -83,7 +83,7 @@ public static partial class IdentificacionFiscalValidaciones
         var regex = MyDniRegex();
         if (!regex.IsMatch(nif))
         {
-            codigoError = nameof(DniCodigosError.DniFormatoInvalido);
+            codigoError = "Cliente.IdentificacionFiscal.DniFormatoInvalido";
             descripcionError = "El Dni tiene un formato inválido.";
             return false;
         }
@@ -94,7 +94,7 @@ public static partial class IdentificacionFiscalValidaciones
 
         if (expectedLetter != actualLetter)
         {
-            codigoError = nameof(DniCodigosError.DniLetraIncorrecta);
+            codigoError = "Cliente.IdentificacionFiscal.DniLetraIncorrecta";
             descripcionError = "La letra del Dni es inválida.";
             return false;
         }
@@ -111,7 +111,7 @@ public static partial class IdentificacionFiscalValidaciones
 
         if (string.IsNullOrWhiteSpace(nie))
         {
-            codigoError = nameof(NieCodigosError.NieVacio);
+            codigoError = "Cliente.IdentificacionFiscal.NieVacio";
             descripcionError = "El Nie es vacío.";
             return false;
         }
@@ -120,7 +120,7 @@ public static partial class IdentificacionFiscalValidaciones
 
         if (nie.Length != 9)
         {
-            codigoError = nameof(NieCodigosError.NieLongitudInvalida);
+            codigoError = "Cliente.IdentificacionFiscal.NieLongitudInvalida";
             descripcionError = "El Nie debe tener 9 caracteres.";
             return false;
         }
@@ -129,7 +129,7 @@ public static partial class IdentificacionFiscalValidaciones
         var regex = MyNieRegex();
         if (!regex.IsMatch(nie))
         {
-            codigoError = nameof(NieCodigosError.NieFormatoInvalido);
+            codigoError = "Cliente.IdentificacionFiscal.NieFormatoInvalido";
             descripcionError = "El Nie tiene un formato inválido.";
             return false;
         }
@@ -146,7 +146,7 @@ public static partial class IdentificacionFiscalValidaciones
 
         if (numericPart.Length == 0)
         {
-            codigoError = nameof(NieCodigosError.NiePrimeraLetraInvalida);
+            codigoError = "Cliente.IdentificacionFiscal.NiePrimeraLetraInvalida";
             descripcionError = "La primera letra del Nie es inválida.";
             return false;
         }
@@ -156,7 +156,7 @@ public static partial class IdentificacionFiscalValidaciones
 
         if (!int.TryParse(numericPart, out int number))
         {
-            codigoError = nameof(NieCodigosError.NieFormatoInvalido);
+            codigoError = "Cliente.IdentificacionFiscal.NieFormatoInvalido";
             descripcionError = "El Nie tiene un formato inválido.";
             return false;
         }
@@ -166,7 +166,7 @@ public static partial class IdentificacionFiscalValidaciones
 
         if (expectedLetter != actualLetter)
         {
-            codigoError = nameof(NieCodigosError.NieUltimaLetraInvalida);
+            codigoError = "Cliente.IdentificacionFiscal.NieUltimaLetraInvalida";
             descripcionError = "La última letra del Nie es inválida.";
             return false;
         }
@@ -181,7 +181,7 @@ public static partial class IdentificacionFiscalValidaciones
 
         if (string.IsNullOrWhiteSpace(cif))
         {
-            codigoError = nameof(CifCodigosError.CifVacio);
+            codigoError = "Cliente.IdentificacionFiscal.CifVacio";
             descripcionError = "El Cif (o Nif de persona jurídica) es vacío.";
             return false;
         }
@@ -191,7 +191,7 @@ public static partial class IdentificacionFiscalValidaciones
         // Debe tener 9 caracteres exactos
         if (cif.Length != 9)
         {
-            codigoError = nameof(CifCodigosError.CifLongitudInvalida);
+            codigoError = "Cliente.IdentificacionFiscal.CifLongitudInvalida";
             descripcionError = "El Cif (o Nif de persona jurídica) debe tener 9 caracteres.";
             return false;
         }
@@ -203,7 +203,7 @@ public static partial class IdentificacionFiscalValidaciones
         // Letra inicial válida
         if (!"ABCDEFGHJKLMNPQRSUVW".Contains(letra))
         {
-            codigoError = nameof(CifCodigosError.CifPrimeraLetraInvalida);
+            codigoError = "Cliente.IdentificacionFiscal.CifPrimeraLetraInvalida";
             descripcionError = "La primera letra del Cif (o Nif de persona jurídica) es inválida.";
             return false;
         }
@@ -211,7 +211,7 @@ public static partial class IdentificacionFiscalValidaciones
         // Los 7 siguientes deben ser dígitos
         if (!numeros.All(char.IsDigit))
         {
-            codigoError = nameof(CifCodigosError.CifFormatoInvalido);
+            codigoError = "Cliente.IdentificacionFiscal.CifFormatoInvalido";
             descripcionError = "El Cif (o Nif de persona jurídica) tiene un formato inválido.";
             return false;
         }
@@ -260,7 +260,7 @@ public static partial class IdentificacionFiscalValidaciones
 
         if (!esValido)
         {
-            codigoError = nameof(CifCodigosError.CifFormatoInvalido);
+            codigoError = "Cliente.IdentificacionFiscal.CifFormatoInvalido";
             descripcionError = "El Cif (o Nif de persona jurídica) tiene un formato inválido.";
             return false;
         }
@@ -281,17 +281,17 @@ public static partial class IdentificacionFiscalValidaciones
 
         if (string.IsNullOrWhiteSpace(codigoPais))
         {
-            codigoError = nameof(IdOtroExtranjeroCodigosError.IdOtroExtranjeroCodigoPaisVacio);
+            codigoError = "Cliente.IdentificacionFiscal.IdOtroExtranjeroCodigoPaisVacio";
             descripcionError = "El código de país es obligatorio.";
         }
         else if (string.IsNullOrWhiteSpace(id))
         {
-            codigoError = nameof(IdOtroExtranjeroCodigosError.IdOtroExtranjeroIdVacio);
+            codigoError = "Cliente.IdentificacionFiscal.IdOtroExtranjeroIdVacio";
             descripcionError = "El identificador extranjero no puede estar vacío.";
         }
         else if (tipo == TiposIdentificacionFiscal.Nif)
         {
-            codigoError = nameof(IdOtroExtranjeroCodigosError.IdOtroExtranjeroInvalido);
+            codigoError = "Cliente.IdentificacionFiscal.IdOtroExtranjeroInvalido";
             descripcionError = "El identificador extranjero no puede ser de tipo NIF español.";
         }
         else
@@ -302,31 +302,31 @@ public static partial class IdentificacionFiscalValidaciones
             // 1. Formato ISO-2
             if (codigoPais.Length != 2)
             {
-                codigoError = nameof(IdOtroExtranjeroCodigosError.IdOtroExtranjeroCodigoPaisLongitudNoIso2);
+                codigoError = "Cliente.IdentificacionFiscal.IdOtroExtranjeroCodigoPaisLongitudNoIso2";
                 descripcionError = "El código de país debe tener exactamente 2 caracteres ISO-2.";
             }
             // 2. Prohibido utilizar 'ES' en IDOtro
             else if (codigoPais == "ES")
             {
-                codigoError = nameof(IdOtroExtranjeroCodigosError.IdOtroExtranjeroCodigoPaisEs);
+                codigoError = "Cliente.IdentificacionFiscal.IdOtroExtranjeroCodigoPaisEs";
                 descripcionError = "Para clientes españoles debe utilizarse NIF, no IDOtro.";
             }
             // 3. Longitud máxima estándar del XSD de TicketBAI (1 a 20 caracteres)
             else if (id.Length is < 1 or > 20)
             {
-                codigoError = nameof(IdOtroExtranjeroCodigosError.IdOtroExtranjeroLongitudInvalida);
+                codigoError = "Cliente.IdentificacionFiscal.IdOtroExtranjeroLongitudInvalida";
                 descripcionError = "El identificador extranjero debe tener entre 1 y 20 caracteres.";
             }
             // 4. Regla específica para NIF-IVA Intracomunitario (Tipo 02)
             else if (tipo == TiposIdentificacionFiscal.NifIvaComunitario && !EsPaisUe(codigoPais))
             {
-                codigoError = nameof(IdOtroExtranjeroCodigosError.IdOtroExtranjeroNifIvaInvalido);
+                codigoError = "Cliente.IdentificacionFiscal.IdOtroExtranjeroNifIvaInvalido";
                 descripcionError = $"El tipo NIF-IVA (02) solo es válido para países miembros de la UE. '{codigoPais}' no pertenece a la UE.";
             }
             // 5. Limpieza de caracteres prohibidos en el XML
             else if (TieneCaracteresInvalidosXml(id))
             {
-                codigoError = nameof(IdOtroExtranjeroCodigosError.IdOtroExtranjeroCaracteresInvalidos);
+                codigoError = "Cliente.IdentificacionFiscal.IdOtroExtranjeroCaracteresInvalidos";
                 descripcionError = "El identificador contiene caracteres no válidos para la firma XML.";
             }
         }
