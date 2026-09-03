@@ -6,6 +6,7 @@ using Facturity.Modules.Customer.Features;
 using Scalar.AspNetCore;
 using Serilog;
 using System.Text.Json.Serialization;
+using Facturity.Api;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
