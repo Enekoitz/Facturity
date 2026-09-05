@@ -132,6 +132,20 @@ namespace Facturity.Modules.Customer.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamptz")
                         .HasColumnName("deleted_at_utc");
 
+                    b.Property<string>("DenominacionFiscalBusqueda")
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("text")
+                        .HasColumnName("denominacion_fiscal_busqueda")
+                        .HasComputedColumnSql("CASE WHEN razon_social IS NOT NULL THEN razon_social ELSE TRIM(COALESCE(nombre, '') || ' ' || COALESCE(primer_apellido, '') || ' ' || COALESCE(segundo_apellido, '')) END", true);
+
+                    b.Property<string>("DireccionBusqueda")
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("text")
+                        .HasColumnName("direccion_busqueda")
+                        .HasComputedColumnSql("COALESCE(domicilio_direccion, '') || ', ' || COALESCE(domicilio_municipio, '') || ', ' || COALESCE(domicilio_codigo_postal, '') || ', ' || COALESCE(domicilio_provincia, '') || ', ' || COALESCE(domicilio_region, '') || ', ' || COALESCE(domicilio_pais, '')", true);
+
                     b.Property<string>("IdentificacionFiscalCodigoPais")
                         .HasMaxLength(2)
                         .HasColumnType("character varying(2)")
