@@ -61,4 +61,8 @@ internal static class ClienteErrors
     internal static readonly Error ActivacionDesactivacionSimultanea = Error.Unexpected("Cliente.ActivacionDesactivacionSimultanea",
         "No se puede informar de las fechas de activación y desactivación simultáneamente.");
     
+    internal static readonly Error TipoIdentificacionFiscalInvalido = Error.Validation(
+        "Cliente.TipoIdentificacionFiscalInvalido",
+        $"El tipo de identificación fiscal es inválido.");
+    
 }

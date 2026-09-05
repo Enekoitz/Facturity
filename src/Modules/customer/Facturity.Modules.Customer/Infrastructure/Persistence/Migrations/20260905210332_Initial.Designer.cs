@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Facturity.Modules.Customer.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ClientesDbContext))]
-    [Migration("20260826191831_Añadir campo DeletedAtUtc a la entidad ClienteRecord")]
-    partial class AñadircampoDeletedAtUtcalaentidadClienteRecord
+    [Migration("20260905210332_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -117,15 +117,37 @@ namespace Facturity.Modules.Customer.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<DateTimeOffset?>("ActivatedAtUtc")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("activated_at_utc");
+
                     b.Property<string>("Alias")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
                         .HasColumnName("alias");
 
-                    b.Property<DateTime?>("DeletedAtUtc")
+                    b.Property<DateTimeOffset?>("DeactivatedAtUtc")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("deactivated_at_utc");
+
+                    b.Property<DateTimeOffset?>("DeletedAtUtc")
                         .HasColumnType("timestamptz")
                         .HasColumnName("deleted_at_utc");
+
+                    b.Property<string>("DenominacionFiscalBusqueda")
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("text")
+                        .HasColumnName("denominacion_fiscal_busqueda")
+                        .HasComputedColumnSql("CASE WHEN razon_social IS NOT NULL THEN razon_social ELSE TRIM(COALESCE(nombre, '') || ' ' || COALESCE(primer_apellido, '') || ' ' || COALESCE(segundo_apellido, '')) END", true);
+
+                    b.Property<string>("DireccionBusqueda")
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("text")
+                        .HasColumnName("direccion_busqueda")
+                        .HasComputedColumnSql("COALESCE(domicilio_direccion, '') || ', ' || COALESCE(domicilio_municipio, '') || ', ' || COALESCE(domicilio_codigo_postal, '') || ', ' || COALESCE(domicilio_provincia, '') || ', ' || COALESCE(domicilio_region, '') || ', ' || COALESCE(domicilio_pais, '')", true);
 
                     b.Property<string>("IdentificacionFiscalCodigoPais")
                         .HasMaxLength(2)

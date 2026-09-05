@@ -1,5 +1,4 @@
 ﻿using Facturity.Modules.Customer.Domain;
-using Facturity.Modules.Customer.Features;
 using Facturity.Modules.SharedKernel.Domain;
 
 namespace Facturity.Modules.Customer.Infrastructure;
@@ -11,22 +10,20 @@ public static class ClienteMapper
 
         (string valor, TiposIdentificacionFiscal tipo, string codigoPais) = cliente.IdentificacionFiscal.ObtenerValoresComunes();
 
-        return new ClienteRecord()
-        {
-            Id = cliente.Id,
-            Alias = cliente.Alias,
-            IdentificacionFiscalValor = valor,
-            IdentificacionFiscalTipo = tipo,
-            IdentificacionFiscalCodigoPais = codigoPais,
-            RazonSocial = cliente.RazonSocial,
-            Nombre = cliente.Nombre,
-            PrimerApellido = cliente.PrimerApellido,
-            SegundoApellido = cliente.SegundoApellido,
-            Domicilio = cliente.Domicilio,
-            ActivatedAtUtc = cliente.ActivatedAtUtc,
-            DeactivatedAtUtc = cliente.DeactivatedAtUtc,
-            DeletedAtUtc = cliente.DeletedAtUtc,
-        };
+        return new ClienteRecord(
+            cliente.Id,
+            cliente.Alias,
+            valor,
+            tipo,
+            codigoPais,
+            cliente.RazonSocial,
+            cliente.Nombre,
+            cliente.PrimerApellido,
+            cliente.SegundoApellido,
+            cliente.Domicilio,
+            cliente.ActivatedAtUtc,
+            cliente.DeactivatedAtUtc,
+            cliente.DeletedAtUtc);
     }
 
     public static Cliente? FromRecord(this ClienteRecord clienteRecord, IIdentificacionFiscalFactory identificacionFiscalFactory)
