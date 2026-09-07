@@ -3,7 +3,7 @@ using Facturity.Modules.SharedKernel.Abstractions;
 
 namespace Facturity.Modules.Customer.Features;
 
-public interface IClientesRepository
+internal interface IClientesRepository
 {
     Task<bool> AliasEnUsoAsync(string alias, CancellationToken ct = default);
 
@@ -18,4 +18,6 @@ public interface IClientesRepository
     Task ActivarClienteAsync(Guid id, CancellationToken ct = default);
     
     Task DesactivarClienteAsync(Guid id, CancellationToken ct = default);
+    
+    Task<IEnumerable<Cliente>> ListarClientesAsync(ListarClientesQuery query, CancellationToken ct = default);
 }

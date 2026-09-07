@@ -35,12 +35,10 @@ public static class ClienteMapper
         if (identificacionFiscalResult.IsFailure)
             return null;
 
-        var tenantIdResult = TenantId.Crear(3);
+        var tenantIdResult = TenantId.Crear(999);
 
-        var id = Guid.NewGuid();
-        
         var clienteResult = Cliente.Reconstruir(
-            id, 
+            clienteRecord.Id, 
             tenantIdResult.Value, 
             clienteRecord.Alias, 
             identificacionFiscalResult.Value, 
@@ -57,5 +55,4 @@ public static class ClienteMapper
 
         return clienteResult.Value;
     }
-
 }

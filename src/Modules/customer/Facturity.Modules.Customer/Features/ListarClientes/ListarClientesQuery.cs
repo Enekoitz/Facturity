@@ -1,17 +1,16 @@
-﻿namespace Facturity.Modules.Customer.Features;
+﻿using Facturity.Modules.Customer.Domain;
+using Facturity.Modules.SharedKernel.Abstractions;
+using Facturity.Modules.SharedKernel.Domain;
 
-public sealed record ListarClientesQuery(
-    string Alias, 
-    string IdentificacionTipoCodigo, 
-    string IdentificacionValor, 
-    string? IdentificacionPais,         
-    string? RazonSocial, 
-    string? Nombre, 
-    string? PrimerApellido, 
-    string? SegundoApellido, 
-    string? Direccion,
-    string? CodigoPostal, 
-    string? Municipio, 
-    string? Provincia, 
-    string? Region, 
-    string? Pais);
+namespace Facturity.Modules.Customer.Features;
+
+internal sealed record ListarClientesQuery(
+    string? Alias, 
+    TiposIdentificacionFiscal? IdentificacionFiscalTipo, 
+    string? IdentificacionFiscalValor, 
+    string? IdentificacionFiscalCodigoPais,
+    string? DenominacionFiscalBusqueda,
+    string? DireccionBusqueda,
+    bool? Activo,
+    int Page,
+    int Size) : IQuery<Result<IEnumerable<Cliente>>>;
