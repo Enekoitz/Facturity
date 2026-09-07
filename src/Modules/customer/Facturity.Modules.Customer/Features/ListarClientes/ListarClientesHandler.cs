@@ -1,15 +1,15 @@
-﻿using Facturity.Modules.SharedKernel.Domain;
+﻿using Facturity.Modules.Customer.Domain;
+using Facturity.Modules.SharedKernel.Abstractions;
+using Facturity.Modules.SharedKernel.Domain;
 
 namespace Facturity.Modules.Customer.Features;
 
-public sealed class ListarClientesHandler(IClientesRepository repoCliente)
+internal sealed class ListarClientesHandler(IClientesRepository repo) 
+    : IQueryHandler<ListarClientesQuery, Result<IEnumerable<Cliente>>>
 {
-    private readonly IClientesRepository _repoCliente = repoCliente;
-
-    public async Task<Result<Guid>> HandleAsync(ListarClientesQuery query)
+    public async Task<Result<IEnumerable<Cliente>>> HandleAsync(ListarClientesQuery query, CancellationToken ct = default)
     {
-        // 1. Hay que listar los clientes de un tenant concreto siempre.
-        // 
-        throw new NotImplementedException();
+        var clientes = await repo.ListarClientesAsync(query, ct);
+        return Result.Ok(clientes);
     }
 }

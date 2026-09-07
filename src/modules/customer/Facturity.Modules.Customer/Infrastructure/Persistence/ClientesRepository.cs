@@ -2,11 +2,10 @@
 using Facturity.Modules.Customer.Domain;
 using Facturity.Modules.Customer.Features;
 using Facturity.Modules.SharedKernel.Abstractions;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Facturity.Modules.Customer.Infrastructure;
 
-public class ClientesRepository(ClientesDbContext context, IIdentificacionFiscalFactory identificacionFiscalFactory) 
+internal  class ClientesRepository(ClientesDbContext context, IIdentificacionFiscalFactory identificacionFiscalFactory) 
     : IClientesRepository
 {
 
@@ -88,5 +87,41 @@ public class ClientesRepository(ClientesDbContext context, IIdentificacionFiscal
             .ExecuteUpdateAsync(setter => setter
                 .SetProperty(c => c.ActivatedAtUtc, nullActivatedAtUtc)
                 .SetProperty(c => c.DeactivatedAtUtc, newDeactivatedAtUtc), cancellationToken:ct);
+    }
+    
+    public async Task<IEnumerable<Cliente>> ListarClientesAsync(ListarClientesQuery query, CancellationToken ct = default)
+    {
+        int initPosition = (query.Page - 1) * query.Size;
+
+        var queryable = context.Clientes.AsNoTracking().AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(query.Alias))
+            queryable = queryable.Where(c => EF.Functions.Like(c.Alias.ToUpper(), $"%{query.Alias.ToUpper()}%") );
+        
+        if(query.IdentificacionFiscalTipo != null)
+            queryable = queryable.Where(c => c.IdentificacionFiscalTipo == query.IdentificacionFiscalTipo);
+        
+        if (!string.IsNullOrWhiteSpace(query.IdentificacionFiscalValor))
+            queryable = queryable.Where(c =>  EF.Functions.Like(c.IdentificacionFiscalValor.ToUpper(), $"%{query.IdentificacionFiscalValor.ToUpper()}%") );
+
+        if (!string.IsNullOrWhiteSpace(query.IdentificacionFiscalCodigoPais))
+            queryable = queryable.Where(c => EF.Functions.Like(c.IdentificacionFiscalCodigoPais.ToUpper(), $"%{query.IdentificacionFiscalCodigoPais.ToUpper()}%") );
+        
+        if (!string.IsNullOrWhiteSpace(query.DenominacionFiscalBusqueda))
+            queryable = queryable.Where(c => EF.Functions.Like(c.DenominacionFiscalBusqueda.ToUpper(), $"%{query.DenominacionFiscalBusqueda.ToUpper()}%")  );
+        
+        if (!string.IsNullOrWhiteSpace(query.DireccionBusqueda))
+            queryable = queryable.Where(c => EF.Functions.Like(c.DireccionBusqueda.ToUpper(), $"%{query.DireccionBusqueda.ToUpper()}%")  );
+
+        if(query.Activo.HasValue)
+            queryable = queryable.Where(c =>  query.Activo == true ? c.ActivatedAtUtc != null : c.DeactivatedAtUtc != null);
+        
+        var clienteRecords = await queryable              
+            .OrderBy(c => c.Id)
+            .Skip(initPosition)
+            .Take(query.Size)
+            .ToListAsync(ct);
+        
+        return clienteRecords.Select(c => c.FromRecord(identificacionFiscalFactory)).ToList()!;
     }
 }
