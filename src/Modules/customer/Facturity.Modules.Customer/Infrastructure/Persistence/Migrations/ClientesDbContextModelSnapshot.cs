@@ -181,6 +181,18 @@ namespace Facturity.Modules.Customer.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(50)")
                         .HasColumnName("segundo_apellido");
 
+                    b.Property<DateTimeOffset>("created_at_utc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("created_by")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("updated_at_utc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("updated_by")
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.HasIndex("IdentificacionFiscalTipo");

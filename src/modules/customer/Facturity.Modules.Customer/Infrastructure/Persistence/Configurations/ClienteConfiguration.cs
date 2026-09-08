@@ -106,5 +106,10 @@ public class ClienteConfiguration : IEntityTypeConfiguration<ClienteRecord>
                     colNameNombre, colNamePrimerApellido, colNameSegundoApellido)}) END",
                 stored: true)
             .ValueGeneratedOnAddOrUpdate();  
+        
+        builder.Property<DateTimeOffset>("created_at_utc").HasColumnType("timestamptz").IsRequired();
+        builder.Property<DateTimeOffset?>("updated_at_utc").HasColumnType("timestamptz");
+        builder.Property<string>("created_by").HasMaxLength(20).IsRequired();
+        builder.Property<string>("updated_by").HasMaxLength(20);
     }
 }
