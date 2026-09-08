@@ -38,7 +38,7 @@ try
 
     builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
     builder.Services.AddProblemDetails();
-
+    builder.Services.AddHttpContextAccessor();
     builder.Services.AddOpenApi("FacturityAPI-v1");
 
     var connectionString = builder.Configuration.GetConnectionString("FacturityDbConnectionString")
