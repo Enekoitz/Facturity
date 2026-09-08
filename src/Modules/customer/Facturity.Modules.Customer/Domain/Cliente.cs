@@ -27,7 +27,8 @@ public sealed class Cliente : AggregateRoot<Guid>
         string? nombre,
         string? primerApellido,
         string? segundoApellido,
-        Domicilio? domicilio) : base(id, tenantId)
+        Domicilio? domicilio,
+        DateTimeOffset activatedAtUtc) : base(id, tenantId)
     {
         Alias = alias;
         IdentificacionFiscal = identificacionFiscal;
@@ -36,6 +37,7 @@ public sealed class Cliente : AggregateRoot<Guid>
         PrimerApellido = primerApellido;
         SegundoApellido = segundoApellido;
         Domicilio = domicilio;
+        ActivatedAtUtc = activatedAtUtc;
     }
 
     public static Result<Cliente> Crear(
@@ -64,6 +66,8 @@ public sealed class Cliente : AggregateRoot<Guid>
 
         if (errores.Count > 0)
             return Result.Fail<Cliente>(errores);
+        
+        var activatedAtUtc = DateTimeOffset.UtcNow;
 
         return Result.Ok(new Cliente(id,
                                     tenantId,
@@ -73,7 +77,8 @@ public sealed class Cliente : AggregateRoot<Guid>
                                     nombre,
                                     primerApellido,
                                     segundoApellido,
-                                    domicilio));
+                                    domicilio,
+                                    activatedAtUtc));
     }
     
     public static Result<Cliente> Reconstruir(
