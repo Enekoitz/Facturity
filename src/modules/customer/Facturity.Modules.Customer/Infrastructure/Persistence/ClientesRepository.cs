@@ -9,26 +9,49 @@ internal  class ClientesRepository(ClientesDbContext context, IIdentificacionFis
     : IClientesRepository
 {
 
-    public async Task<bool> AliasEnUsoAsync(string alias, CancellationToken ct = default)
+    public async Task<bool> AliasEnUsoAsync(
+        string alias, 
+        CancellationToken ct = default)
     {
-        var resultado = await context.Clientes.AnyAsync(c => c.Alias == alias, cancellationToken: ct);
-        return resultado;
+        return await context.Clientes
+                                            .AnyAsync(c => c.Alias == alias 
+                                                           && c.DeletedAtUtc == null, cancellationToken: ct);
     }
 
-    public async Task<bool> IdentificacionFiscalEnUsoAsync(string valor, TiposIdentificacionFiscal tipo, string? codigoPais, CancellationToken ct = default)
+    public async Task<bool> IdentificacionFiscalEnUsoAsync(
+        string valor, 
+        TiposIdentificacionFiscal tipo, 
+        string? codigoPais, 
+        CancellationToken ct = default)
     {
-        var resultado = await context.Clientes.AnyAsync(c => c.IdentificacionFiscalValor == valor && c.IdentificacionFiscalTipo == tipo && c.IdentificacionFiscalCodigoPais == codigoPais, cancellationToken: ct);
-        return resultado;
+        return await context.Clientes
+                                            .AnyAsync(c => c.IdentificacionFiscalValor == valor 
+                                                           && c.IdentificacionFiscalTipo == tipo 
+                                                           && c.IdentificacionFiscalCodigoPais == codigoPais
+                                                           && c.DeletedAtUtc == null, cancellationToken: ct);
     }
 
-    public async Task GuardarNuevoClienteAsync(Cliente cliente, CancellationToken ct = default)
+    public async Task GuardarAsync(
+        Cliente cliente, 
+        CancellationToken ct = default)
     {
         var clienteRecord = cliente.ToRecord();
         await context.Clientes.AddAsync(clienteRecord, ct);
         await context.SaveChangesAsync(ct);
     }
+    
+    public async Task ActualizarAsync(
+        Cliente cliente, 
+        CancellationToken ct = default)
+    {
+        var clienteRecord = cliente.ToRecord();
+        context.Clientes.Update(clienteRecord);
+        await context.SaveChangesAsync(ct);
+    }
 
-    public async Task<Cliente?> ObtenerClientePorIdAsync(Guid id, CancellationToken ct = default)
+    public async Task<Cliente?> ObtenerClientePorIdAsync(
+        Guid id, 
+        CancellationToken ct = default)
     {
         var clienteRecord = await context.Clientes
             .AsNoTracking()
@@ -43,12 +66,15 @@ internal  class ClientesRepository(ClientesDbContext context, IIdentificacionFis
         return cliente;
     }
     
-    public async Task<SoftDeleteResult> EliminarClienteSoftDeleteAsync(Guid id, CancellationToken ct = default)
+    public async Task<SoftDeleteResult> EliminarClienteSoftDeleteAsync(
+        Guid id, 
+        CancellationToken ct = default)
     {
         var deletedAtUtc = DateTimeOffset.UtcNow.UtcDateTime;
         
         var affectedRow = await context.Clientes
-            .Where(c => c.Id == id && c.DeletedAtUtc == null)
+            .Where(c => c.Id == id 
+                        && c.DeletedAtUtc == null)
             .ExecuteUpdateAsync(setter => setter
                 .SetProperty(c => c.DeletedAtUtc, deletedAtUtc), cancellationToken: ct);
         
@@ -65,19 +91,25 @@ internal  class ClientesRepository(ClientesDbContext context, IIdentificacionFis
             : SoftDeleteResult.NotFound();
     }
 
-    public async Task ActivarClienteAsync(Guid id, CancellationToken ct = default)
+    public async Task ActivarClienteAsync(
+        Guid id, 
+        CancellationToken ct = default)
     {
         DateTimeOffset? newActivatedAtUtc = DateTimeOffset.UtcNow.UtcDateTime;
         DateTimeOffset? nullDeactivatedAtUtc = null;
 
         await context.Clientes
-            .Where(c => c.Id == id && c.DeactivatedAtUtc != null && c.ActivatedAtUtc == null)
+            .Where(c => c.Id == id 
+                        && c.DeactivatedAtUtc != null 
+                        && c.ActivatedAtUtc == null)
             .ExecuteUpdateAsync(setter => setter
                 .SetProperty(c => c.ActivatedAtUtc, newActivatedAtUtc)
                 .SetProperty(c => c.DeactivatedAtUtc, nullDeactivatedAtUtc), cancellationToken:ct);
     }
 
-    public async Task DesactivarClienteAsync(Guid id, CancellationToken ct = default)
+    public async Task DesactivarClienteAsync(
+        Guid id, 
+        CancellationToken ct = default)
     {
         DateTimeOffset? nullActivatedAtUtc = null;
         DateTimeOffset? newDeactivatedAtUtc = DateTimeOffset.UtcNow.UtcDateTime;
@@ -89,32 +121,42 @@ internal  class ClientesRepository(ClientesDbContext context, IIdentificacionFis
                 .SetProperty(c => c.DeactivatedAtUtc, newDeactivatedAtUtc), cancellationToken:ct);
     }
     
-    public async Task<IEnumerable<Cliente>> ListarClientesAsync(ListarClientesQuery query, CancellationToken ct = default)
+    public async Task<IEnumerable<Cliente>> ListarClientesAsync(
+        ListarClientesQuery query, 
+        CancellationToken ct = default)
     {
         int initPosition = (query.Page - 1) * query.Size;
 
         var queryable = context.Clientes.AsNoTracking().AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(query.Alias))
-            queryable = queryable.Where(c => EF.Functions.Like(c.Alias.ToUpper(), $"%{query.Alias.ToUpper()}%") );
+            queryable = queryable
+                .Where(c => EF.Functions.Like(c.Alias.ToUpper(), $"%{query.Alias.ToUpper()}%") );
         
         if(query.IdentificacionFiscalTipo != null)
-            queryable = queryable.Where(c => c.IdentificacionFiscalTipo == query.IdentificacionFiscalTipo);
+            queryable = queryable
+                .Where(c => c.IdentificacionFiscalTipo == query.IdentificacionFiscalTipo);
         
         if (!string.IsNullOrWhiteSpace(query.IdentificacionFiscalValor))
-            queryable = queryable.Where(c =>  EF.Functions.Like(c.IdentificacionFiscalValor.ToUpper(), $"%{query.IdentificacionFiscalValor.ToUpper()}%") );
-
+            queryable = queryable
+                .Where(c =>  EF.Functions.Like(c.IdentificacionFiscalValor.ToUpper(), 
+                                                    $"%{query.IdentificacionFiscalValor.ToUpper()}%") );
+            
         if (!string.IsNullOrWhiteSpace(query.IdentificacionFiscalCodigoPais))
-            queryable = queryable.Where(c => EF.Functions.Like(c.IdentificacionFiscalCodigoPais.ToUpper(), $"%{query.IdentificacionFiscalCodigoPais.ToUpper()}%") );
+            queryable = queryable
+                .Where(c => EF.Functions.Like(c.IdentificacionFiscalCodigoPais.ToUpper(), $"%{query.IdentificacionFiscalCodigoPais.ToUpper()}%") );
         
         if (!string.IsNullOrWhiteSpace(query.DenominacionFiscalBusqueda))
-            queryable = queryable.Where(c => EF.Functions.Like(c.DenominacionFiscalBusqueda.ToUpper(), $"%{query.DenominacionFiscalBusqueda.ToUpper()}%")  );
+            queryable = queryable
+                .Where(c => EF.Functions.Like(c.DenominacionFiscalBusqueda.ToUpper(), $"%{query.DenominacionFiscalBusqueda.ToUpper()}%")  );
         
         if (!string.IsNullOrWhiteSpace(query.DireccionBusqueda))
-            queryable = queryable.Where(c => EF.Functions.Like(c.DireccionBusqueda.ToUpper(), $"%{query.DireccionBusqueda.ToUpper()}%")  );
+            queryable = queryable
+                .Where(c => EF.Functions.Like(c.DireccionBusqueda.ToUpper(), $"%{query.DireccionBusqueda.ToUpper()}%")  );
 
         if(query.Activo.HasValue)
-            queryable = queryable.Where(c =>  query.Activo == true ? c.ActivatedAtUtc != null : c.DeactivatedAtUtc != null);
+            queryable = queryable
+                .Where(c =>  query.Activo == true ? c.ActivatedAtUtc != null : c.DeactivatedAtUtc != null);
         
         var clienteRecords = await queryable              
             .OrderBy(c => c.Id)
@@ -122,6 +164,7 @@ internal  class ClientesRepository(ClientesDbContext context, IIdentificacionFis
             .Take(query.Size)
             .ToListAsync(ct);
         
-        return clienteRecords.Select(c => c.FromRecord(identificacionFiscalFactory)).ToList()!;
+        return clienteRecords
+            .Select(c => c.FromRecord(identificacionFiscalFactory)).ToList()!;
     }
 }

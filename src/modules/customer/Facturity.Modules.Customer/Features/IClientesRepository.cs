@@ -9,7 +9,8 @@ internal interface IClientesRepository
 
     Task<bool> IdentificacionFiscalEnUsoAsync(string valor, TiposIdentificacionFiscal tipo, string? codigoPais, CancellationToken ct = default);
 
-    Task GuardarNuevoClienteAsync(Cliente cliente, CancellationToken ct = default);
+    Task GuardarAsync(Cliente cliente, CancellationToken ct = default);
+    Task ActualizarAsync(Cliente cliente, CancellationToken ct = default);
 
     Task<Cliente?> ObtenerClientePorIdAsync(Guid id, CancellationToken ct = default);
     

@@ -9,6 +9,7 @@ internal static class ClientesEndpointsGroup
             .WithTags("Clientes");
 
         new CrearClienteEndpoint().MapEndpoint(clientesGroup);
+        new ActualizarClienteEndpoint().MapEndpoint(clientesGroup);
         new ObtenerClientePorIdEndpoint().MapEndpoint(clientesGroup);
         new ListarClientesEndpoint().MapEndpoint(clientesGroup);
         new DesactivarClienteEndpoint().MapEndpoint(clientesGroup);
