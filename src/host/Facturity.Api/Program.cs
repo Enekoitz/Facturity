@@ -35,7 +35,6 @@ try
         });
     
     builder.Services.AddValidatorsFromAssemblyContaining<CrearClienteCommand>();
-
     builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
     builder.Services.AddProblemDetails();
     builder.Services.AddHttpContextAccessor();
