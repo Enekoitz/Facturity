@@ -21,17 +21,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Infrastructure\Persistence\Migrations\" />
+	  	<Folder Include="Infrastructure\Persistence\Migrations\" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\Facturity.Modules.SharedKernel\Facturity.Modules.SharedKernel.csproj" />
+	  	<ProjectReference Include="..\..\Facturity.Modules.SharedKernel\Facturity.Modules.SharedKernel.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Reference Include="Microsoft.AspNetCore.Http.Abstractions">
-	    <HintPath>..\..\..\..\..\..\Program Files\dotnet\shared\Microsoft.AspNetCore.App\10.0.10\Microsoft.AspNetCore.Http.Abstractions.dll</HintPath>
-	  </Reference>
+  	  	<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	</ItemGroup>
 	
 </Project>
