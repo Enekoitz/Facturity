@@ -62,7 +62,13 @@ public sealed class Cliente : AggregateRoot<Guid>
 
         ValidarAlias(alias, errores);
 
-        ValidarNombresApellidosRazonSocial(identificacionFiscal.EsPersonaJuridica, razonSocial, nombre, primerApellido, segundoApellido, errores);
+        var tipoDenominacionFiscal = ObtenerTipoDenominacionFiscal(
+            identificacionFiscal.EsPersonaJuridica, 
+            razonSocial,
+            nombre);
+
+        ValidarNombresApellidosRazonSocial(tipoDenominacionFiscal, razonSocial, 
+            nombre, primerApellido, segundoApellido, errores);
 
         if (errores.Count > 0)
             return Result.Fail<Cliente>(errores);
@@ -131,40 +137,47 @@ public sealed class Cliente : AggregateRoot<Guid>
             errores.Add(ClienteErrors.AliasDemasiadoLargo);
     }
 
-    private static void ValidarNombresApellidosRazonSocial(
+    internal static TipoDenominacionFiscal? ObtenerTipoDenominacionFiscal(
         bool? esPersonaJuridica,
+        string? razonSocial,
+        string? nombre)
+    {
+        return (esPersonaJuridica, razonSocial, nombre) switch
+        {
+            (false, _, _) => TipoDenominacionFiscal.NombreApellidos,
+            (true, _, _)  => TipoDenominacionFiscal.RazonSocial,
+    
+            var (_, r, _) when !string.IsNullOrWhiteSpace(r) => TipoDenominacionFiscal.RazonSocial,
+            var (_, _, n) when !string.IsNullOrWhiteSpace(n) => TipoDenominacionFiscal.NombreApellidos,
+    
+            _ => null
+        };
+    }
+
+    private static void ValidarNombresApellidosRazonSocial(
+        TipoDenominacionFiscal? tipoDenominacionFiscal,
         string? razonSocial,
         string? nombre,
         string? primerApellido,
         string? segundoApellido,
-        List<Error> errores)
+        List<Error> errores
+        )
     {
-        switch (esPersonaJuridica)
+        switch (tipoDenominacionFiscal, razonSocial, nombre)
         {
-            case false:
-                ValidarNombreApellido(nombre, primerApellido, segundoApellido, errores);
-                break;
-            case true:
+            case (TipoDenominacionFiscal.RazonSocial, _, _):
                 ValidarRazonSocial(razonSocial, errores);
                 break;
-            default:
-            {
-                if (!string.IsNullOrWhiteSpace(razonSocial))
-                {
-                    ValidarRazonSocial(razonSocial, errores);
-                }
-                else if(!string.IsNullOrWhiteSpace(nombre))
-                {
-                    ValidarNombreApellido(nombre, primerApellido, segundoApellido, errores);
-                }
-                else
-                {
-                    errores.Add(ClienteErrors.NiRazonSocialNiNombreApellido);
-                }
 
+            case (TipoDenominacionFiscal.NombreApellidos, _, _):
+                ValidarNombreApellido(nombre, primerApellido, segundoApellido, errores);
                 break;
-            }
-        }   
+
+            case (null, _, _):
+            default:
+                errores.Add(ClienteErrors.DenominacionFiscalInvalida);
+                break;
+        }
     }
 
     private static void ValidarNombreApellido(
