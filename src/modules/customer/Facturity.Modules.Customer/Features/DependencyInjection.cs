@@ -10,6 +10,7 @@ public static class DependencyInjection
     public static IServiceCollection AddClientesFeatures(this IServiceCollection services)
     {
         services.AddScoped<ICommandHandler<CrearClienteCommand, Result<Guid>>, CrearClienteHandler>();
+        services.AddScoped<ICommandHandler<ActualizarClienteCommand, Result>, ActualizarClienteHandler>();
         services.AddScoped<IQueryHandler<ListarClientesQuery, Result<IEnumerable<Cliente>>>, ListarClientesHandler>();
         services.AddScoped<ICommandHandler<EliminarClienteCommand, Result>, EliminarClienteHandler>();
         services.AddScoped<IQueryHandler<ObtenerClientePorIdQuery, Result<ClienteDto>>, ObtenerClientePorIdHandler>();

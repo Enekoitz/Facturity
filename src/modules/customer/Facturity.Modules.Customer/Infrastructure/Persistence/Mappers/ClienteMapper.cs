@@ -53,6 +53,8 @@ public static class ClienteMapper
             TimeProvider.System
         );
 
-        return clienteResult.Value;
+        return clienteResult.IsFailure 
+            ? null 
+            : clienteResult.Value;
     }
 }

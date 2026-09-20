@@ -126,6 +126,40 @@ public sealed class Cliente : AggregateRoot<Guid>
         return Result.Ok(cliente);
     }
 
+    public Result Actualizar(
+        IIdentificacionFiscal? identificacionFiscal,
+        string? razonSocial,
+        string? nombre,
+        string? primerApellido,
+        string? segundoApellido,
+        Domicilio? domicilio)
+    {
+        var errores = new List<Error>();
+        
+        var tipoDenominacionFiscal = ObtenerTipoDenominacionFiscal(
+            identificacionFiscal.EsPersonaJuridica, 
+            razonSocial,
+            nombre);
+
+        ValidarNombresApellidosRazonSocial(tipoDenominacionFiscal, razonSocial, 
+            nombre, primerApellido, segundoApellido, errores);
+
+        if (errores.Count > 0)
+            Result.Fail(errores);
+
+        (RazonSocial, Nombre, PrimerApellido, SegundoApellido) = tipoDenominacionFiscal switch
+        {
+            TipoDenominacionFiscal.RazonSocial => (razonSocial, (string?)null, (string?)null, (string?)null),
+            TipoDenominacionFiscal.NombreApellidos => ((string?)null, nombre, primerApellido, segundoApellido),
+            _ => (null, null, null, null)
+        };
+            
+        IdentificacionFiscal = identificacionFiscal;
+        Domicilio = domicilio;
+        
+        return Result.Ok();
+    }
+
     private static void ValidarAlias(
         string alias,
         List<Error> errores)
