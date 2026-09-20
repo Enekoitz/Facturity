@@ -2,9 +2,9 @@
 
 public readonly record struct TenantId
 {
-    public int Value { get; }
+    public long Value { get; }
 
-    private TenantId(int value)
+    private TenantId(long value)
     {
         if (value <= 0)
             throw new ArgumentException("El TenantId debe ser un entero positivo.", nameof(value));
@@ -12,9 +12,9 @@ public readonly record struct TenantId
         Value = value;
     }
 
-    public static TenantId From(int value) => new(value);
+    public static TenantId From(long value) => new(value);
 
-    public static Result<TenantId> Crear(int value)
+    public static Result<TenantId> Crear(long value)
     {
         if (value <= 0)
             return Result.Fail<TenantId>(Error.Validation("TenantIdInvalido", "TenantId inválido."));
@@ -24,7 +24,7 @@ public readonly record struct TenantId
 
     public static TenantId Parse(string value)
     {
-        if (!int.TryParse(value, out int id))
+        if (!long.TryParse(value, out var id))
             throw new InvalidOperationException("TenantId inválido.");
 
         return new TenantId(id);
@@ -32,5 +32,5 @@ public readonly record struct TenantId
 
     public override string ToString() => Value.ToString();
 
-    public static explicit operator int(TenantId tenantId) => tenantId.Value;
+    public static explicit operator long(TenantId tenantId) => tenantId.Value;
 }
