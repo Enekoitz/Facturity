@@ -19,7 +19,11 @@
     <Project Path="src/modules/identity/Facturity.Modules.Identity/Facturity.Modules.Identity.csproj" />
   </Folder>
   <Folder Name="/Solution Items/">
+    <File Path=".dockerignore" />
+    <File Path=".github/workflows/ci.yaml" />
     <File Path=".gitignore" />
+    <File Path="compose.yaml" />
+    <File Path="Facturity.slnx" />
     <File Path="README.md" />
     <File Path="ROADMAP.md" />
   </Folder>
