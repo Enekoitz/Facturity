@@ -1,9 +1,4 @@
 <Solution>
-  <Folder Name="/Elementos de la solución/">
-    <File Path=".gitignore" />
-    <File Path="README.md" />
-    <File Path="ROADMAP.md" />
-  </Folder>
   <Folder Name="/Host/">
     <Project Path="src/host/Facturity.Api/Facturity.Api.csproj" />
   </Folder>
@@ -23,7 +18,11 @@
   <Folder Name="/Modules/Identity/">
     <Project Path="src/modules/identity/Facturity.Modules.Identity/Facturity.Modules.Identity.csproj" />
   </Folder>
-  <Folder Name="/Solution Items/" />
+  <Folder Name="/Solution Items/">
+    <File Path=".gitignore" />
+    <File Path="README.md" />
+    <File Path="ROADMAP.md" />
+  </Folder>
   <Folder Name="/Tests/" />
   <Folder Name="/Tests/Audit/" />
   <Folder Name="/Tests/Customer/">
