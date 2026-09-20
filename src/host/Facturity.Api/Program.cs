@@ -14,7 +14,6 @@ using Microsoft.AspNetCore.Mvc;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console(outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] [{Application}/{MachineName}] [CorrelationId: {CorrelationId}] {Message:lj}{NewLine}{Exception}")
-    .WriteTo.Seq("http://localhost:5341", apiKey: "[REDACTED]")
     .Enrich.FromLogContext()
     .CreateBootstrapLogger();
 
@@ -56,8 +55,6 @@ try
     app.UseCorrelationId();
     app.UseExceptionHandler();
 
-    Log.Information("Middlewares personalizados para el tracking de peticiones HTTP con CorrelationId y manejador de excepciones global implementado en la aplicación.");
-    
     if (app.Environment.IsDevelopment())
     {
         app.MapOpenApi();

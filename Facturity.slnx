@@ -23,6 +23,7 @@
   <Folder Name="/Modules/Identity/">
     <Project Path="src/modules/identity/Facturity.Modules.Identity/Facturity.Modules.Identity.csproj" />
   </Folder>
+  <Folder Name="/Solution Items/" />
   <Folder Name="/Tests/" />
   <Folder Name="/Tests/Audit/" />
   <Folder Name="/Tests/Customer/">
