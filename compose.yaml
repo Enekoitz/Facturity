@@ -34,7 +34,7 @@ services:
   backend-api:
     build:
       context: .
-      dockerfile: src/host/Facturity.Api/Dockerfile # Ajusta la ruta a tu Dockerfile
+      dockerfile: src/Host/Facturity.Api/Dockerfile # Ajusta la ruta a tu Dockerfile
     container_name: dotnet_api
     ports:
       - "8080:8080" # Exponemos el puerto de la API al exterior

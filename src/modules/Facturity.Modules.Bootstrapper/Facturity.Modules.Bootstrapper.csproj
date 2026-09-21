@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\customer\Facturity.Modules.Customer\Facturity.Modules.Customer.csproj" />
+    <ProjectReference Include="..\Customer\Facturity.Modules.Customer\Facturity.Modules.Customer.csproj" />
   </ItemGroup>
 
 </Project>

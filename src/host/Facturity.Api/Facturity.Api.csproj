@@ -19,7 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\modules\Facturity.Modules.Bootstrapper\Facturity.Modules.Bootstrapper.csproj" />
+        <ProjectReference Include="..\..\Modules\Facturity.Modules.Bootstrapper\Facturity.Modules.Bootstrapper.csproj" />
     </ItemGroup>
 
     <ItemGroup>

@@ -30,7 +30,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\src\modules\customer\Facturity.Modules.Customer\Facturity.Modules.Customer.csproj" />
+      <ProjectReference Include="..\..\..\src\Modules\Customer\Facturity.Modules.Customer\Facturity.Modules.Customer.csproj" />
     </ItemGroup>
 
 </Project>
