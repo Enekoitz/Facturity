@@ -7,13 +7,13 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/host/Facturity.Api/Facturity.Api.csproj", "src/host/Facturity.Api/"]
-COPY ["src/modules/Facturity.Modules.Bootstrapper/Facturity.Modules.Bootstrapper.csproj", "src/modules/Facturity.Modules.Bootstrapper/"]
-COPY ["src/modules/Facturity.Modules.SharedKernel/Facturity.Modules.SharedKernel.csproj", "src/modules/Facturity.Modules.SharedKernel/"]
-COPY ["src/modules/customer/Facturity.Modules.Customer/Facturity.Modules.Customer.csproj", "src/modules/customer/Facturity.Modules.Customer/"]
-RUN dotnet restore "src/host/Facturity.Api/Facturity.Api.csproj"
+COPY ["src/Host/Facturity.Api/Facturity.Api.csproj", "src/Host/Facturity.Api/"]
+COPY ["src/Modules/Facturity.Modules.Bootstrapper/Facturity.Modules.Bootstrapper.csproj", "src/Modules/Facturity.Modules.Bootstrapper/"]
+COPY ["src/Modules/Facturity.Modules.SharedKernel/Facturity.Modules.SharedKernel.csproj", "src/Modules/Facturity.Modules.SharedKernel/"]
+COPY ["src/Modules/Customer/Facturity.Modules.Customer/Facturity.Modules.Customer.csproj", "src/Modules/Customer/Facturity.Modules.Customer/"]
+RUN dotnet restore "src/Host/Facturity.Api/Facturity.Api.csproj"
 COPY . .
-WORKDIR "/src/src/host/Facturity.Api"
+WORKDIR "/src/src/Host/Facturity.Api"
 RUN dotnet build "./Facturity.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
