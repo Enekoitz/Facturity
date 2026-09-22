@@ -435,3 +435,7 @@ FodyWeavers.xsd
 **/.obsidian/
 !**/.obsidian/plugins/
 !**/.obsidian/themes/
+
+# Heavy resources
+/resources/
+/docs/_gitignore
