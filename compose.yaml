@@ -1,0 +1,54 @@
+﻿name: Facturity
+
+services:
+  # --------------------------------------------------------
+  # 1. Base de Datos: PostgreSQL
+  # --------------------------------------------------------
+  postgres-db:
+    image: postgres:16-alpine
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: rootroot
+      POSTGRES_DB: facturity
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Persistencia de datos
+
+  # --------------------------------------------------------
+  # 2. Sistema de Logs: Seq
+  # --------------------------------------------------------
+  seq:
+    image: datalust/seq:latest
+    container_name: seq_logs
+    environment:
+      ACCEPT_EULA: Y
+      SEQ_FIRSTRUN_NOAUTHENTICATION: 
+    ports:
+      - "5341:80" # Panel Web de Seq accesible en http://localhost:5341
+
+  # --------------------------------------------------------
+  # 3. Backend: API .NET 10
+  # --------------------------------------------------------
+  backend-api:
+    build:
+      context: .
+      dockerfile: src/Host/Facturity.Api/Dockerfile # Ajusta la ruta a tu Dockerfile
+    container_name: dotnet_api
+    ports:
+      - "8080:8080" # Exponemos el puerto de la API al exterior
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      # Inyección de ConnectionStrings para sobreescribir appsettings.json
+      - ConnectionStrings__FacturityDbConnectionString=Host=postgres-db;Database=facturity;Username=postgres;Password=rootroot
+      - Serilog__WriteTo__0__Args__configure__2__serverUrl=http://seq:80
+    depends_on:
+      - postgres-db
+      - seq
+
+# --------------------------------------------------------
+# Volúmenes declarados para la persistencia
+# --------------------------------------------------------
+volumes:
+  postgres_data:
