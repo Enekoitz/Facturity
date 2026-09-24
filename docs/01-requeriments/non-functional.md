@@ -12,9 +12,9 @@ El sistema debe estar disponible el 99% del tiempo.
 Todas las comunicaciones se deben realizar a través de HTTPS y las contraseñas deben almacenarse cifradas (bcrypt o similar).
 
 ### RNF-05 - Autenticación y autorización - Prioridad: Alta
-La aplicación debe implementar control de acceso basado en roles (ej.: admin, usuario estándar...)
+La aplicación debe implementar control de acceso basado en roles (ej.: admin, usuario estándar...) y policies.
 
-### RNF-06 - Usabilidad - Prioridad: Alta
+### RNF-06 - Usabilidad - Prioridad: Baja
 La interfaz de usuario debe ser intuitiva, con un flujo claro desde la carga de la factura hasta su confirmación.
 
 ### RNF-07 - Mantenibilidad - Prioridad: Alta
