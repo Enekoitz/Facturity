@@ -1,10 +1,11 @@
-### Arquitectura de sistema: **Monolito Modular**.
+### Arquitectura de sistema: **Monolito Modular evolutivo**.
 
-Utilizamos monolito modular como punto medio entre la complejidad de los microservicios y el desorden del monolito tradicional.
+El monolito modular evolutivo se sitúa en el punto medio entre la complejidad de los microservicios y el desorden del monolito tradicional, permitiendo crear un sistema de relativo fácil mantenimiento y posibilitando la extracción futura de ciertos módulos a microservicios.
+
 ##### ¿Por qué?
 El monolito modular permite dividir a nivel lógico el sistema en distintos módulos (`bounded contexts`) aislándolos en ensamblados y utilizando distintas técnicas y tecnologías para que se puedan comunicar entre ellos, dotando al sistema de una alta cohesión, imponiendo un encapsulamiento al detalle y minimizando el acoplamiento entre módulos. 
 
-La comunicación inter-modular es asíncrona por defecto para mantener el desacoplamiento temporal
+La comunicación inter-modular es asíncrona por defecto para mantener el desacoplamiento temporal.
 
 A nivel físico sigue siendo una única unidad de despliegue, ejecutándose como un único proceso. Lo que facilita enormemente los procesos de despliegue y reduce la carga de red e infraestructura propia de los microservicios.
 
@@ -24,4 +25,3 @@ Si en un futuro se decide refactorizar el proyecto a una arquitectura de microse
 | Facturación   | Generación y validación de facturas | ASP.NET / C#       | Encargado de crear facturas y comunicarlas con las haciendas. |
 | OCR           | Captura de datos desde imágenes     | Python / .NET + IA | Procesar imágenes y extraer datos estructurados               |
 | Base de datos | Persistencia de información         | PostgreSQL         | Almacena series, facturas, productos, clientes, etc.          |
-| Frontend      | Interfaz web                        | Angular            | Interacción del usuario y visualización de datos              |
