@@ -49,6 +49,7 @@ try
         includeInternalTypes: true);
     
     builder.Services.AddCustomerModuleServices(connectionString);
+    builder.Services.AddAllModules(connectionString);
     
     var app = builder.Build();
 
