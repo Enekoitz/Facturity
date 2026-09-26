@@ -66,6 +66,9 @@
   <Folder Name="/Modules/Audit/">
     <Project Path="src/Modules/Audit/Facturity.Modules.Audit/Facturity.Modules.Audit.csproj" />
   </Folder>
+  <Folder Name="/Modules/Auth/">
+    <Project Path="src/Modules/Auth/Facturity.Modules.Auth/Facturity.Modules.Auth.csproj" />
+  </Folder>
   <Folder Name="/Modules/Customer/">
     <Project Path="src/Modules/Customer/Facturity.Modules.Customer/Facturity.Modules.Customer.csproj" />
   </Folder>
