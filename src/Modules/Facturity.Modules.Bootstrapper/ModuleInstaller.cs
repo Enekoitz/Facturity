@@ -2,31 +2,31 @@
 using Facturity.Modules.Customer.Features;
 using Facturity.Modules.Customer.Infrastructure;
 using Facturity.Modules.Customer.Domain;
+using Facturity.Modules.Auth.Infrastructure;
 
 namespace Facturity.Modules.Bootstrapper;
 
 public static class ModuleInstaller
 {
-    //public static IServiceCollection AddAllModules(this IServiceCollection services, string connString)
-    //{
-    //    // Domain
-    //    services.AddScoped<IIdentificacionFiscalFactory, IdentificacionFiscalFactory>();
-
-    //    services.AddClientesFeatures();
-    //    services.AddClientesInfrastructure(connString);
-
-    //    return services;
-    //}
-
-    public static IServiceCollection AddCustomerModuleServices(this IServiceCollection services, string connString)
+    extension(IServiceCollection services)
     {
-        // Domain
-        services.AddScoped<IIdentificacionFiscalFactory, IdentificacionFiscalFactory>();
-        // Features
-        services.AddClientesFeatures();
-        // Infrastructure
-        services.AddClientesInfrastructure(connString);
+        public void AddAllModules(string connString)
+        {
+            services.AddAuthModuleServices(connString);
+            services.AddCustomerModuleServices(connString);
+        }
 
-        return services;
+        private void AddAuthModuleServices(string connString)
+        {
+            services.AddAuthModule(connString);
+        }
+        
+        private void AddCustomerModuleServices(string connString)
+        {
+            services.AddScoped<IIdentificacionFiscalFactory, IdentificacionFiscalFactory>();
+            services.AddClientesFeatures();
+            services.AddClientesInfrastructure(connString);
+
+        }
     }
 }
