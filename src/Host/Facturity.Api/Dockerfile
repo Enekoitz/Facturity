@@ -11,6 +11,7 @@ COPY ["src/Host/Facturity.Api/Facturity.Api.csproj", "src/Host/Facturity.Api/"]
 COPY ["src/Modules/Facturity.Modules.Bootstrapper/Facturity.Modules.Bootstrapper.csproj", "src/Modules/Facturity.Modules.Bootstrapper/"]
 COPY ["src/Modules/Facturity.Modules.SharedKernel/Facturity.Modules.SharedKernel.csproj", "src/Modules/Facturity.Modules.SharedKernel/"]
 COPY ["src/Modules/Customer/Facturity.Modules.Customer/Facturity.Modules.Customer.csproj", "src/Modules/Customer/Facturity.Modules.Customer/"]
+COPY ["src/Modules/Auth/Facturity.Modules.Auth/Facturity.Modules.Auth.csproj", "src/Modules/Auth/Facturity.Modules.Auth/"]
 RUN dotnet restore "src/Host/Facturity.Api/Facturity.Api.csproj"
 COPY . .
 WORKDIR "/src/src/Host/Facturity.Api"
