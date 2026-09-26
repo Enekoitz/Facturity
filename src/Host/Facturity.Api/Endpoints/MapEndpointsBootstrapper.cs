@@ -1,12 +1,13 @@
-﻿using Facturity.Api.Endpoints.Modules.Customer;
+﻿using Facturity.Api.Endpoints.Modules.Auth;
+using Facturity.Api.Endpoints.Modules.Customer;
 
 namespace Facturity.Api.Endpoints;
 
 internal static class MapEndpointsBootstrapper
 {
-    internal static IEndpointRouteBuilder  UseApplicationEndpoints(this IEndpointRouteBuilder  app)
+    internal static void UseApplicationEndpoints(this IEndpointRouteBuilder app)
     {
         app.MapClientesEndpoints();
-        return app;
+        app.MapAuthEndpoints();
     }
 }
