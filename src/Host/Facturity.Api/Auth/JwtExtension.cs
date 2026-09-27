@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Facturity.Api.Settings;
+namespace Facturity.Api.Auth;
 
 public static class JwtExtension
 {
@@ -47,5 +47,7 @@ public static class JwtExtension
         });
 
         services.AddAuthorization();
+        
+        services.AddScoped<ITokenService, JwtTokenService>();
     }
 }

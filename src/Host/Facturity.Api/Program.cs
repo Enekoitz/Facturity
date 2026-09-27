@@ -5,7 +5,7 @@ using FluentValidation;
 using Facturity.Api.Endpoints;
 using Facturity.Api.Exceptions;
 using Facturity.Api.Middlewares;
-using Facturity.Api.Settings;
+using Facturity.Api.Auth;
 using Facturity.Modules.Bootstrapper;
 using Facturity.Modules.Customer.Features;
 

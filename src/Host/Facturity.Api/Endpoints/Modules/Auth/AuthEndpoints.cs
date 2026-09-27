@@ -1,10 +1,8 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Facturity.Api.Settings;
-using Facturity.Modules.Auth.Domain;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
+using Facturity.Api.Auth;
+using Facturity.Api.Helpers;
 using Microsoft.IdentityModel.Tokens;
 using Facturity.Modules.Auth.Features;
 
@@ -18,6 +16,7 @@ public static class AuthEndpoints
 
         group.MapPost("/register", RegisterAsync);
         group.MapPost("/login", LoginAsync);
+        group.MapGet("/me", GetMe).RequireAuthorization();
     }
     
     private static async Task<IResult> RegisterAsync(
@@ -33,45 +32,30 @@ public static class AuthEndpoints
             : registerResult.ToProblemDetails(httpContext);
     }
 
-        return result.Succeeded
-            ? Results.Created($"/auth/{user.Id}", new { user.Id, user.Email })
-            : Results.ValidationProblem(
-                result.Errors.ToDictionary(e => e.Code, e => new[] { e.Description }));
+    private record LoginResponse(string AccessToken);
+    
+    private static async Task<IResult> LoginAsync(
+        LoginCommand command,
+        LoginHandler handler,
+        ITokenService tokenService,
+        HttpContext httpContext,
+        CancellationToken ct)
+    {
+        var loginResult = await handler.HandleAsync(command, ct);
+
+        if (loginResult.IsFailure)
+            return loginResult.ToProblemDetails(httpContext);
+
+        var tokenString = tokenService.GenerateAccessToken(loginResult.Value.UserId, loginResult.Value.Email);
+
+        return Results.Ok(new LoginResponse(tokenString));
     }
 
-    private static async Task<IResult> LoginAsync(
-        LoginRequest request,
-        UserManager<ApplicationUser> userManager,
-        IOptions<JwtSettings> jwtOptions)
+    private static IResult GetMe(ClaimsPrincipal user)
     {
-        var user = await userManager.FindByEmailAsync(request.Email);
-        if (user is null || !await userManager.CheckPasswordAsync(user, request.Password))
-            return Results.Unauthorized();
+        var email = user.FindFirstValue(ClaimTypes.Email);
+        var sub = user.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        var jwt = jwtOptions.Value;
-
-        var claims = new List<Claim>
-        {
-            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new(ClaimTypes.Email, user.Email!),
-            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
-
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.SigningKey));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-        var token = new JwtSecurityToken(
-            issuer: jwt.Issuer,
-            audience: jwt.Audience,
-            claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(jwt.ExpirationMinutes),
-            signingCredentials: creds);
-
-        var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
-
-        return Results.Ok(new { token = tokenString });
+        return Results.Ok(new { id = sub, email });
     }
 }
-
-public record RegisterRequest(string Email, string Password);
-public record LoginRequest(string Email, string Password);
