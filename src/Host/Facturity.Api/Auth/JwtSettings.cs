@@ -1,4 +1,4 @@
-﻿namespace Facturity.Api.Settings;
+﻿namespace Facturity.Api.Auth;
 
 public class JwtSettings
 {
