@@ -6,6 +6,7 @@ using Facturity.Modules.Auth.Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Facturity.Modules.Auth.Features;
 
 namespace Facturity.Api.Endpoints.Modules.Auth;
 
@@ -20,20 +21,17 @@ public static class AuthEndpoints
     }
     
     private static async Task<IResult> RegisterAsync(
-        RegisterRequest request,
-        UserManager<ApplicationUser> userManager)
+        RegisterCommand command,
+        RegisterHandler handler,
+        HttpContext httpContext,
+        CancellationToken ct)
     {
-        var existing = await userManager.FindByEmailAsync(request.Email);
-        if (existing is not null)
-            return Results.Conflict(new { error = "El email ya está registrado." });
+        var registerResult = await handler.HandleAsync(command, ct);
 
-        var user = new ApplicationUser
-        {
-            UserName = request.Email,
-            Email = request.Email
-        };
-
-        var result = await userManager.CreateAsync(user, request.Password);
+        return registerResult.IsSuccess
+            ? Results.Created($"/auth/{registerResult.Value.UserId}", registerResult.Value)
+            : registerResult.ToProblemDetails(httpContext);
+    }
 
         return result.Succeeded
             ? Results.Created($"/auth/{user.Id}", new { user.Id, user.Email })

@@ -7,7 +7,7 @@ namespace Facturity.Modules.Auth.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddAuthModule(this IServiceCollection services, string connectionString)
+    public static IServiceCollection AddAuthInfrastructure(this IServiceCollection services, string connectionString)
     {
         services.AddDbContext<AuthDbContext>(options =>
             options.UseNpgsql(
