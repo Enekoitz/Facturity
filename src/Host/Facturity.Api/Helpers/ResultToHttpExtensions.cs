@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using Facturity.Modules.SharedKernel.Domain;
-using Facturity.Api.Helpers;
 
 namespace Facturity.Api.Helpers;
 

@@ -1,7 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Facturity.Modules.Customer.Domain;
 using Facturity.Modules.Customer.Features;
 using Facturity.Modules.Customer.Infrastructure;
-using Facturity.Modules.Customer.Domain;
+using Facturity.Modules.Auth.Features;
 using Facturity.Modules.Auth.Infrastructure;
 
 namespace Facturity.Modules.Bootstrapper;
@@ -18,7 +19,8 @@ public static class ModuleInstaller
 
         private void AddAuthModuleServices(string connString)
         {
-            services.AddAuthModule(connString);
+            services.AddAuthFeatures();
+            services.AddAuthInfrastructure(connString);
         }
         
         private void AddCustomerModuleServices(string connString)
