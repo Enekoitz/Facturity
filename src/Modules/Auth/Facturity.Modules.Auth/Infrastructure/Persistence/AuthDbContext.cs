@@ -7,6 +7,9 @@ namespace Facturity.Modules.Auth.Infrastructure;
 public class AuthDbContext(DbContextOptions<AuthDbContext> options)
     : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>(options)
 {
+    
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema("auth");
@@ -16,6 +19,8 @@ public class AuthDbContext(DbContextOptions<AuthDbContext> options)
             tenantColumn.Property(u => u.TenantId)
                 .HasColumnName("tenant_id")
                 .ValueGeneratedNever();
+            
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AuthDbContext).Assembly);
         
         base.OnModelCreating(modelBuilder);
     }
