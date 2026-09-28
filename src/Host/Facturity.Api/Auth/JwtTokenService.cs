@@ -8,19 +8,20 @@ namespace Facturity.Api.Auth;
 
 internal interface ITokenService
 {
-    internal string GenerateAccessToken(Guid userId, string email);
+    internal string GenerateAccessToken(Guid userId, string email, Guid tenantId);
 }
 
 internal sealed class JwtTokenService(IOptions<JwtSettings> jwtOptions) : ITokenService
 {
-    public string GenerateAccessToken(Guid userId, string email)
+    public string GenerateAccessToken(Guid userId, string email, Guid tenantId)
     {
         var jwt = jwtOptions.Value;
 
         var claims = new List<Claim>
         {
-            new(ClaimTypes.NameIdentifier, userId.ToString()),
-            new(ClaimTypes.Email, email!),
+            new(JwtRegisteredClaimNames.Sub, userId.ToString()),
+            new(JwtRegisteredClaimNames.Email, email),
+            new(CustomClaimTypes.TenantId, tenantId.ToString()),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
