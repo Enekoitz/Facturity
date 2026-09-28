@@ -8,12 +8,12 @@ namespace Facturity.Api.Auth;
 
 internal interface ITokenService
 {
-    internal string GenerateJwtAccessToken(Guid userId, string email, Guid tenantId);
+    internal string GenerateAccessToken(Guid userId, string email, Guid tenantId);
 }
 
-internal sealed class TokenService(IOptions<JwtSettings> jwtOptions) : ITokenService
+internal sealed class JwtTokenService(IOptions<JwtOptions> jwtOptions) : ITokenService
 {
-    public string GenerateJwtAccessToken(Guid userId, string email, Guid tenantId)
+    public string GenerateAccessToken(Guid userId, string email, Guid tenantId)
     {
         var jwt = jwtOptions.Value;
 

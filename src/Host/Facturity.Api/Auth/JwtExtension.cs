@@ -9,8 +9,8 @@ public static class JwtExtension
     public static void AddJwtSettings(this IServiceCollection services, IConfiguration configuration)
     {
         // 1. Mapeo y validación de JwtSettings con IOptions
-        services.AddOptions<JwtSettings>()
-            .Bind(configuration.GetSection(JwtSettings.SectionName))
+        services.AddOptions<JwtOptions>()
+            .Bind(configuration.GetSection(JwtOptions.SectionName))
             .Validate(options => !string.IsNullOrWhiteSpace(options.SigningKey) && options.SigningKey.Length >= 32,
                 "Jwt:SigningKey es obligatoria y debe tener al menos 32 caracteres.")
             .Validate(options => !string.IsNullOrWhiteSpace(options.Issuer), "Jwt:Issuer no puede estar vacío.")
@@ -19,7 +19,7 @@ public static class JwtExtension
             .ValidateOnStart();
 
         // 2. Extraer valores necesarios para el Middleware de Auth
-        var jwtSettings = configuration.GetSection(JwtSettings.SectionName).Get<JwtSettings>()
+        var jwtSettings = configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>()
             ?? throw new InvalidOperationException("No se encontró la sección 'Jwt' en la configuración.");
 
         var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SigningKey));
@@ -48,6 +48,6 @@ public static class JwtExtension
 
         services.AddAuthorization();
         
-        services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<ITokenService, JwtTokenService>();
     }
 }
