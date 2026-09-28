@@ -1,6 +1,6 @@
 ﻿namespace Facturity.Api.Auth;
 
-public class JwtSettings
+public class JwtOptions
 {
     public const string SectionName = "Jwt";
 
