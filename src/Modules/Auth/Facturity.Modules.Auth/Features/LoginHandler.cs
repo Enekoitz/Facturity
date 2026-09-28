@@ -4,18 +4,22 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Facturity.Modules.Auth.Features;
 
-internal sealed class LoginHandler(UserManager<ApplicationUser> userManager)
+internal sealed class LoginHandler(UserManager<ApplicationUser> userManager, RefreshTokenIssuer issuer)
 {
-    internal async Task<Result<LoginUserDto>> HandleAsync(LoginCommand command, CancellationToken ct)
+    internal async Task<Result<LoginResult>> HandleAsync(
+        LoginCommand command,
+        CancellationToken ct)
     {
         var user = await userManager.FindByEmailAsync(command.Email);
         if (user is null || !await userManager.CheckPasswordAsync(user, command.Password))
-            return Result.Fail<LoginUserDto>(Error.Unauthorized(AuthErrors.InvalidLogin.Code, AuthErrors.InvalidLogin.Description));
+            return Result.Fail<LoginResult>(Error.Unauthorized(AuthErrors.InvalidLogin.Code, AuthErrors.InvalidLogin.Description));
         
-        return Result.Ok(new LoginUserDto(user.Id, user.Email!, user.TenantId));
+        var refreshToken = await issuer.IssueAsync(user.Id, familyId: Guid.NewGuid(), ct);
+        
+        return Result.Ok(new LoginResult(user.Id, user.Email!, user.TenantId, refreshToken));
     } 
 }
 
 internal record LoginCommand(string Email, string Password);
 
-internal record LoginUserDto(Guid UserId, string Email, Guid TenantId);
+internal record LoginResult(Guid UserId, string Email, Guid TenantId, string RefreshToken);

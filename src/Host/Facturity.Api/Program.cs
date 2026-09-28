@@ -50,9 +50,8 @@ try
         includeInternalTypes: true);
     
     builder.Services.AddAllModules(connectionString);
-
     builder.Services.AddJwtSettings(builder.Configuration);
-    
+    builder.Services.AddRefreshTokenSettings(builder.Configuration);
     
     var app = builder.Build();
 
