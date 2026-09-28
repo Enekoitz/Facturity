@@ -46,7 +46,7 @@ public static class AuthEndpoints
         if (loginResult.IsFailure)
             return loginResult.ToProblemDetails(httpContext);
 
-        var tokenString = tokenService.GenerateAccessToken(
+        var tokenString = tokenService.GenerateJwtAccessToken(
             loginResult.Value.UserId, 
             loginResult.Value.Email,
             loginResult.Value.TenantId);
