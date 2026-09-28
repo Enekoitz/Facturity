@@ -1,15 +1,14 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 using Facturity.Api.Auth;
 using Facturity.Api.Helpers;
-using Microsoft.IdentityModel.Tokens;
 using Facturity.Modules.Auth.Features;
 
 namespace Facturity.Api.Endpoints.Modules.Auth;
 
 public static class AuthEndpoints
 {
+    private static readonly Guid TenantIdProvisional = Guid.Parse("2b4f5701-30be-4eb4-b30e-2fa5f4a6a128");
     public static void MapAuthEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/auth").WithTags("Auth");
@@ -25,7 +24,8 @@ public static class AuthEndpoints
         HttpContext httpContext,
         CancellationToken ct)
     {
-        var registerResult = await handler.HandleAsync(command, ct);
+        var fullCommand = command with{TenantId = TenantIdProvisional};
+        var registerResult = await handler.HandleAsync(fullCommand, ct);
 
         return registerResult.IsSuccess
             ? Results.Created($"/auth/{registerResult.Value.UserId}", registerResult.Value)
@@ -46,16 +46,20 @@ public static class AuthEndpoints
         if (loginResult.IsFailure)
             return loginResult.ToProblemDetails(httpContext);
 
-        var tokenString = tokenService.GenerateAccessToken(loginResult.Value.UserId, loginResult.Value.Email);
+        var tokenString = tokenService.GenerateAccessToken(
+            loginResult.Value.UserId, 
+            loginResult.Value.Email,
+            loginResult.Value.TenantId);
 
         return Results.Ok(new LoginResponse(tokenString));
     }
 
     private static IResult GetMe(ClaimsPrincipal user)
     {
-        var email = user.FindFirstValue(ClaimTypes.Email);
-        var sub = user.FindFirstValue(ClaimTypes.NameIdentifier);
+        var email = user.FindFirstValue(JwtRegisteredClaimNames.Email);
+        var sub = user.FindFirstValue(JwtRegisteredClaimNames.Sub);
+        var tenantId = user.FindFirstValue(CustomClaimTypes.TenantId);
 
-        return Results.Ok(new { id = sub, email });
+        return Results.Ok(new { id = sub, email, tenantId });
     }
 }

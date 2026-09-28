@@ -12,10 +12,10 @@ internal sealed class LoginHandler(UserManager<ApplicationUser> userManager)
         if (user is null || !await userManager.CheckPasswordAsync(user, command.Password))
             return Result.Fail<LoginUserDto>(Error.Unauthorized(AuthErrors.InvalidLogin.Code, AuthErrors.InvalidLogin.Description));
         
-        return Result.Ok(new LoginUserDto(user.Id, user.Email!));
+        return Result.Ok(new LoginUserDto(user.Id, user.Email!, user.TenantId));
     } 
 }
 
 internal record LoginCommand(string Email, string Password);
 
-internal record LoginUserDto(Guid UserId, string Email);
+internal record LoginUserDto(Guid UserId, string Email, Guid TenantId);

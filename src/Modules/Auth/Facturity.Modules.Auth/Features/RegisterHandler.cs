@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Facturity.Modules.Auth.Features;
 
-internal class RegisterHandler(UserManager<ApplicationUser> userManager)
+internal sealed class RegisterHandler(UserManager<ApplicationUser> userManager)
 {
     internal async Task<Result<RegisteredUserDto>> HandleAsync(RegisterCommand command, CancellationToken ct)
     {
@@ -15,32 +15,30 @@ internal class RegisterHandler(UserManager<ApplicationUser> userManager)
         // - si el correo existe se envía email de seguridad tipo "Intento de registro con su correo"
         // - si el correo no existe se envía email para confirmar cuenta y dar bienvenida por ejemplo.
         
-        var existing = await userManager.FindByEmailAsync(command.Email);
-        // if (existing is not null)
-            // errors.Add(AuthErrors.EmailInUse);
+        var existing = await userManager.FindByEmailAsync(command.Email) 
+                       ?? await userManager.FindByNameAsync(command.UserName);
 
+        // if (existing is not null)
+        // errors.Add(AuthErrors.EmailInUse);
         var user = new ApplicationUser
         {
-            UserName = command.Email,
-            Email = command.Email
+            UserName = command.UserName,
+            Email = command.Email,
+            TenantId = command.TenantId
         };
 
         if (existing is not null)
-        {
-            var identityResult = await userManager.CreateAsync(user, command.Password);
-
-            if (!identityResult.Succeeded)
-            {
-                errors.AddRange(identityResult.Errors.Select(error => Error.Validation($"Auth.{error.Code}", error.Description)));
-                return Result.Fail<RegisteredUserDto>(errors);
-            }
+            return Result.Ok(new RegisteredUserDto(user.Id, user.Email, user.UserName));
             
-        }
+        var identityResult = await userManager.CreateAsync(user, command.Password);
+        if (identityResult.Succeeded) 
+            return Result.Ok(new RegisteredUserDto(user.Id, user.Email, user.UserName));
         
-        return Result.Ok(new RegisteredUserDto(user.Id, user.Email));
+        errors.AddRange(identityResult.Errors.Select(error => Error.Validation($"Auth.{error.Code}", error.Description)));
+        return Result.Fail<RegisteredUserDto>(errors);
     } 
 }
 
-internal record RegisterCommand(string Email, string Password);
+internal record RegisterCommand(string UserName, string Email, string Password, Guid TenantId);
 
-internal record RegisteredUserDto(Guid UserId, string Email);
+internal record RegisteredUserDto(Guid UserId, string Email, string UserName);
