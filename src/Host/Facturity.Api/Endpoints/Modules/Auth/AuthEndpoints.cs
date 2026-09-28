@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Facturity.Api.Auth;
 using Facturity.Api.Helpers;
 using Facturity.Modules.Auth.Features;
+using Microsoft.Extensions.Options;
 
 namespace Facturity.Api.Endpoints.Modules.Auth;
 
@@ -15,6 +16,7 @@ public static class AuthEndpoints
 
         group.MapPost("/register", RegisterAsync);
         group.MapPost("/login", LoginAsync);
+        group.MapPost("/refresh", RefreshAsync);
         group.MapGet("/me", GetMe).RequireAuthorization();
     }
     
@@ -36,12 +38,13 @@ public static class AuthEndpoints
     
     private static async Task<IResult> LoginAsync(
         LoginCommand command,
-        LoginHandler handler,
+        LoginHandler loginHandler,
         ITokenService tokenService,
+        IOptions<RefreshTokenOptions> refreshTokenOptions,
         HttpContext httpContext,
         CancellationToken ct)
     {
-        var loginResult = await handler.HandleAsync(command, ct);
+        var loginResult = await loginHandler.HandleAsync(command, ct);
 
         if (loginResult.IsFailure)
             return loginResult.ToProblemDetails(httpContext);
@@ -50,10 +53,46 @@ public static class AuthEndpoints
             loginResult.Value.UserId, 
             loginResult.Value.Email,
             loginResult.Value.TenantId);
+        
+        httpContext.AddRefreshTokenAsCookieAtResponse(
+            tokenString, 
+            refreshTokenOptions.Value.ExpirationDays,
+            AuthConstants.RefreshTokenCookiePath);
 
         return Results.Ok(new LoginResponse(tokenString));
     }
 
+    private static async Task<IResult> RefreshAsync(
+        RefreshTokenHandler handler,
+        ITokenService tokenService,
+        IOptions<RefreshTokenOptions> refreshTokenOptions,
+        HttpContext httpContext,
+        CancellationToken ct)
+    {
+        if (!httpContext.Request.Cookies.TryGetValue(AuthConstants.RefreshTokenCookieName, out var refreshToken))
+            return Results.Unauthorized();
+        
+        var command = new RefreshTokenCommand(refreshToken);
+        
+        var result = await handler.HandleAsync(command, ct);
+
+        if (result.IsFailure)
+            return result.ToProblemDetails(httpContext);
+        
+        httpContext.AddRefreshTokenAsCookieAtResponse(
+            result.Value.RefreshToken, 
+            refreshTokenOptions.Value.ExpirationDays, 
+            AuthConstants.RefreshTokenCookiePath );
+
+        var accessToken = tokenService.GenerateAccessToken(
+            result.Value.UserId, 
+            result.Value.Email, 
+            TenantIdProvisional);
+
+        return Results.Ok(new LoginResponse(accessToken));
+    }
+
+    
     private static IResult GetMe(ClaimsPrincipal user)
     {
         var email = user.FindFirstValue(JwtRegisteredClaimNames.Email);
