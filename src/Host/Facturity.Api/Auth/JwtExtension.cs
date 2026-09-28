@@ -48,6 +48,6 @@ public static class JwtExtension
 
         services.AddAuthorization();
         
-        services.AddScoped<ITokenService, JwtTokenService>();
+        services.AddScoped<ITokenService, TokenService>();
     }
 }
