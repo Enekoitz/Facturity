@@ -10,5 +10,6 @@ public static class DependencyInjection
         services.AddScoped<LoginHandler>();
         services.AddScoped<RefreshTokenIssuer>();
         services.AddScoped<RefreshHandler>();
+        services.AddScoped<LogoutHandler>();
     }
 }
