@@ -4,6 +4,10 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Facturity.Modules.Auth.Features;
 
+internal record LoginCommand(string Email, string Password);
+
+internal record LoginResult(Guid UserId, string Email, Guid TenantId, string RefreshToken);
+
 internal sealed class LoginHandler(UserManager<ApplicationUser> userManager, RefreshTokenIssuer issuer)
 {
     internal async Task<Result<LoginResult>> HandleAsync(
@@ -19,7 +23,3 @@ internal sealed class LoginHandler(UserManager<ApplicationUser> userManager, Ref
         return Result.Ok(new LoginResult(user.Id, user.Email!, user.TenantId, refreshToken));
     } 
 }
-
-internal record LoginCommand(string Email, string Password);
-
-internal record LoginResult(Guid UserId, string Email, Guid TenantId, string RefreshToken);

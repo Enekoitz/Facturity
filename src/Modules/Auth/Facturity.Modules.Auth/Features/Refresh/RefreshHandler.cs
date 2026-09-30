@@ -7,18 +7,19 @@ using Microsoft.EntityFrameworkCore;
 namespace Facturity.Modules.Auth.Features;
 
 
-internal record RefreshTokenCommand(string RefreshToken);
-internal record RefreshTokenResult(Guid UserId, string Email, string RefreshToken);
+internal record RefreshCommand(string RefreshToken);
+internal record RefreshResult(Guid UserId, string Email, string RefreshToken);
 
 internal class RefreshHandler(
     AuthDbContext dbContext,
     UserManager<ApplicationUser> userManager,
-    RefreshTokenIssuer issuer)
+    RefreshTokenIssuer issuer,
+    TimeProvider timeProvider)
 {
-    private static Result<RefreshTokenResult> IsInvalid =>
-        Result<RefreshTokenResult>.Fail(AuthErrors.InvalidRefreshToken);
+    private static Result<RefreshResult> IsInvalid =>
+        Result<RefreshResult>.Fail(AuthErrors.InvalidRefreshToken);
     
-    internal async Task<Result<RefreshTokenResult>> HandleAsync(RefreshTokenCommand command, CancellationToken ct)
+    internal async Task<Result<RefreshResult>> HandleAsync(RefreshCommand command, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(command.RefreshToken))
             return IsInvalid;
@@ -30,19 +31,18 @@ internal class RefreshHandler(
         if (stored is null)
             return IsInvalid;
 
-        var now = DateTime.UtcNow;
+        var utcNow = timeProvider.GetUtcNow();
 
-        // Casuística A.
         // Token ya usado/revocado que reaparece: posible robo, así que se invalida toda la sesión
         if (stored.RevokedAt is not null)
         {
             await dbContext.RefreshTokens
                 .Where(t => t.FamilyId == stored.FamilyId && t.RevokedAt == null)
-                .ExecuteUpdateAsync(s => s.SetProperty(t => t.RevokedAt, now), ct);
+                .ExecuteUpdateAsync(s => s.SetProperty(t => t.RevokedAt, utcNow), ct);
             return IsInvalid;
         }
 
-        if (stored.ExpiresAt <= now)
+        if (stored.ExpiresAt <= utcNow)
             return IsInvalid;
 
         var user = await userManager.FindByIdAsync(stored.UserId.ToString());
@@ -52,13 +52,13 @@ internal class RefreshHandler(
         // Revocación atómica: si llegan dos peticiones a la vez con el mismo token, solo una gana
         var revoked = await dbContext.RefreshTokens
             .Where(t => t.Id == stored.Id && t.RevokedAt == null)
-            .ExecuteUpdateAsync(s => s.SetProperty(t => t.RevokedAt, now), ct);
+            .ExecuteUpdateAsync(s => s.SetProperty(t => t.RevokedAt, utcNow), ct);
         if (revoked == 0)
             return IsInvalid;
 
         var newRefreshToken = await issuer.IssueAsync(user.Id, stored.FamilyId, ct);
 
-        return Result<RefreshTokenResult>.Ok(
-            new RefreshTokenResult(user.Id, user.Email!, newRefreshToken));
+        return Result<RefreshResult>.Ok(
+            new RefreshResult(user.Id, user.Email!, newRefreshToken));
     }
 }
