@@ -87,10 +87,11 @@
     <File Path="README.md" />
   </Folder>
   <Folder Name="/Tests/" />
-  <Folder Name="/Tests/Audit/" />
+  <Folder Name="/Tests/Auth/">
+    <Project Path="tests/Auth/Facturity.Modules.Auth.Tests/Facturity.Modules.Auth.Tests.csproj" />
+  </Folder>
   <Folder Name="/Tests/Customer/">
     <Project Path="tests/Customer/Facturity.Modules.Customer.Tests/Facturity.Modules.Customer.Tests.csproj" />
   </Folder>
   <Folder Name="/Tests/Invoicing/" />
-  <Folder Name="/Tests/Identity/" />
 </Solution>
