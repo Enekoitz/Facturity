@@ -63,9 +63,6 @@
     <Project Path="src/Modules/Facturity.Modules.Bootstrapper/Facturity.Modules.Bootstrapper.csproj" />
     <Project Path="src/Modules/Facturity.Modules.SharedKernel/Facturity.Modules.SharedKernel.csproj" />
   </Folder>
-  <Folder Name="/Modules/Audit/">
-    <Project Path="src/Modules/Audit/Facturity.Modules.Audit/Facturity.Modules.Audit.csproj" />
-  </Folder>
   <Folder Name="/Modules/Auth/">
     <Project Path="src/Modules/Auth/Facturity.Modules.Auth/Facturity.Modules.Auth.csproj" />
   </Folder>
@@ -74,9 +71,6 @@
   </Folder>
   <Folder Name="/Modules/Invoicing/">
     <Project Path="src/Modules/Invoicing/Facturity.Modules.Invoicing/Facturity.Modules.Invoicing.csproj" />
-  </Folder>
-  <Folder Name="/Modules/Identity/">
-    <Project Path="src/Modules/Identity/Facturity.Modules.Identity/Facturity.Modules.Identity.csproj" />
   </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".dockerignore" />
