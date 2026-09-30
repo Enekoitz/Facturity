@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Facturity.Api.Auth;
 using Facturity.Api.Helpers;
 using Facturity.Modules.Auth.Features;
+using Facturity.Modules.Customer.Domain;
 using Microsoft.Extensions.Options;
 
 namespace Facturity.Api.Endpoints.Modules.Auth;
@@ -28,7 +29,7 @@ public static class AuthEndpoints
     {
         var fullCommand = command with{TenantId = TenantIdProvisional};
         var registerResult = await handler.HandleAsync(fullCommand, ct);
-
+        
         return registerResult.IsSuccess
             ? Results.Created($"/auth/{registerResult.Value.UserId}", registerResult.Value)
             : registerResult.ToProblemDetails(httpContext);
@@ -63,7 +64,7 @@ public static class AuthEndpoints
     }
 
     private static async Task<IResult> RefreshAsync(
-        RefreshTokenHandler handler,
+        RefreshHandler handler,
         ITokenService tokenService,
         IOptions<RefreshTokenOptions> refreshTokenOptions,
         HttpContext httpContext,
@@ -92,7 +93,6 @@ public static class AuthEndpoints
         return Results.Ok(new LoginResponse(accessToken));
     }
 
-    
     private static IResult GetMe(ClaimsPrincipal user)
     {
         var email = user.FindFirstValue(JwtRegisteredClaimNames.Email);

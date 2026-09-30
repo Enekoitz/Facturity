@@ -7,14 +7,14 @@ using Microsoft.Extensions.Options;
 
 namespace Facturity.Modules.Auth.Features;
 
-public class RefreshTokenIssuer(AuthDbContext db, IOptions<RefreshTokenOptions> options)
+internal class RefreshTokenIssuer(AuthDbContext dbContext, IOptions<RefreshTokenOptions> options)
 {
-    public async Task<string> IssueAsync(Guid userId, Guid familyId, CancellationToken ct)
+    internal async Task<string> IssueAsync(Guid userId, Guid familyId, CancellationToken ct)
     {
         var rawBase64 = Base64Url.EncodeToString(RandomNumberGenerator.GetBytes(64));
         var urcNow = DateTime.UtcNow;
 
-        db.RefreshTokens.Add(new RefreshToken
+        dbContext.RefreshTokens.Add(new RefreshToken
         {
             UserId = userId,
             FamilyId = familyId,
@@ -23,10 +23,10 @@ public class RefreshTokenIssuer(AuthDbContext db, IOptions<RefreshTokenOptions> 
             CreatedAt = urcNow
         });
 
-        await db.SaveChangesAsync(ct);
+        await dbContext.SaveChangesAsync(ct);
         return rawBase64;
     }
 
-    public static string ToHashSha256(string raw) =>
+    internal static string ToHashSha256(string raw) =>
         Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(raw)));
 }

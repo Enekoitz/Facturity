@@ -2,7 +2,7 @@
 
 namespace Facturity.Modules.Auth.Domain;
 
-public class ApplicationRole : IdentityRole<Guid>
+internal class ApplicationRole : IdentityRole<Guid>
 {
     
 }
