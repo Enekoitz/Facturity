@@ -18,6 +18,7 @@ public static class AuthEndpoints
         group.MapPost("/register", RegisterAsync);
         group.MapPost("/login", LoginAsync);
         group.MapPost("/refresh", RefreshAsync);
+        group.MapPost("/logout", LogoutAsync);
         group.MapGet("/me", GetMe).RequireAuthorization();
     }
     
@@ -91,6 +92,27 @@ public static class AuthEndpoints
             TenantIdProvisional);
 
         return Results.Ok(new LoginResponse(accessToken));
+    }
+    
+    private static async Task<IResult> LogoutAsync(
+        LogoutHandler handler,
+        HttpContext httpContext,
+        CancellationToken ct)
+    {
+        httpContext.Request.Cookies.TryGetValue(AuthConstants.RefreshTokenCookieName, out var refreshToken);
+        
+        httpContext.DeleteRefreshTokenCookie(AuthConstants.RefreshTokenCookiePath );
+        
+        if (refreshToken == null) 
+            return Results.Ok();
+        
+        var command = new LogoutCommand(refreshToken);
+        var result = await handler.HandleAsync(command, ct);
+
+        return result.IsFailure 
+            ? result.ToProblemDetails(httpContext)
+            : Results.Ok();
+
     }
 
     private static IResult GetMe(ClaimsPrincipal user)
