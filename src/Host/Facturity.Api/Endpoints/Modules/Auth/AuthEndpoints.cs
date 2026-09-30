@@ -56,7 +56,7 @@ public static class AuthEndpoints
             loginResult.Value.TenantId);
         
         httpContext.AddRefreshTokenAsCookieAtResponse(
-            tokenString, 
+            loginResult.Value.RefreshToken, 
             refreshTokenOptions.Value.ExpirationDays,
             AuthConstants.RefreshTokenCookiePath);
 
