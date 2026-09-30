@@ -4,6 +4,10 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Facturity.Modules.Auth.Features;
 
+internal record RegisterCommand(string UserName, string Email, string Password, Guid TenantId);
+
+internal record RegisteredUserDto(Guid UserId, string Email, string UserName);
+
 internal sealed class RegisterHandler(UserManager<ApplicationUser> userManager)
 {
     internal async Task<Result<RegisteredUserDto>> HandleAsync(RegisterCommand command, CancellationToken ct)
@@ -38,7 +42,3 @@ internal sealed class RegisterHandler(UserManager<ApplicationUser> userManager)
         return Result.Fail<RegisteredUserDto>(errors);
     } 
 }
-
-internal record RegisterCommand(string UserName, string Email, string Password, Guid TenantId);
-
-internal record RegisteredUserDto(Guid UserId, string Email, string UserName);

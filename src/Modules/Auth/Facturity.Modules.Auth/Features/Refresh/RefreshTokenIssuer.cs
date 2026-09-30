@@ -7,20 +7,23 @@ using Microsoft.Extensions.Options;
 
 namespace Facturity.Modules.Auth.Features;
 
-internal class RefreshTokenIssuer(AuthDbContext dbContext, IOptions<RefreshTokenOptions> options)
+internal class RefreshTokenIssuer(
+    AuthDbContext dbContext, 
+    IOptions<RefreshTokenOptions> options,
+    TimeProvider timeProvider)
 {
     internal async Task<string> IssueAsync(Guid userId, Guid familyId, CancellationToken ct)
     {
         var rawBase64 = Base64Url.EncodeToString(RandomNumberGenerator.GetBytes(64));
-        var urcNow = DateTime.UtcNow;
-
+        var utcNow = timeProvider.GetUtcNow();
+        
         dbContext.RefreshTokens.Add(new RefreshToken
         {
             UserId = userId,
             FamilyId = familyId,
             TokenHash = ToHashSha256(rawBase64),
-            ExpiresAt = urcNow.AddDays(options.Value.ExpirationDays),
-            CreatedAt = urcNow
+            ExpiresAt = utcNow.AddDays(options.Value.ExpirationDays),
+            CreatedAt = utcNow
         });
 
         await dbContext.SaveChangesAsync(ct);
