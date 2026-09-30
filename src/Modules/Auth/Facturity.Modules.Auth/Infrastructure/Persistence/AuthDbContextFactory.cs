@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Facturity.Modules.Auth.Infrastructure;
 
-public class AuthDbContextFactory : IDesignTimeDbContextFactory<AuthDbContext>
+internal class AuthDbContextFactory : IDesignTimeDbContextFactory<AuthDbContext>
 {
     private const string NombreConnectionString = "FacturityDbConnectionString";
     

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Facturity.Modules.Auth.Infrastructure;
 
-public class RefreshTokensConfiguration : IEntityTypeConfiguration<RefreshToken>
+internal class RefreshTokensConfiguration : IEntityTypeConfiguration<RefreshToken>
 {
     public void Configure(EntityTypeBuilder<RefreshToken> builder)
     {

@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Facturity.Modules.Auth.Infrastructure;
 
-public class AuthDbContext(DbContextOptions<AuthDbContext> options)
+internal class AuthDbContext(DbContextOptions<AuthDbContext> options)
     : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>(options)
 {
     
-    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+    internal DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

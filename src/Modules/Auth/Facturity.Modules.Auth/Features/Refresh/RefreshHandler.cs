@@ -7,18 +7,18 @@ using Microsoft.EntityFrameworkCore;
 namespace Facturity.Modules.Auth.Features;
 
 
-public record RefreshTokenCommand(string RefreshToken);
-public record RefreshTokenResult(Guid UserId, string Email, string RefreshToken);
+internal record RefreshTokenCommand(string RefreshToken);
+internal record RefreshTokenResult(Guid UserId, string Email, string RefreshToken);
 
-public class RefreshTokenHandler(
-    AuthDbContext db,
+internal class RefreshHandler(
+    AuthDbContext dbContext,
     UserManager<ApplicationUser> userManager,
     RefreshTokenIssuer issuer)
 {
     private static Result<RefreshTokenResult> IsInvalid =>
         Result<RefreshTokenResult>.Fail(AuthErrors.InvalidRefreshToken);
     
-    public async Task<Result<RefreshTokenResult>> HandleAsync(RefreshTokenCommand command, CancellationToken ct)
+    internal async Task<Result<RefreshTokenResult>> HandleAsync(RefreshTokenCommand command, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(command.RefreshToken))
             return IsInvalid;
@@ -26,7 +26,7 @@ public class RefreshTokenHandler(
         var hash = RefreshTokenIssuer.ToHashSha256(command.RefreshToken);
         
         // Debe existir el refresh token en el sistema, de lo contrario la operación es inválida
-        var stored = await db.RefreshTokens.SingleOrDefaultAsync(t => t.TokenHash == hash, ct);
+        var stored = await dbContext.RefreshTokens.SingleOrDefaultAsync(t => t.TokenHash == hash, ct);
         if (stored is null)
             return IsInvalid;
 
@@ -36,7 +36,7 @@ public class RefreshTokenHandler(
         // Token ya usado/revocado que reaparece: posible robo, así que se invalida toda la sesión
         if (stored.RevokedAt is not null)
         {
-            await db.RefreshTokens
+            await dbContext.RefreshTokens
                 .Where(t => t.FamilyId == stored.FamilyId && t.RevokedAt == null)
                 .ExecuteUpdateAsync(s => s.SetProperty(t => t.RevokedAt, now), ct);
             return IsInvalid;
@@ -50,7 +50,7 @@ public class RefreshTokenHandler(
             return IsInvalid;
 
         // Revocación atómica: si llegan dos peticiones a la vez con el mismo token, solo una gana
-        var revoked = await db.RefreshTokens
+        var revoked = await dbContext.RefreshTokens
             .Where(t => t.Id == stored.Id && t.RevokedAt == null)
             .ExecuteUpdateAsync(s => s.SetProperty(t => t.RevokedAt, now), ct);
         if (revoked == 0)

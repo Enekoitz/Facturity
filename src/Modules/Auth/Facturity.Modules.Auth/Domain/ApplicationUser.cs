@@ -2,7 +2,7 @@
 
 namespace Facturity.Modules.Auth.Domain;
 
-public sealed class ApplicationUser : IdentityUser<Guid>
+internal sealed class ApplicationUser : IdentityUser<Guid>
 {
-    public Guid TenantId { get; init; }
+    internal Guid TenantId { get; init; }
 }
