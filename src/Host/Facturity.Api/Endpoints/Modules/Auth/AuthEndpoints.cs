@@ -55,7 +55,7 @@ public static class AuthEndpoints
             loginResult.Value.Email,
             loginResult.Value.TenantId);
         
-        httpContext.AddRefreshTokenAsCookieAtResponse(
+        httpContext.AddRefreshTokenCookie(
             loginResult.Value.RefreshToken, 
             refreshTokenOptions.Value.ExpirationDays,
             AuthConstants.RefreshTokenCookiePath);
@@ -73,14 +73,14 @@ public static class AuthEndpoints
         if (!httpContext.Request.Cookies.TryGetValue(AuthConstants.RefreshTokenCookieName, out var refreshToken))
             return Results.Unauthorized();
         
-        var command = new RefreshTokenCommand(refreshToken);
+        var command = new RefreshCommand(refreshToken);
         
         var result = await handler.HandleAsync(command, ct);
 
         if (result.IsFailure)
             return result.ToProblemDetails(httpContext);
         
-        httpContext.AddRefreshTokenAsCookieAtResponse(
+        httpContext.AddRefreshTokenCookie(
             result.Value.RefreshToken, 
             refreshTokenOptions.Value.ExpirationDays, 
             AuthConstants.RefreshTokenCookiePath );
