@@ -1,16 +1,18 @@
 ﻿using Facturity.Modules.Auth.Domain;
+using Facturity.Modules.SharedKernel.Abstractions;
 using Facturity.Modules.SharedKernel.Domain;
 using Microsoft.AspNetCore.Identity;
 
 namespace Facturity.Modules.Auth.Features;
 
-internal record RegisterCommand(string UserName, string Email, string Password, Guid TenantId);
+internal record RegisterCommand(string UserName, string Email, string Password) : ICommand<Result<RegisterResult>>;
 
-internal record RegisteredUserDto(Guid UserId, string Email, string UserName);
+internal record RegisterResult(Guid UserId, string Email, string UserName);
 
 internal sealed class RegisterHandler(UserManager<ApplicationUser> userManager)
+    : ICommandHandler<RegisterCommand, Result<RegisterResult>>
 {
-    internal async Task<Result<RegisteredUserDto>> HandleAsync(RegisterCommand command, CancellationToken ct)
+    public async Task<Result<RegisterResult>> HandleAsync(RegisterCommand command, CancellationToken ct)
     {
         var errors = new List<Error>();
         
@@ -28,17 +30,17 @@ internal sealed class RegisterHandler(UserManager<ApplicationUser> userManager)
         {
             UserName = command.UserName,
             Email = command.Email,
-            TenantId = command.TenantId
+            TenantId = Guid.Parse("2b4f5701-30be-4eb4-b30e-2fa5f4a6a128")
         };
 
         if (existing is not null)
-            return Result.Ok(new RegisteredUserDto(user.Id, user.Email, user.UserName));
+            return Result.Ok(new RegisterResult(user.Id, user.Email, user.UserName));
             
         var identityResult = await userManager.CreateAsync(user, command.Password);
         if (identityResult.Succeeded) 
-            return Result.Ok(new RegisteredUserDto(user.Id, user.Email, user.UserName));
+            return Result.Ok(new RegisterResult(user.Id, user.Email, user.UserName));
         
         errors.AddRange(identityResult.Errors.Select(error => Error.Validation($"Auth.{error.Code}", error.Description)));
-        return Result.Fail<RegisteredUserDto>(errors);
+        return Result.Fail<RegisterResult>(errors);
     } 
 }

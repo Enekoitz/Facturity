@@ -1,5 +1,6 @@
 ﻿using Facturity.Modules.Auth.Domain;
 using Facturity.Modules.Auth.Infrastructure;
+using Facturity.Modules.SharedKernel.Abstractions;
 using Facturity.Modules.SharedKernel.Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Facturity.Modules.Auth.Features;
 
 
-internal record RefreshCommand(string RefreshToken);
+internal record RefreshCommand(string RefreshToken): ICommand<Result<RefreshResult>>;
 internal record RefreshResult(Guid UserId, string Email, string RefreshToken);
 
 internal class RefreshHandler(
@@ -15,11 +16,12 @@ internal class RefreshHandler(
     UserManager<ApplicationUser> userManager,
     RefreshTokenIssuer issuer,
     TimeProvider timeProvider)
+: ICommandHandler<RefreshCommand, Result<RefreshResult>>
 {
     private static Result<RefreshResult> IsInvalid =>
         Result<RefreshResult>.Fail(AuthErrors.InvalidRefreshToken);
     
-    internal async Task<Result<RefreshResult>> HandleAsync(RefreshCommand command, CancellationToken ct)
+    public async Task<Result<RefreshResult>> HandleAsync(RefreshCommand command, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(command.RefreshToken))
             return IsInvalid;

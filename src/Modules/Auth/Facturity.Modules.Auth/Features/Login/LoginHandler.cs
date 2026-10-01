@@ -1,18 +1,20 @@
 ﻿using Facturity.Modules.Auth.Domain;
+using Facturity.Modules.SharedKernel.Abstractions;
 using Facturity.Modules.SharedKernel.Domain;
 using Microsoft.AspNetCore.Identity;
 
 namespace Facturity.Modules.Auth.Features;
 
-internal record LoginCommand(string Email, string Password);
+internal record LoginCommand(string Email, string Password) : ICommand<Result<LoginResult>>;
 
 internal record LoginResult(Guid UserId, string Email, Guid TenantId, string RefreshToken);
 
 internal sealed class LoginHandler(UserManager<ApplicationUser> userManager, RefreshTokenIssuer issuer)
+    : ICommandHandler<LoginCommand, Result<LoginResult>>
 {
-    internal async Task<Result<LoginResult>> HandleAsync(
+    public async Task<Result<LoginResult>> HandleAsync(
         LoginCommand command,
-        CancellationToken ct)
+        CancellationToken ct) 
     {
         var user = await userManager.FindByEmailAsync(command.Email);
         if (user is null || !await userManager.CheckPasswordAsync(user, command.Password))

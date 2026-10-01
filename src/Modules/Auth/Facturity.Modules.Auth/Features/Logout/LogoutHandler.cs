@@ -1,16 +1,18 @@
 ﻿using Facturity.Modules.Auth.Infrastructure;
+using Facturity.Modules.SharedKernel.Abstractions;
 using Facturity.Modules.SharedKernel.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace Facturity.Modules.Auth.Features;
 
-internal record LogoutCommand(string RefreshToken);
+internal record LogoutCommand(string RefreshToken) : ICommand<Result>;
 
 internal sealed class LogoutHandler(
     AuthDbContext dbContext,
     TimeProvider timeProvider)
+        :  ICommandHandler<LogoutCommand, Result>
 {
-    internal async Task<Result> HandleAsync(
+    public async Task<Result> HandleAsync(
         LogoutCommand command,
         CancellationToken ct)
     {

@@ -3,7 +3,8 @@ using System.Security.Claims;
 using Facturity.Api.Auth;
 using Facturity.Api.Helpers;
 using Facturity.Modules.Auth.Features;
-using Facturity.Modules.Customer.Domain;
+using Facturity.Modules.SharedKernel.Abstractions;
+using Facturity.Modules.SharedKernel.Domain;
 using Microsoft.Extensions.Options;
 
 namespace Facturity.Api.Endpoints.Modules.Auth;
@@ -24,12 +25,11 @@ public static class AuthEndpoints
     
     private static async Task<IResult> RegisterAsync(
         RegisterCommand command,
-        RegisterHandler handler,
+        ICommandHandler<RegisterCommand, Result<RegisterResult>> handler,
         HttpContext httpContext,
         CancellationToken ct)
     {
-        var fullCommand = command with{TenantId = TenantIdProvisional};
-        var registerResult = await handler.HandleAsync(fullCommand, ct);
+        var registerResult = await handler.HandleAsync(command, ct);
         
         return registerResult.IsSuccess
             ? Results.Created($"/auth/{registerResult.Value.UserId}", registerResult.Value)
@@ -40,7 +40,7 @@ public static class AuthEndpoints
     
     private static async Task<IResult> LoginAsync(
         LoginCommand command,
-        LoginHandler loginHandler,
+        ICommandHandler<LoginCommand, Result<LoginResult>>  loginHandler,
         ITokenService tokenService,
         IOptions<RefreshTokenOptions> refreshTokenOptions,
         HttpContext httpContext,
@@ -65,7 +65,7 @@ public static class AuthEndpoints
     }
 
     private static async Task<IResult> RefreshAsync(
-        RefreshHandler handler,
+        ICommandHandler<RefreshCommand, Result<RefreshResult>> handler,
         ITokenService tokenService,
         IOptions<RefreshTokenOptions> refreshTokenOptions,
         HttpContext httpContext,
