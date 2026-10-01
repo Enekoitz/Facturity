@@ -19,7 +19,7 @@ public static class RefreshTokenExtension
             {
                 HttpOnly = true,
                 Secure = true,
-                SameSite = SameSiteMode.Strict,
+                SameSite = SameSiteMode.Lax,
                 Expires = DateTimeOffset.UtcNow.AddDays(expirationDays),
                 Path = uri
             });
@@ -31,7 +31,7 @@ public static class RefreshTokenExtension
             {
                 HttpOnly = true,
                 Secure = true,
-                SameSite = SameSiteMode.Strict,
+                SameSite = SameSiteMode.Lax,
                 Path = uri
             });
         }
