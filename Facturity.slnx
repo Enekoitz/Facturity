@@ -25,6 +25,7 @@
     <File Path="docs/02-architecture/technical-decisions/ef-core-configuration.md" />
   </Folder>
   <Folder Name="/Docs/03-modules/" />
+  <Folder Name="/Docs/03-modules/auth/" />
   <Folder Name="/Docs/03-modules/customer/">
     <File Path="docs/03-modules/customer/01-crear-cliente.md" />
     <File Path="docs/03-modules/customer/02-obtener-cliente-por-id.md" />
@@ -80,9 +81,8 @@
     <File Path="Facturity.slnx" />
     <File Path="README.md" />
   </Folder>
-  <Folder Name="/Tests/" />
-  <Folder Name="/Tests/Auth/">
-    <Project Path="tests/Auth/Facturity.Modules.Auth.Tests/Facturity.Modules.Auth.Tests.csproj" />
+  <Folder Name="/Tests/">
+    <Project Path="tests/Facturity.IntegrationTests/Facturity.IntegrationTests.csproj" />
   </Folder>
   <Folder Name="/Tests/Customer/">
     <Project Path="tests/Customer/Facturity.Modules.Customer.Tests/Facturity.Modules.Customer.Tests.csproj" />
