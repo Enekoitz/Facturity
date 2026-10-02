@@ -1,6 +1,7 @@
 ﻿using Facturity.Modules.Customer.Domain;
+using Xunit;
 
-namespace Facturity.Modules.Customer.Tests.Domain;
+namespace Facturity.Modules.Customer.UnitTests.Domain;
 
 public class NifEspanolTests
 {

@@ -1,5 +1,7 @@
 ﻿using Facturity.Modules.Customer.Domain;
-namespace Facturity.Modules.Customer.Tests.Domain;
+using Xunit;
+
+namespace Facturity.Modules.Customer.UnitTests.Domain;
 
 public class CodigoPostalTests
 {
