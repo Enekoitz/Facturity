@@ -20,6 +20,7 @@ public class ActualizarClienteEndpoint : IClientesEndpoint
                     ? Results.Ok()
                     : result.ToProblemDetails(httpContext);
             })
+            .RequireAuthorization()
             .WithName("ActualizarCliente")
             .WithSummary("Actualizar nuevo cliente")
             .WithDescription("Actualiza los datos existentes de un cliente.")

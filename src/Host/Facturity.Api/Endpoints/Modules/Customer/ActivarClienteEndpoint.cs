@@ -20,6 +20,7 @@ public class ActivarClienteEndpoint : IClientesEndpoint
                     ? Results.Ok()
                     : result.ToProblemDetails(httpContext);
             })
+            .RequireAuthorization()
             .WithName("ActivarCliente")
             .WithSummary("Activar cliente")
             .WithDescription("Cambia el estado del cliente a activo y registra la fecha de activación.")
