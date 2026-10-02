@@ -1,7 +1,9 @@
-﻿using Facturity.Modules.Customer.Domain;
+﻿using System;
+using Facturity.Modules.Customer.Domain;
 using Facturity.Modules.SharedKernel.Domain;
+using Xunit;
 
-namespace Facturity.Modules.Customer.Tests.Domain;
+namespace Facturity.Modules.Customer.UnitTests.Domain;
 
 public static class ActualizarClienteTestsHelper
 {

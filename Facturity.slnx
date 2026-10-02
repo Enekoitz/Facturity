@@ -88,5 +88,8 @@
   <Folder Name="/Tests/Modules/Auth/">
     <Project Path="tests/Auth/Facturity.Modules.Auth.UnitTests/Facturity.Modules.Auth.UnitTests.csproj" />
   </Folder>
-  <Folder Name="/Tests/Invoicing/" />
+  <Folder Name="/Tests/Modules/Customer/">
+    <Project Path="tests/Customer/Facturity.Modules.Customer.UnitTests/Facturity.Modules.Customer.UnitTests.csproj" />
+  </Folder>
+  <Folder Name="/Tests/Modules/Invoicing/" />
 </Solution>

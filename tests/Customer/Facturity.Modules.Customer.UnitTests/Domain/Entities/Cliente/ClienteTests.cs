@@ -3,8 +3,9 @@ using Facturity.Modules.SharedKernel.Abstractions;
 using Facturity.Modules.SharedKernel.Domain;
 using FluentAssertions;
 using Microsoft.Extensions.Time.Testing;
+using Xunit;
 
-namespace Facturity.Modules.Customer.Tests.Domain;
+namespace Facturity.Modules.Customer.UnitTests.Domain;
 
 public abstract class ClienteTests
 {
