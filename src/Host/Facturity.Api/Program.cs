@@ -88,3 +88,7 @@ finally
 {
     Log.CloseAndFlush();
 }
+
+// Used to be contemplated by integration testing WebApplicationFactory(Program) implementation when Program.cs is top-level
+// statement. It lives in the global namespace so we have to do this.
+public partial class Program { }
