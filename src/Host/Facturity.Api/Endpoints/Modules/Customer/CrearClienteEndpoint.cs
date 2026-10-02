@@ -20,6 +20,7 @@ public class CrearClienteEndpoint : IClientesEndpoint
                     ? Results.Created($"/api/clientes/{result.Value}", new { Id = result.Value })
                     : result.ToProblemDetails(httpContext);
             })
+            .RequireAuthorization()
             .WithName("CrearCliente")
             .WithSummary("Crear nuevo cliente")
             .WithDescription("Crea y guarda un nuevo cliente.")

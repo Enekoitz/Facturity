@@ -21,6 +21,7 @@ public class ObtenerClientePorIdEndpoint : IClientesEndpoint
                     ? Results.Ok(result.Value)
                     : result.ToProblemDetails(httpContext);
             })
+            .RequireAuthorization()
             .WithName("ObtenerClientePorId")
             .WithSummary("Obtener cliente por Id")
             .WithDescription("Devuelve los datos de un cliente existente.")
