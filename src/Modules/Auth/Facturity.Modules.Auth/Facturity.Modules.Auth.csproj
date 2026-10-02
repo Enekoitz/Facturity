@@ -22,6 +22,7 @@
     <ItemGroup>
         <InternalsVisibleTo Include="Facturity.API" />
         <InternalsVisibleTo Include="Facturity.Modules.Bootstrapper" />
-        <InternalsVisibleTo Include="Facturity.Modules.Auth.Tests" />
+        <InternalsVisibleTo Include="Facturity.Modules.Auth.UnitTests" />
+        <InternalsVisibleTo Include="Facturity.IntegrationTests" />
     </ItemGroup>
 </Project>
