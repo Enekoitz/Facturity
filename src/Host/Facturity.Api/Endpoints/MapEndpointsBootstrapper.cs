@@ -7,7 +7,9 @@ internal static class MapEndpointsBootstrapper
 {
     internal static void UseApplicationEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapClientesEndpoints();
-        app.MapAuthEndpoints();
+        var apiGroup = app.MapGroup("/api");
+        
+        apiGroup.MapClientesEndpoints();
+        apiGroup.MapAuthEndpoints();
     }
 }

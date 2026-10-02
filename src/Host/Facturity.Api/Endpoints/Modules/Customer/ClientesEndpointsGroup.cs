@@ -5,7 +5,7 @@ internal static class ClientesEndpointsGroup
     internal static void MapClientesEndpoints(this IEndpointRouteBuilder app)
     {
         var clientesGroup = app
-            .MapGroup("/api/clientes")
+            .MapGroup("/customer")
             .WithTags("Clientes");
 
         new CrearClienteEndpoint().MapEndpoint(clientesGroup);
