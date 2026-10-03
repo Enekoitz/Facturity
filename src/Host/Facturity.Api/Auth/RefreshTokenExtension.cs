@@ -15,7 +15,7 @@ public static class RefreshTokenExtension
     {
         public void AddRefreshTokenCookie(string refreshToken, int expirationDays, string uri)
         {
-            httpContext.Response.Cookies.Append(RefreshTokenOptions.SectionName, refreshToken, new CookieOptions
+            httpContext.Response.Cookies.Append(AuthConstants.RefreshTokenCookieName, refreshToken, new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,
@@ -27,7 +27,7 @@ public static class RefreshTokenExtension
 
         public void DeleteRefreshTokenCookie(string uri)
         {
-            httpContext.Response.Cookies.Delete(RefreshTokenOptions.SectionName, new CookieOptions
+            httpContext.Response.Cookies.Delete(AuthConstants.RefreshTokenCookieName, new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,
