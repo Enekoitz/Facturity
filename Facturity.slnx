@@ -55,6 +55,8 @@
   <Folder Name="/Docs/04-adrs/">
     <File Path="docs/04-adrs/adr-01-modular-monolith-as-system-architecture.md" />
     <File Path="docs/04-adrs/adr-02-clean-and-vertical-slice-as-software-hybrid-architecture.md" />
+    <File Path="docs/04-adrs/adr-03-identity-jwt-strategy.md" />
+    <File Path="docs/04-adrs/adr-04-refresh-token-rotation.md" />
   </Folder>
   <Folder Name="/Docs/05-operations/" />
   <Folder Name="/Host/">
