@@ -29,11 +29,10 @@ public static class AuthEndpoints
         HttpContext httpContext,
         CancellationToken ct)
     {
-        var registerResult = await handler.HandleAsync(command, ct);
-        
-        return registerResult.IsSuccess
-            ? Results.Created($"/auth/{registerResult.Value.UserId}", registerResult.Value)
-            : registerResult.ToProblemDetails(httpContext);
+        var result = await handler.HandleAsync(command, ct);
+        return result.IsSuccess
+            ? Results.Created($"/api/auth/{result.Value.UserId}", result.Value)
+            : result.ToProblemDetails(httpContext);
     }
 
     private record LoginResponse(string AccessToken);
@@ -46,18 +45,17 @@ public static class AuthEndpoints
         HttpContext httpContext,
         CancellationToken ct)
     {
-        var loginResult = await loginHandler.HandleAsync(command, ct);
-
-        if (loginResult.IsFailure)
-            return loginResult.ToProblemDetails(httpContext);
+        var result = await loginHandler.HandleAsync(command, ct);
+        if (result.IsFailure)
+            return result.ToProblemDetails(httpContext);
 
         var tokenString = tokenService.GenerateAccessToken(
-            loginResult.Value.UserId, 
-            loginResult.Value.Email,
-            loginResult.Value.TenantId);
+            result.Value.UserId, 
+            result.Value.Email,
+            result.Value.TenantId);
         
         httpContext.AddRefreshTokenCookie(
-            loginResult.Value.RefreshToken, 
+            result.Value.RefreshToken, 
             refreshTokenOptions.Value.ExpirationDays,
             AuthConstants.RefreshTokenCookiePath);
 
@@ -77,7 +75,6 @@ public static class AuthEndpoints
         var command = new RefreshCommand(refreshToken);
         
         var result = await handler.HandleAsync(command, ct);
-
         if (result.IsFailure)
             return result.ToProblemDetails(httpContext);
         
@@ -89,7 +86,7 @@ public static class AuthEndpoints
         var accessToken = tokenService.GenerateAccessToken(
             result.Value.UserId, 
             result.Value.Email, 
-            TenantIdProvisional);
+            result.Value.TenantId);
 
         return Results.Ok(new LoginResponse(accessToken));
     }
@@ -112,7 +109,6 @@ public static class AuthEndpoints
         return result.IsFailure 
             ? result.ToProblemDetails(httpContext)
             : Results.Ok();
-
     }
 
     private static IResult GetMe(ClaimsPrincipal user)

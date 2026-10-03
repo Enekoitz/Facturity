@@ -7,9 +7,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Facturity.Modules.Auth.Features;
 
-
 internal record RefreshCommand(string RefreshToken): ICommand<Result<RefreshResult>>;
-internal record RefreshResult(Guid UserId, string Email, string RefreshToken);
+internal record RefreshResult(Guid UserId, string Email, Guid TenantId, string RefreshToken);
 
 internal class RefreshHandler(
     AuthDbContext dbContext,
@@ -61,6 +60,6 @@ internal class RefreshHandler(
         var newRefreshToken = await issuer.IssueAsync(user.Id, stored.FamilyId, ct);
 
         return Result<RefreshResult>.Ok(
-            new RefreshResult(user.Id, user.Email!, newRefreshToken));
+            new RefreshResult(user.Id, user.Email!, user.TenantId, newRefreshToken));
     }
 }
