@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
-namespace Facturity.Api;
+namespace Facturity.Api.Exceptions;
 
 /// <summary>
 /// Captura excepción desde cualquier punto no controlado de la aplicación, loggea lo necesario y devuelve 

@@ -25,6 +25,7 @@ public class ListarClientesEndpoint : IClientesEndpoint
                 ? Results.Ok(result.Value)
                 : result.ToProblemDetails(httpContext);
         })
+        .RequireAuthorization()
         .WithName("ListarClientes")
         .WithSummary("Listar clientes")
         .WithDescription("Devuelve un listado de clientes con datos básicos según los filtros proporcionados.");

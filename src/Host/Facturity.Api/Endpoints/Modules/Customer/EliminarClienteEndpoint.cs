@@ -20,6 +20,7 @@ public class EliminarClienteEndpoint : IClientesEndpoint
                     ? Results.Ok()
                     : result.ToProblemDetails(httpContext);
             })
+            .RequireAuthorization()
             .WithName("EliminarCliente")
             .WithSummary("Eliminar cliente existente")
             .WithDescription("Elimina un cliente existente.")

@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.13" />
+      <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.12" />
+      <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.12" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="10.0.12" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.12" />
+      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Facturity.Modules.SharedKernel\Facturity.Modules.SharedKernel.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="Facturity.API" />
+        <InternalsVisibleTo Include="Facturity.Modules.Bootstrapper" />
+        <InternalsVisibleTo Include="Facturity.Modules.Auth.UnitTests" />
+        <InternalsVisibleTo Include="Facturity.IntegrationTests" />
+    </ItemGroup>
+</Project>

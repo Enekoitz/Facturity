@@ -25,6 +25,7 @@
     <File Path="docs/02-architecture/technical-decisions/ef-core-configuration.md" />
   </Folder>
   <Folder Name="/Docs/03-modules/" />
+  <Folder Name="/Docs/03-modules/auth/" />
   <Folder Name="/Docs/03-modules/customer/">
     <File Path="docs/03-modules/customer/01-crear-cliente.md" />
     <File Path="docs/03-modules/customer/02-obtener-cliente-por-id.md" />
@@ -54,6 +55,8 @@
   <Folder Name="/Docs/04-adrs/">
     <File Path="docs/04-adrs/adr-01-modular-monolith-as-system-architecture.md" />
     <File Path="docs/04-adrs/adr-02-clean-and-vertical-slice-as-software-hybrid-architecture.md" />
+    <File Path="docs/04-adrs/adr-03-identity-jwt-strategy.md" />
+    <File Path="docs/04-adrs/adr-04-refresh-token-rotation.md" />
   </Folder>
   <Folder Name="/Docs/05-operations/" />
   <Folder Name="/Host/">
@@ -63,17 +66,14 @@
     <Project Path="src/Modules/Facturity.Modules.Bootstrapper/Facturity.Modules.Bootstrapper.csproj" />
     <Project Path="src/Modules/Facturity.Modules.SharedKernel/Facturity.Modules.SharedKernel.csproj" />
   </Folder>
-  <Folder Name="/Modules/Audit/">
-    <Project Path="src/Modules/Audit/Facturity.Modules.Audit/Facturity.Modules.Audit.csproj" />
+  <Folder Name="/Modules/Auth/">
+    <Project Path="src/Modules/Auth/Facturity.Modules.Auth/Facturity.Modules.Auth.csproj" />
   </Folder>
   <Folder Name="/Modules/Customer/">
     <Project Path="src/Modules/Customer/Facturity.Modules.Customer/Facturity.Modules.Customer.csproj" />
   </Folder>
   <Folder Name="/Modules/Invoicing/">
     <Project Path="src/Modules/Invoicing/Facturity.Modules.Invoicing/Facturity.Modules.Invoicing.csproj" />
-  </Folder>
-  <Folder Name="/Modules/Identity/">
-    <Project Path="src/Modules/Identity/Facturity.Modules.Identity/Facturity.Modules.Identity.csproj" />
   </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".dockerignore" />
@@ -83,11 +83,15 @@
     <File Path="Facturity.slnx" />
     <File Path="README.md" />
   </Folder>
-  <Folder Name="/Tests/" />
-  <Folder Name="/Tests/Audit/" />
-  <Folder Name="/Tests/Customer/">
-    <Project Path="tests/Customer/Facturity.Modules.Customer.Tests/Facturity.Modules.Customer.Tests.csproj" />
+  <Folder Name="/Tests/">
+    <Project Path="tests/Facturity.IntegrationTests/Facturity.IntegrationTests.csproj" />
   </Folder>
-  <Folder Name="/Tests/Invoicing/" />
-  <Folder Name="/Tests/Identity/" />
+  <Folder Name="/Tests/Modules/" />
+  <Folder Name="/Tests/Modules/Auth/">
+    <Project Path="tests/Auth/Facturity.Modules.Auth.UnitTests/Facturity.Modules.Auth.UnitTests.csproj" />
+  </Folder>
+  <Folder Name="/Tests/Modules/Customer/">
+    <Project Path="tests/Customer/Facturity.Modules.Customer.UnitTests/Facturity.Modules.Customer.UnitTests.csproj" />
+  </Folder>
+  <Folder Name="/Tests/Modules/Invoicing/" />
 </Solution>

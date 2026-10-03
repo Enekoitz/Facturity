@@ -20,6 +20,7 @@ public class DesactivarClienteEndpoint : IClientesEndpoint
                     ? Results.Ok()
                     : result.ToProblemDetails(httpContext);
             })
+            .RequireAuthorization()
             .WithName("DesactivarCliente")
             .WithSummary("Desactivar cliente")
             .WithDescription("Cambia el estado del cliente a inactivo y registra la fecha de desactivación.")
