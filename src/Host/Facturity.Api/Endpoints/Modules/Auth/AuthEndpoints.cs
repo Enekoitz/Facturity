@@ -92,7 +92,7 @@ public static class AuthEndpoints
     }
     
     private static async Task<IResult> LogoutAsync(
-        LogoutHandler handler,
+        ICommandHandler<LogoutCommand, Result> handler,
         HttpContext httpContext,
         CancellationToken ct)
     {

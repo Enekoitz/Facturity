@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Facturity.IntegrationTests.Security;
+namespace Facturity.IntegrationTests.Auth.Security;
 
 public class EndpointProtectionTests(AuthApiFactory factory) : IClassFixture<AuthApiFactory>
 {
