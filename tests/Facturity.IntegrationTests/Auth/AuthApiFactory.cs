@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Facturity.Modules.Auth.Infrastructure;
 
-namespace Facturity.IntegrationTests;
+namespace Facturity.IntegrationTests.Auth;
 
 public class AuthApiFactory : WebApplicationFactory<Program>
 {
