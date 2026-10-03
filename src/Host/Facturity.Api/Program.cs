@@ -1,16 +1,13 @@
+using System.Text.Json.Serialization;
+using Scalar.AspNetCore;
+using Serilog;
+using FluentValidation;
 using Facturity.Api.Endpoints;
 using Facturity.Api.Exceptions;
 using Facturity.Api.Middlewares;
+using Facturity.Api.Auth;
 using Facturity.Modules.Bootstrapper;
 using Facturity.Modules.Customer.Features;
-using Scalar.AspNetCore;
-using Serilog;
-using System.Text.Json.Serialization;
-using Facturity.Api;
-using FluentValidation;
-using Microsoft.AspNetCore.Mvc;
-
-//Serilog.Debugging.SelfLog.Enable(Console.Error);
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console(outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] [{Application}/{MachineName}] [CorrelationId: {CorrelationId}] {Message:lj}{NewLine}{Exception}")
@@ -19,6 +16,10 @@ Log.Logger = new LoggerConfiguration()
 
 try
 {
+    const string nombreConnectionString = "FacturityDbConnectionString";
+    const string nombreAppName = "Facturity";
+    const string nombreAppNameApi = "FacturityAPI";
+    
     var builder = WebApplication.CreateBuilder(args);
 
     builder.Host.UseSerilog((context, services, configuration) => configuration
@@ -37,10 +38,10 @@ try
     builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
     builder.Services.AddProblemDetails();
     builder.Services.AddHttpContextAccessor();
-    builder.Services.AddOpenApi("FacturityAPI-v1");
+    builder.Services.AddOpenApi($"{nombreAppNameApi}-v1");
 
-    var connectionString = builder.Configuration.GetConnectionString("FacturityDbConnectionString")
-        ?? throw new InvalidOperationException("CRITICAL: La cadena de conexión 'FacturityDbConnectionString' es nula.");
+    var connectionString = builder.Configuration.GetConnectionString(nombreConnectionString)
+        ?? throw new InvalidOperationException($"CRITICAL: La cadena de conexión '{nombreConnectionString}' es nula.");
 
     builder.Services.AddValidatorsFromAssemblies(
         [
@@ -48,7 +49,9 @@ try
         ], 
         includeInternalTypes: true);
     
-    builder.Services.AddCustomerModuleServices(connectionString);
+    builder.Services.AddAllModules(connectionString);
+    builder.Services.AddJwtSettings(builder.Configuration);
+    builder.Services.AddRefreshTokenSettings(builder.Configuration);
     
     var app = builder.Build();
 
@@ -60,18 +63,18 @@ try
         app.MapOpenApi();
         app.MapScalarApiReference(options =>
         {
-            options.WithTitle("FacturityAPI")
+            options.WithTitle($"{nombreAppNameApi}")
                    .WithTheme(ScalarTheme.DeepSpace);
         });
         
-        app.MapGet("/", () => Results.Redirect("/scalar/FacturityAPI-v1"))
+        app.MapGet("/", () => Results.Redirect($"/scalar/{nombreAppNameApi}-v1"))
             .ExcludeFromDescription();
     }
 
     app.UseHttpsRedirection();
 
-    //app.UseAuthentication();
-    //app.UseAuthorization();
+    app.UseAuthentication();
+    app.UseAuthorization();
 
     app.UseApplicationEndpoints();
     
@@ -85,3 +88,7 @@ finally
 {
     Log.CloseAndFlush();
 }
+
+// Used to be contemplated by integration testing WebApplicationFactory(Program) implementation when Program.cs is top-level
+// statement. It lives in the global namespace so we have to do this.
+public partial class Program { }

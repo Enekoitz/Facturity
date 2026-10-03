@@ -3,11 +3,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Facturity.Modules.Customer.Infrastructure;
 
-public class ClientesDbContext : DbContext
+public class ClientesDbContext(DbContextOptions<ClientesDbContext> options) : DbContext(options)
 {
-    public ClientesDbContext(DbContextOptions<ClientesDbContext> options)
-        : base(options) { }
-
     public DbSet<ClienteRecord> Clientes { get; set; }
     public DbSet<TipoIdentificacionFiscal> TipoIdentificacionFiscal { get; set; }
 
@@ -17,6 +14,9 @@ public class ClientesDbContext : DbContext
         
         modelBuilder.ApplyConfiguration(new TiposIdentificacionFiscalConfiguration());
         modelBuilder.ApplyConfiguration(new ClienteConfiguration());
+        
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ClientesDbContext).Assembly);
+        
         
         base.OnModelCreating(modelBuilder);
     }
