@@ -438,4 +438,5 @@ FodyWeavers.xsd
 
 # Heavy resources
 /resources/
-/docs/_gitignore
+/docs/borrador/
+/docs/borrador/.
