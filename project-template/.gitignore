@@ -1,6 +1,0 @@
-site/
-.cache/
-__pycache__/
-.DS_Store
-# Borradores personales (no versionados)
-docs/research/_borradores/
