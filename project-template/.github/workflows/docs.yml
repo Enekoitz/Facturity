@@ -1,0 +1,26 @@
+name: Publicar documentación
+
+on:
+  push:
+    branches: [main]
+    paths: ["docs/**", "mkdocs.yml"]
+  pull_request:
+    paths: ["docs/**", "mkdocs.yml"]
+
+permissions:
+  contents: write
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - run: pip install mkdocs-material
+      # En PRs solo valida que compila (strict falla con enlaces rotos)
+      - run: mkdocs build --strict
+      # En main publica en GitHub Pages
+      - if: github.ref == 'refs/heads/main'
+        run: mkdocs gh-deploy --force

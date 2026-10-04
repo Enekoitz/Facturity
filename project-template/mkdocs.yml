@@ -1,0 +1,41 @@
+site_name: NOMBRE-DEL-PROYECTO
+docs_dir: docs
+theme:
+  name: material
+  language: es
+  features:
+    - navigation.sections
+    - content.code.copy
+
+markdown_extensions:
+  - tables
+  - admonition
+  - toc:
+      permalink: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+nav:
+  - Inicio: index.md
+  - Contexto:
+      - Visión: vision.md
+      - Alcance: scope.md
+      - Stakeholders: stakeholders.md
+  - Lenguaje común:
+      - Glosario: glossary.md
+  - Qué debe hacer:
+      - Requisitos: requirements.md
+      - Historias de usuario: user-stories/README.md
+  - Estructura:
+      - Modelo de dominio: domain-model.md
+      - Arquitectura: architecture.md
+  - Decisiones: decisions/README.md
+  - Operación:
+      - Runbooks: runbooks/README.md
+      - Investigación: research/README.md
+  - Colaboración:
+      - Contribuir: CONTRIBUTING.md
+      - Changelog: CHANGELOG.md
