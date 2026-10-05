@@ -4,8 +4,6 @@
 ```mermaid
 flowchart TD
     %% Actores
-    superAdmin("👤 Super Admin")
-    tenantAdmin("👤 Tenant Admin")
     usuario("👤 Usuario")
 
     %% Sistema
@@ -16,8 +14,6 @@ flowchart TD
     db[("🗄️ PostgreSQL")]
 
     %% Relaciones
-    superAdmin -->|Gestiona tenants| facturity
-    tenantAdmin -->|Configura tenant| facturity
     usuario -->|Opera facturas y otras gestiones varias| facturity
     facturity -->|Envía XML firmado| hacienda
     facturity -->|Persistencia de datos| db
@@ -26,17 +22,17 @@ flowchart TD
 ---
 ## **Módulos**
 ### v1
-| Módulo                 | Descripción                                                         |
-| ---------------------- | ------------------------------------------------------------------- |
-| **Identity**           | Autenticación JWT, refresh tokens y permisos por tenant             |
-| **Clientes**           | Gestión de clientes con validaciones y reglas de negocio            |
-| **Facturas**           | Emisión, estados, transiciones y numeración correlativa de facturas |
-| **Motor de impuestos** | Cálculo de impuestos configurable y aislado por tenant              |
-| **Auditoría**          | Trazabilidad completa de operaciones por tenant                     |
+| Módulo | Descripción                                                      |
+|-------| ---------------------------------------------------------------- |
+| **Auth** | Autenticación JWT, refresh tokens             |
+| **Customer** | Gestión de clientes con validaciones y reglas de negocio         |
+| **Invoicing** | Emisión, estados, transiciones y numeración correlativa de facturas |
+| **TaxEngine** | Cálculo de impuestos configurable y aislado por tenant           |
+| **TenantManagement**          | Gestión de tenants                                                               |
 
 ### Roadmap
 | Módulo                        | Descripción                                                                      |
-| ----------------------------- | -------------------------------------------------------------------------------- |
+|-------------------------------|----------------------------------------------------------------------------------|
 | **Dashboards**                | Dashboardas, informes y reportes a partir de los datos generados y almacenados.  |
 | **Comunicación con Hacienda** | Envío directo de la factura en formato XML válido a la hacienda correspondiente. |
 
@@ -48,14 +44,13 @@ flowchart TD
 - Gestión de series
 - Gestión y consultas avanzadas de facturas
 - Generación de XML válido TicketBAI
-- Identity: autenticación, refresh tokens y permisos por tenant
-- Motor de impuestos configurable por tenant
+- Generación de PDF de factura
+- Autenticación y autorización, refresh tokens, RBAC
 - Auditoría y trazabilidad completa de operaciones
 
 ### Roadmap
 - Comunicación y envío directo a Hacienda / Diputación Foral de Bizkaia
 - Generación de QR obligatorio TicketBAI
-- Generación de PDF de factura
 - Dashboards y generación de reportes personalizados
 
 ---
@@ -64,13 +59,13 @@ flowchart TD
 ### V1
 | Actor            | Descripción              | Necesita                                                         |
 | ---------------- | ------------------------ | ---------------------------------------------------------------- |
-| **Super Admin**  | Administra la plataforma | Gestionar tenants, usuarios y configuración global               |
-| **Tenant Admin** | Administra su empresa    | Gestionar usuarios, series, impuestos y configuración del tenant |
 | **Usuario**      | Opera el día a día       | Gestionar clientes, productos y facturas                         |
 
 ### Roadmap
 | Actor                       | Descripción                       | Necesita                                               |
 | --------------------------- | --------------------------------- | ------------------------------------------------------ |
+| **Super Admin**  | Administra la plataforma | Gestionar tenants, usuarios y configuración global               |
+| **Tenant Admin** | Administra su empresa    | Gestionar usuarios, series, impuestos y configuración del tenant |
 | **Usuario de solo lectura** | Acceso externo (contable, gestor) | Consultar facturas e informes sin poder modificar nada |
 
 ---
@@ -80,21 +75,20 @@ flowchart TD
 - **Framework:** .NET 10 (LTS)
 - **Lenguaje:** C# 14
 - **Arquitectura de sistema:** Monolito Modular Evolutivo
-- **Arquitectura de software:** `Clean Architecture` con`Vertical Slice` en capa de Features
+- **Arquitectura de software:** Híbrida `Clean Architecture` con`Vertical Slice Architecture` en capa de Features
 - **Base de datos:** PostgreSQL 16
 - **ORM:** EF Core 10
 - **Caché:** Redis
 
 ### Patrones y librerías
-- **Mediador:** MediatR
 - **Mapeo**: Mapster
 - **Mensajería**: Outbox Pattern (Implementación propia)
 - **Validación:** FluentValidation
 - **Logging:** Serilog
-- **Documentación API**: Swagger / OpenAPI
+- **Documentación API**: Scalar
 
 ### Testing
-- **Unit & Integration:** xUnit, Testcontainers
+- **Unit & Integration:** xUnit, FluentAssertions, Testcontainers
 - **Arquitectura:** NetArchTest
 
 ### Infraestructura
@@ -104,7 +98,7 @@ flowchart TD
 - **Cloud**: Azure
 
 ### Seguridad: 
-- **Autenticación:** ASP.NET Core Identity + JWT + Refresh Tokens
+- **Autenticación:** ASP.NET Core Identity + JWT Access Token y Refresh Tokens (Implementación propia)
 - **Autorización:** Permisos por tenant
 
 ---
@@ -120,9 +114,9 @@ flowchart TD
 ```text
 Facturity/
 ├── src/
-│   ├── host/
+│   ├── Host/
 │   │   └── Facturity.API/
-│   ├── modules/
+│   ├── Modules/
 │   │   ├── [module_x]/
 │   │   │   ├── Facturity.Modules.[module_x]
 |   |   |   |   |
@@ -133,8 +127,9 @@ Facturity/
 │   │	├── Facturity.Modules.Bootstrapper
 │   │	└── Facturity.Modules.SharedKernel
 ├── tests/
-│   ├── Facturity.UnitTests/
+│   ├── Modules/
 │   │   ├── [module_x]/
+|   |   |   └──Facturity.Modules.[module_x].UnitTests
 │   │   └── ...
 │   ├── Facturity.IntegrationTests/
 │   │   ├── [module_x]/

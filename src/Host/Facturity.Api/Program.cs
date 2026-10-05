@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using Scalar.AspNetCore;
 using Serilog;
+using Serilog.Extensions.Hosting;
 using FluentValidation;
 using Facturity.Api.Endpoints;
 using Facturity.Api.Exceptions;
@@ -9,10 +10,13 @@ using Facturity.Api.Auth;
 using Facturity.Modules.Bootstrapper;
 using Facturity.Modules.Customer.Features;
 
-Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console(outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] [{Application}/{MachineName}] [CorrelationId: {CorrelationId}] {Message:lj}{NewLine}{Exception}")
-    .Enrich.FromLogContext()
-    .CreateBootstrapLogger();
+if (Log.Logger is not ReloadableLogger)
+{
+    Log.Logger = new LoggerConfiguration()
+        .WriteTo.Console(outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] [{Application}/{MachineName}] [CorrelationId: {CorrelationId}] {Message:lj}{NewLine}{Exception}")
+        .Enrich.FromLogContext()
+        .CreateBootstrapLogger();
+}
 
 try
 {
@@ -24,7 +28,8 @@ try
 
     builder.Host.UseSerilog((context, services, configuration) => configuration
         .ReadFrom.Configuration(context.Configuration)
-        .ReadFrom.Services(services));
+        .ReadFrom.Services(services),
+        preserveStaticLogger: true);
     
     builder.Services.AddControllers()
         .AddJsonOptions(options =>

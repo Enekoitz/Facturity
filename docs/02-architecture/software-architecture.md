@@ -1,1 +1,0 @@
-### Arquitectura de software: **Vertical Slice + **.
