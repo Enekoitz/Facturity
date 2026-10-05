@@ -7,7 +7,7 @@ Este es el mapa de la documentación. Cada documento responde a una pregunta.
 | [Visión](vision.md)                            | ¿Por qué existe el proyecto?     | 🟢 Revisado    |
 | [Alcance](scope.md)                            | ¿Hasta dónde llegamos?           | 🟢 Revisado    |
 | [Stakeholders](stakeholders.md)                | ¿Quién tiene interés?            | 🟢 Revisado    |
-| [Glosario](glossary.md)                        | ¿Qué significa cada término?     | 🟢 Revisado    |
+| [Glosario](glossary.md)                        | ¿Qué significa cada término?     | 🟡 Borrador    |
 | [Requisitos](requirements.md)                  | ¿Qué debe cumplir el sistema?    | 🟢 Revisado    |
 | [Historias de usuario](user-stories/README.md) | ¿Qué necesita el usuario?        | 🔴 Sin empezar |
 | [Modelo de dominio](domain-model.md)           | ¿Sobre qué conceptos trabajamos? | 🟡 Borrador    |
