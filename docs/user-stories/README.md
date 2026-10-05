@@ -6,10 +6,9 @@
 
 ## Índice de épicas
 
-| Épica | Descripción | Estado |
-|---|---|---|
-| [EP-01](_plantilla-epica.md) | | 🟡 |
-
+| Épica                        | Descripción | Estado |
+| ---------------------------- | ----------- | ------ |
+| [EP-01](_plantilla-epica.md) |             | 🟡     |
 ## Formato de historia
 
 > **Como** [rol] **quiero** [acción] **para** [beneficio].
