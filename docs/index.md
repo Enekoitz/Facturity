@@ -10,7 +10,7 @@ Este es el mapa de la documentación. Cada documento responde a una pregunta.
 | [Glosario](glossary.md)                        | ¿Qué significa cada término?     | 🟡 Borrador    |
 | [Requisitos](requirements.md)                  | ¿Qué debe cumplir el sistema?    | 🟢 Revisado    |
 | [Historias de usuario](user-stories/README.md) | ¿Qué necesita el usuario?        | 🔴 Sin empezar |
-| [Modelo de dominio](domain-model.md)           | ¿Sobre qué conceptos trabajamos? | 🟡 Borrador    |
+| [Modelo de dominio](invoicing.md)              | ¿Sobre qué conceptos trabajamos? | 🟡 Borrador    |
 | [Arquitectura](architecture.md)                | ¿Cómo está construido?           | 🟢 Revisado    |
 | [Decisiones (ADRs)](decisions/README.md)       | ¿Por qué es así?                 | 🟢 Revisado    |
 
