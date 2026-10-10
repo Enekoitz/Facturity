@@ -24,6 +24,9 @@ Además, se utilizarán como parte del pipeline CI/CD en los despliegues, garant
 | Integración  | Sistema completo (API + módulos): `Facturity.IntegrationTests`  |
 | Arquitectura | Sistema completo (API + módulos): `Facturity.ArchitectureTests` |
 
+## Convenciones
+
+- Nomenclatura: _MethodName_StateUnderTest_ExpectedBehavior_
 
 ## Proyecto adicional de arquitectura
 
@@ -37,4 +40,4 @@ Se desarrolla también un  proyecto con tests de arquitectura. Es fundamental pa
 Ninguna actualmente
 
 ---
-_Última revisión: 2026-10-04
+_Última revisión: 2026-10-10
