@@ -7,6 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Features\" />
+    <Folder Include="Infrastructure\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Facturity.Modules.SharedKernel\Facturity.Modules.SharedKernel.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Facturity.API" />
+    <InternalsVisibleTo Include="Facturity.Modules.Bootstrapper" />
     <InternalsVisibleTo Include="Facturity.Modules.Invoicing.UnitTests" />
   </ItemGroup>
 
