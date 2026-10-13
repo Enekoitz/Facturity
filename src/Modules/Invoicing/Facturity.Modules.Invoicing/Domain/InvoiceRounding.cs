@@ -2,9 +2,8 @@
 
 internal static class InvoiceRounding
 {
-    internal const int Decimals = 2;
-    internal const MidpointRounding Mode = MidpointRounding.AwayFromZero;
+    private const MidpointRounding Mode = MidpointRounding.AwayFromZero;
 
-    internal static decimal Round(decimal value) =>
-        Math.Round(value, Decimals, Mode);
+    internal static decimal Round(decimal value, int decimalPlaces = 2) 
+        => Math.Round(value, decimalPlaces, Mode);
 }
