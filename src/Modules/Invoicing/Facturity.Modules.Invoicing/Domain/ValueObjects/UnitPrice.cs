@@ -29,7 +29,7 @@ internal record UnitPrice
         if (currency.Length != Parameters.CurrencyExactLength)
             errors.Add(UnitPriceError.InvalidCurrencyCode);
 
-        if (Utilities.GetSignificantDecimalPlaces(price) > Parameters.UnitPriceDecimalPlaces)
+        if (Utilities.GetSignificantDecimalPlaces(price) > Parameters.UnitPriceMaxDecimalPlaces)
             errors.Add(UnitPriceError.ExceededMaximumDecimalPlaces);
         
         if (errors.Count > 0)

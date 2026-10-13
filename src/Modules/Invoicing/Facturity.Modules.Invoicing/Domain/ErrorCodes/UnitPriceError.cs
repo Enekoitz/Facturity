@@ -14,5 +14,5 @@ internal static class UnitPriceError
     
     internal static readonly Error ExceededMaximumDecimalPlaces =
         Error.Validation("UnitPrice.ExceededMaximumDecimalPlaces", 
-            $"The unit price cannot have more than {Parameters.UnitPriceDecimalPlaces} decimal places.");
+            $"The unit price cannot have more than {Parameters.UnitPriceMaxDecimalPlaces} decimal places.");
 }
