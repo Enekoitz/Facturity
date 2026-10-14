@@ -1,10 +1,23 @@
-﻿using System.Diagnostics;
-using Facturity.Modules.SharedKernel.Domain;
+﻿using Facturity.Modules.SharedKernel.Domain;
 
 namespace Facturity.Modules.Invoicing.Domain;
 
-internal record Money
+/// <summary>
+/// Money extension methods
+/// </summary>
+internal static class MoneyExtensions
 {
+    public static Money Sum<T>(this IEnumerable<T> source, Func<T, Money> selector) =>
+        source.Aggregate(Money.Zero, (acc, item) => acc + selector(item));
+}
+
+/// <summary>
+/// Money value object
+/// </summary>
+internal sealed record Money
+{
+    internal static readonly Money Zero = new(0m);
+    
     internal const string DefaultCurrency = "EUR";
     internal decimal Amount { get; private init; }
     internal string Currency { get; private init; } = DefaultCurrency;
@@ -41,5 +54,8 @@ internal record Money
         return Result.Ok(new Money(amount, currency));
     }
     
-    public override string ToString() => $"{Amount} {Currency}";
+    public static Money operator +(Money left, Money right) =>
+        new(left.Amount + right.Amount);
+    
+    public override string ToString() => $"{Amount:F2} {Currency}";
 }
