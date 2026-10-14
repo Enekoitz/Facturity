@@ -1,23 +1,13 @@
-﻿using Facturity.Modules.SharedKernel.Domain;
+﻿using Facturity.Modules.Invoicing.UnitTests.Domain;
 
 namespace Facturity.Modules.Invoicing.Domain;
 
 public class InvoiceLineTests
 {
-    private static UnitPrice Price(decimal value) => UnitPrice.Create(value).Value;
-    private static TaxRate Rate(decimal value) => TaxRate.Create(value).Value;
-
-    private static Result<InvoiceLine> CreateLine(
-        string? description = "Consulting",
-        decimal units = 1m,
-        decimal unitPrice = 10m,
-        decimal taxRate = 21m) =>
-        InvoiceLine.Create(description!, units, Price(unitPrice), Rate(taxRate));
-
     [Fact]
     public void Create_WithValidData_ShouldCalculateTaxBaseTaxAmountAndTotal()
     {
-        var result = CreateLine(units: 2m, unitPrice: 10m, taxRate: 21m);
+        var result = Helper.CreateLine(units: 2m, unitPrice: 10m, taxRate: 21m);
 
         Assert.True(result.IsSuccess);
         Assert.Equal(20.00m, result.Value.TaxBase.Amount);
@@ -34,7 +24,7 @@ public class InvoiceLineTests
         decimal units, decimal unitPrice, decimal taxRate,
         decimal expectedBase, decimal expectedTax, decimal expectedTotal)
     {
-        var result = CreateLine(units: units, unitPrice: unitPrice, taxRate: taxRate);
+        var result = Helper.CreateLine(units: units, unitPrice: unitPrice, taxRate: taxRate);
 
         Assert.True(result.IsSuccess);
         Assert.Equal(expectedBase, result.Value.TaxBase.Amount);
@@ -45,7 +35,7 @@ public class InvoiceLineTests
     [Fact]
     public void Create_ShouldKeepInputValues()
     {
-        var result = CreateLine(description: "Consulting", units: 2.5m, unitPrice: 10m, taxRate: 10m);
+        var result = Helper.CreateLine(description: "Consulting", units: 2.5m, unitPrice: 10m, taxRate: 10m);
 
         Assert.Equal("Consulting", result.Value.Description);
         Assert.Equal(2.5m, result.Value.Units);
@@ -59,7 +49,7 @@ public class InvoiceLineTests
     [InlineData("   ")]
     public void Create_WithNullOrBlankDescription_ShouldFailWithoutThrowing(string? description)
     {
-        var result = CreateLine(description: description);
+        var result = Helper.CreateLine(description: description);
 
         Assert.True(result.IsFailure);
         Assert.Contains(InvoiceLineError.NullOrEmptyDescription, result.Errors);
@@ -71,7 +61,7 @@ public class InvoiceLineTests
     {
         var description = new string('a', Parameters.DescriptionMaxLength);
 
-        var result = CreateLine(description: description);
+        var result = Helper.CreateLine(description: description);
 
         Assert.True(result.IsSuccess);
     }
@@ -81,7 +71,7 @@ public class InvoiceLineTests
     {
         var description = new string('a', Parameters.DescriptionMaxLength + 1);
 
-        var result = CreateLine(description: description);
+        var result = Helper.CreateLine(description: description);
 
         Assert.True(result.IsFailure);
         Assert.Contains(InvoiceLineError.ExceededMaximumLengthDescription, result.Errors);
@@ -90,7 +80,7 @@ public class InvoiceLineTests
     [Fact]
     public void Create_ShouldTrimDescription()
     {
-        var result = CreateLine(description: "  Consulting  ");
+        var result = Helper.CreateLine(description: "  Consulting  ");
 
         Assert.Equal("Consulting", result.Value.Description);
     }
@@ -100,7 +90,7 @@ public class InvoiceLineTests
     {
         var description = "  " + new string('a', Parameters.DescriptionMaxLength) + "  ";
 
-        var result = CreateLine(description: description);
+        var result = Helper.CreateLine(description: description);
 
         Assert.True(result.IsSuccess);
     }
@@ -110,7 +100,7 @@ public class InvoiceLineTests
     [InlineData(-1)]
     public void Create_WithZeroOrNegativeUnits_ShouldFail(decimal units)
     {
-        var result = CreateLine(units: units);
+        var result = Helper.CreateLine(units: units);
 
         Assert.True(result.IsFailure);
         Assert.Contains(InvoiceLineError.NegativeOrZeroUnits, result.Errors);
@@ -122,7 +112,7 @@ public class InvoiceLineTests
     [InlineData(1.500000)]
     public void Create_WithUnitsWithinMaxDecimals_ShouldSucceed(decimal units)
     {
-        var result = CreateLine(units: units);
+        var result = Helper.CreateLine(units: units);
 
         Assert.True(result.IsSuccess);
     }
@@ -132,7 +122,7 @@ public class InvoiceLineTests
     [InlineData(1.001)]
     public void Create_WithUnitsOverMaxDecimals_ShouldFailAndNotRound(decimal units)
     {
-        var result = CreateLine(units: units);
+        var result = Helper.CreateLine(units: units);
 
         Assert.True(result.IsFailure);
         Assert.Contains(InvoiceLineError.ExceededMaximumDecimalPlacesUnits, result.Errors);
@@ -141,7 +131,7 @@ public class InvoiceLineTests
     [Fact]
     public void Create_WithSeveralInvalidFields_ShouldReturnAllErrors()
     {
-        var result = CreateLine(description: "", units: 0m);
+        var result = Helper.CreateLine(description: "", units: 0m);
 
         Assert.True(result.IsFailure);
         Assert.Contains(InvoiceLineError.NullOrEmptyDescription, result.Errors);
