@@ -1,4 +1,4 @@
-﻿using Facturity.Modules.Invoicing.UnitTests.Domain;
+using Facturity.Modules.Invoicing.UnitTests.Domain;
 
 namespace Facturity.Modules.Invoicing.Domain;
 
