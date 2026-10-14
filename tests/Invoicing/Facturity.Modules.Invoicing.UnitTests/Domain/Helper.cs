@@ -16,4 +16,13 @@ internal static class Helper
         decimal unitPrice = 10m,
         decimal taxRate = 21m) =>
         InvoiceLine.Create(description!, units, GetUnitPrice(unitPrice), GetTaxRate(taxRate));
+    
+    internal static List<InvoiceLine> GetInvoiceLinesSampleList() =>
+    [
+        CreateLine(units: 2m, unitPrice: 2.356m, taxRate: 21.00m).Value,
+        CreateLine(units: 14m, unitPrice: 3.34m, taxRate: 21m).Value,
+        CreateLine(units: 8.45m, unitPrice: 1.055m, taxRate: 15.00m).Value,
+        CreateLine(units: 34.2m, unitPrice: 5.23m, taxRate: 15m).Value,
+        CreateLine(units: 1m, unitPrice: 2.34m, taxRate: 4m).Value
+    ];
 }

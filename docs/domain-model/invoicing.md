@@ -34,7 +34,7 @@ The aggregate root of the invoicing module. It represents the system's main enti
 ### InvoiceData
 | Field            | Type                         | Rules                                   |
 | ---------------- | ---------------------------- | --------------------------------------- |
-| Description      | `string`                     | - Required, <br>- Max length. N         |
+| Description      | `string`                     | - Required, <br>- Max length. 500       |
 | InvoiceLines     | `IReadOnlyList<InvoiceLine>` | - At least 1 element                    |
 | TotalAmount      | `Money`                      | - Positive (except for amended returns) |
 | TransactionAtUtc | `DateTimeOffset`             | - Non-future date                       |
