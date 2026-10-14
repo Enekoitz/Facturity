@@ -1,9 +1,7 @@
 ﻿using Facturity.Modules.Customer.Domain;
-using Facturity.Modules.SharedKernel.Abstractions;
 using Facturity.Modules.SharedKernel.Domain;
 using FluentAssertions;
 using Microsoft.Extensions.Time.Testing;
-using Xunit;
 
 namespace Facturity.Modules.Customer.UnitTests.Domain;
 
