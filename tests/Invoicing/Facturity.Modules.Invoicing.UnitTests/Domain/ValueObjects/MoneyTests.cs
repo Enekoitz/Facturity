@@ -1,4 +1,60 @@
-﻿namespace Facturity.Modules.Invoicing.Domain;
+﻿using Facturity.Modules.Invoicing.UnitTests.Domain;
+
+namespace Facturity.Modules.Invoicing.Domain;
+
+public class MoneyExtensionsTests
+{
+    private record Item(Money Amount);
+
+    [Fact]
+    public void Sum_WithEmptyCollection_ShouldReturnZero()
+    {
+        var items = Array.Empty<Item>();
+
+        var result = items.Sum(i => i.Amount);
+
+        Assert.Equal(Money.Zero, result);
+    }
+
+    [Fact]
+    public void Sum_WithSingleItem_ShouldReturnThatAmount()
+    {
+        var items = new[] { new Item(Helper.GetMoney(10.50m)) };
+
+        Assert.Equal(Helper.GetMoney(10.50m), items.Sum(i => i.Amount));
+    }
+
+    [Fact]
+    public void Sum_WithSeveralItems_ShouldReturnTotal()
+    {
+        var items = new[]
+        {
+            new Item(Helper.GetMoney(10.50m)),
+            new Item(Helper.GetMoney(0.25m)),
+            new Item(Helper.GetMoney(5.00m))
+        };
+
+        Assert.Equal(Helper.GetMoney(15.75m), items.Sum(i => i.Amount));
+    }
+
+    [Fact]
+    public void Sum_ShouldUseTheSelector()
+    {
+        var items = new[] { (A: Helper.GetMoney(1m), B: Helper.GetMoney(100m)), (A: Helper.GetMoney(2m), B: Helper.GetMoney(200m)) };
+
+        Assert.Equal(Helper.GetMoney(3m), items.Sum(i => i.A));
+        Assert.Equal(Helper.GetMoney(300m), items.Sum(i => i.B));
+    }
+
+    [Fact]
+    public void Sum_ShouldNotDependOnOrder()
+    {
+        var a = new[] { new Item(Helper.GetMoney(1.10m)), new Item(Helper.GetMoney(2.20m)), new Item(Helper.GetMoney(3.30m)) };
+        var b = a.Reverse().ToArray();
+
+        Assert.Equal(a.Sum(i => i.Amount), b.Sum(i => i.Amount));
+    }
+}
 
 public class MoneyTests
 {
@@ -90,5 +146,22 @@ public class MoneyTests
         Assert.Equal(2, result.Errors.Count);
         Assert.Contains(MoneyError.InvalidAmountNegativeOrZero ,result.Errors);
         Assert.Contains(MoneyError.InvalidCurrencyCode ,result.Errors);
+    }
+    
+    [Theory]
+    [InlineData(145.345, 12.455, 157.810000)]
+    [InlineData(43.006, 17.001, 60.01000000)]
+    [InlineData(134.45, 755.43, 889.88)]
+    [InlineData(1345.45, 44.345, 1389.8)]
+    public void SumOperation_ValidMoneyObjectsSum_ReturnsSuccessMoney(decimal firstMoneyAmount, decimal secondMoneyAmount, decimal expectedSum)
+    {
+        var firstMoney = Money.Create(firstMoneyAmount).Value;
+        var secondMoney = Money.Create(secondMoneyAmount).Value;
+        var expectedSumMoney = Money.Create(expectedSum).Value;
+        
+        var resultMoney = firstMoney + secondMoney;
+        
+        Assert.IsType<Money>(resultMoney);
+        Assert.Equal(expectedSumMoney, resultMoney);
     }
 }

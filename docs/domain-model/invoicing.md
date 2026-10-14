@@ -4,16 +4,16 @@
 
 The aggregate root of the invoicing module. It represents the system's main entity and encapsulates the majority of the complexity.
 
-| Field      | Type            | Rules                                                                                | Nullable |
-| ---------- | --------------- | ------------------------------------------------------------------------------------ | -------- |
-| Id         | `Guid`          | - Technical identity(persistencia)                                                   | False    |
-| TenantId   | `Guid`          | - Owner identity (invoice issuer)                                                    | False    |
-| CustomerId | `Guid`          | - Recipient of the invoice (invoice recipient)<br>- Null if is an simplified invoice | True     |
-| Header     | `InvoiceHeader` | - VO                                                                                 | False    |
-| Data       | `InvoiceData`   | - VO                                                                                 | False    |
-| Breakdown  | `TaxBreakdown`  | - VO                                                                                 | False    |
-| Status     | `InvoiceStatus` | - Draft / Issued                                                                     | False    |
-| Audit      | `AuditInfo`     | - CreatedAt, CreatedBy, UpdatedAt...                                                 | False    |
+| Field        | Type                           | Rules                                                                                | Nullable |
+| ------------ | ------------------------------ | ------------------------------------------------------------------------------------ | -------- |
+| Id           | `Guid`                         | - Technical identity(persistencia)                                                   | False    |
+| TenantId     | `Guid`                         | - Owner identity (invoice issuer)                                                    | False    |
+| CustomerId   | `Guid`                         | - Recipient of the invoice (invoice recipient)<br>- Null if is an simplified invoice | True     |
+| Header       | `InvoiceHeader`                | - VO                                                                                 | False    |
+| Data         | `InvoiceData`                  | - VO                                                                                 | False    |
+| TaxBreakdown | `IReadOnlyList<BreakdownLine>` | - Minimun of 1 element                                                               | False    |
+| Status       | `InvoiceStatus`                | - Draft / Issued                                                                     | False    |
+| Audit        | `AuditInfo`                    | - CreatedAt, CreatedBy, UpdatedAt...                                                 | False    |
 
 ### Invariants
 - `Data.TotalAmount` = sum of bases + amounts de `Breakdown`.
@@ -38,11 +38,6 @@ The aggregate root of the invoicing module. It represents the system's main enti
 | InvoiceLines     | `IReadOnlyList<InvoiceLine>` | - At least 1 element                    |
 | TotalAmount      | `Money`                      | - Positive (except for amended returns) |
 | TransactionAtUtc | `DateTimeOffset`             | - Non-future date                       |
-
-### TaxBreakdown
-| Field          | Type                           | Rules                  |
-| -------------- | ------------------------------ | ---------------------- |
-| BreakdownLines | `IReadOnlyList<BreakdownLine>` | - Minimun of 1 element |
 
 ### InvoiceLine
 | Field       | Type        | Rules                                  |

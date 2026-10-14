@@ -5,7 +5,7 @@ namespace Facturity.Modules.Invoicing.Domain;
 /// <summary>
 /// Money extension methods
 /// </summary>
-internal static class MoneyExtensions
+internal static class MoneyExtension
 {
     public static Money Sum<T>(this IEnumerable<T> source, Func<T, Money> selector) =>
         source.Aggregate(Money.Zero, (acc, item) => acc + selector(item));
@@ -51,7 +51,7 @@ internal sealed record Money
         if (errors.Count > 0)
             return Result.Fail<Money>(errors);
 
-        return Result.Ok(new Money(amount, currency));
+        return Result.Ok(new Money(InvoiceRounding.Round(amount), currency));
     }
     
     public static Money operator +(Money left, Money right) =>
