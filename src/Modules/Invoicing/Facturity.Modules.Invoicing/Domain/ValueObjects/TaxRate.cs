@@ -2,7 +2,10 @@
 
 namespace Facturity.Modules.Invoicing.Domain;
 
-internal record TaxRate
+/// <summary>
+/// Tax rate value object
+/// </summary>
+internal sealed record TaxRate
 {
     internal decimal Percentage { get; private init; }
 
@@ -21,5 +24,5 @@ internal record TaxRate
         return Result.Ok(new TaxRate(InvoiceRounding.Round(percentage)));
     }
     
-    public override string ToString() => $"{Percentage}%";
+    public override string ToString() => $"{Percentage:F2}%";
 }
