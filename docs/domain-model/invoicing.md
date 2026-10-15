@@ -6,20 +6,22 @@ The aggregate root of the invoicing module. It represents the system's main enti
 
 | Field        | Type                           | Rules                                                                                | Nullable |
 | ------------ | ------------------------------ | ------------------------------------------------------------------------------------ | -------- |
-| Id           | `Guid`                         | - Technical identity(persistencia)                                                   | False    |
-| TenantId     | `Guid`                         | - Owner identity (invoice issuer)                                                    | False    |
-| CustomerId   | `Guid`                         | - Recipient of the invoice (invoice recipient)<br>- Null if is an simplified invoice | True     |
-| Header       | `InvoiceHeader`                | - VO                                                                                 | False    |
-| Data         | `InvoiceData`                  | - VO                                                                                 | False    |
-| TaxBreakdown | `IReadOnlyList<BreakdownLine>` | - Minimun of 1 element                                                               | False    |
-| Status       | `InvoiceStatus`                | - Draft / Issued                                                                     | False    |
-| Audit        | `AuditInfo`                    | - CreatedAt, CreatedBy, UpdatedAt...                                                 | False    |
+| Id           | `Guid`                         | - Technical identity(persistencia)                                                   | No       |
+| TenantId     | `Guid`                         | - Owner identity (invoice issuer)                                                    | No       |
+| CustomerId   | `Guid`                         | - Recipient of the invoice (invoice recipient)<br>- Null if is an simplified invoice | Yes      |
+| Header       | `InvoiceHeader`                | - VO                                                                                 | No       |
+| Data         | `InvoiceData`                  | - VO                                                                                 | No       |
+| TaxBreakdown | `IReadOnlyList<BreakdownLine>` | - Minimun of 1 element                                                               | No       |
+| Status       | `InvoiceStatus`                | - Draft / Issued                                                                     | No       |
+| Audit        | `AuditInfo`                    | - CreatedAt, CreatedBy, UpdatedAt...                                                 | No       |
 
 ### Invariants
-- `Data.TotalAmount` = sum of bases + amounts de `Breakdown`.
+- `Data.TotalAmount` = sum of bases + amounts of `InvoiceLine` list.
 - An `Issued` invoice is inmutable.
 - Only a `Draft` invoice can be converted into an `Issued` invoice.
 - An invoice must have at least a detail line.
+- The InvoiceHeader field number is calculated and assigned solely during the issuance process, via a database transaction. This ensures the integrity and sequential continuity of the numbers—with no gaps—while also preventing potential race conditions and concurrency conflicts.
+- `Header.IssuedAtUtc` cannot be null or future when the invoice is being issued.
 
 ## Entities
 
@@ -29,17 +31,16 @@ The aggregate root of the invoicing module. It represents the system's main enti
 | Id    | `Guid`   |                  |
 | Name  | `string` | - Max length: 20 
 
-- The invoice number is calculated and assigned solely during the issuance process, via a database transaction. This ensures the integrity and sequential continuity of the numbers—with no gaps—while also preventing potential race conditions and concurrency conflicts.
-
 ## Value Objects
 
 ### InvoiceHeader
-| Field        | Type             | Rules                                                     | Nullable |
-| ------------ | ---------------- | --------------------------------------------------------- | -------- |
-| Series       | `InvoiceSeries`  | - Required<br>- Max length. 20                            | No       |
-| Number       | `InvoiceNumber`  | - Required<br>- Greater than 0<br>- Related to the series | No       |
-| IssuedAtUtc  | `DateTimeOffset` | - Non-future date                                         | No       |
-| IsSimplified | `bool`           | - Default: false                                          | No       |
+| Field        | Type                   | Rules                                       | Nullable |
+| ------------ | ---------------------- | ------------------------------------------- | -------- |
+| SeriesId     | `Guid` (or `SeriesId`) | - Required<br>- Max length. 20              | No       |
+| Number       | `uint`                 | - Greater than 0<br>- Related to the series | Yes      |
+| IssuedAtUtc  | `DateTimeOffset`       | - Non-future date                           | Yes      |
+| IsSimplified | `bool`                 | - Default: false                            | No       |
+- The "Number" field is only set in the database transaction when the invoice is issued. "InvoiceHeader" can only obtain this value via an invoice that has been previously loaded and issued using EF Core.
 
 ### InvoiceData
 | Field            | Type                         | Rules                                   |
@@ -53,8 +54,8 @@ The aggregate root of the invoicing module. It represents the system's main enti
 | Field       | Type        | Rules                                  |
 | ----------- | ----------- | -------------------------------------- |
 | Description | `string`    | - Max length: 100                      |
-| Units       | `decimal`   |                                        |
-| UnitPrice   | `UnitPrice` |                                        |
+| Units       | `decimal`   | - Greater than 0                       |
+| UnitPrice   | `UnitPrice` | - Max six decimal places               |
 | TaxBase     | `Money`     | - = Units * UnitAmount                 |
 | TaxRate     | `TaxRate`   | - 0 to 100                             |
 | TaxAmount   | `Money`     | - = TaxBase * TaxRate / 100 (rounding) |
