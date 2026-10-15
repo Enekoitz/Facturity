@@ -25,4 +25,15 @@ internal static class Helper
         CreateLine(units: 34.2m, unitPrice: 5.23m, taxRate: 15m).Value,
         CreateLine(units: 1m, unitPrice: 2.34m, taxRate: 4m).Value
     ];
+    
+    internal static Result<InvoiceSeries> CreateSeries(
+        string name = "DFB_MLC") =>
+        InvoiceSeries.Create(name);
+    
+    internal static Result<InvoiceHeader> CreateInvoiceHeader(
+        Guid seriesId,
+        bool isSimplified,
+        DateTimeOffset? issuedAtUtc,
+        TimeProvider fakeTimeProvider) =>
+        InvoiceHeader.Create(seriesId, isSimplified, issuedAtUtc, fakeTimeProvider);
 }
