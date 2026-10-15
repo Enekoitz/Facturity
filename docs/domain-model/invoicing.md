@@ -18,15 +18,25 @@ The aggregate root of the invoicing module. It represents the system's main enti
 ### Invariants
 - `Data.TotalAmount` = sum of bases + amounts de `Breakdown`.
 - An `Issued` invoice is inmutable.
-- Only a `Draft` invoice can be converte into an `Issued` invoice.
-- An invoice must have al least a detail line.
+- Only a `Draft` invoice can be converted into an `Issued` invoice.
+- An invoice must have at least a detail line.
+
+## Entities
+
+### InvoiceSeries
+| Field | Type     | Rules            |
+| ----- | -------- | ---------------- |
+| Id    | `Guid`   |                  |
+| Name  | `string` | - Max length: 20 
+
+- The invoice number is calculated and assigned solely during the issuance process, via a database transaction. This ensures the integrity and sequential continuity of the numbers—with no gaps—while also preventing potential race conditions and concurrency conflicts.
 
 ## Value Objects
 
 ### InvoiceHeader
 | Field        | Type             | Rules                                                     | Nullable |
 | ------------ | ---------------- | --------------------------------------------------------- | -------- |
-| Series       | `InvoiceSeries`  | - Required<br>- Max length. N                             | No       |
+| Series       | `InvoiceSeries`  | - Required<br>- Max length. 20                            | No       |
 | Number       | `InvoiceNumber`  | - Required<br>- Greater than 0<br>- Related to the series | No       |
 | IssuedAtUtc  | `DateTimeOffset` | - Non-future date                                         | No       |
 | IsSimplified | `bool`           | - Default: false                                          | No       |
@@ -78,12 +88,13 @@ The aggregate root of the invoicing module. It represents the system's main enti
 | ----- | --------- | ------------------- |
 | Value | `decimal` | - Between 0 and 100 |
 
-### InvoiceSeries / InvoiceNumber
-| Field | Type      | Rules               |
-| ----- | --------- | ------------------- |
-| Value | `decimal` | - Between 0 and 100 |
+## Enums
 
-Format and length validation. Each series has its own numerical sequence based on the invoices issued within that same series.
+### InvoiceStatus
+| Element  | Value | Description                                                        |
+| -------- | ----- | ------------------------------------------------------------------ |
+| `Draft`  | 1     | The invoice is in draft status, not issued yet                     |
+| `Issued` | 2     | The invoice has been issued previously passing through draf status |
 
 # Notes
 
