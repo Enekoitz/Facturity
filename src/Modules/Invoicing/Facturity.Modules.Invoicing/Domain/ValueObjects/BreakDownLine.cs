@@ -19,11 +19,8 @@ internal record BreakdownLine
     
     private BreakdownLine(){ }
 
-    internal static Result<IReadOnlyList<BreakdownLine>> CreateList(IReadOnlyList<InvoiceLine> invoiceLines)
+    internal static IReadOnlyList<BreakdownLine> CreateList(IReadOnlyList<InvoiceLine> invoiceLines)
     {
-        if(invoiceLines.Count == 0)
-            return Result.Fail<IReadOnlyList<BreakdownLine>>(BreakdownLineError.EmptyInvoiceLinesList);
-
         var breakdownLines = 
             invoiceLines
                 .GroupBy(l => l.TaxRate)
@@ -36,7 +33,6 @@ internal record BreakdownLine
                     ))
                 .ToList();
 
-        IReadOnlyList<BreakdownLine> readOnlyBreakdownLines = breakdownLines.AsReadOnly();
-        return Result.Ok(readOnlyBreakdownLines);
+        return breakdownLines.AsReadOnly();
     }
 }
