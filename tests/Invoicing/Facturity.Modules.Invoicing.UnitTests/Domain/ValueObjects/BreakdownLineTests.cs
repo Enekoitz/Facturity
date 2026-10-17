@@ -22,14 +22,12 @@ public class BreakdownLineTests
         
         var result = BreakdownLine.CreateList(invoiceLines);
         
-        Assert.True(result.IsSuccess);
-        
-        Assert.Equal(invoiceLines.GroupBy(l => l.TaxRate).Count(), result.Value.Count);
+        Assert.Equal(invoiceLines.GroupBy(l => l.TaxRate).Count(), result.Count);
         
         var expectedGroups = invoiceLines.GroupBy(l => l.TaxRate);
         foreach (var group in expectedGroups)
         {
-            var breakdownLine = result.Value.FirstOrDefault(l => l.TaxRate == group.Key);
+            var breakdownLine = result.FirstOrDefault(l => l.TaxRate == group.Key);
     
             Assert.NotNull(breakdownLine);
 
@@ -38,11 +36,13 @@ public class BreakdownLineTests
             Assert.Equal(group.Sum(l => l.TotalAmount), breakdownLine.TotalAmount);
         }
         
-        Assert.Equal(invoiceLines.Sum(l => l.TaxBase), result.Value.Sum(l => l.TaxBase));
-        Assert.Equal(invoiceLines.Sum(l => l.TaxAmount), result.Value.Sum(l => l.TaxAmount));
-        Assert.Equal(invoiceLines.Sum(l => l.TotalAmount), result.Value.Sum(l => l.TotalAmount));
+        Assert.Equal(invoiceLines.Sum(l => l.TaxBase), result.Sum(l => l.TaxBase));
+        Assert.Equal(invoiceLines.Sum(l => l.TaxAmount), result.Sum(l => l.TaxAmount));
+        Assert.Equal(invoiceLines.Sum(l => l.TotalAmount), result.Sum(l => l.TotalAmount));
         
-        Assert.IsType<IReadOnlyList<BreakdownLine>>(result.Value, exactMatch:false);
+        Assert.IsType<IReadOnlyList<BreakdownLine>>(result, exactMatch:false);
+        
+        Assert.NotEmpty(result);
     }
 
     [Fact]
@@ -52,8 +52,6 @@ public class BreakdownLineTests
 
         var result = BreakdownLine.CreateList(emptyInvoiceLines);
         
-        Assert.True(result.IsFailure);
-        Assert.Contains(BreakdownLineError.EmptyInvoiceLinesList, result.Errors);
-        Assert.Single(result.Errors);
+        Assert.Empty(result);
     }
 }
