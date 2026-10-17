@@ -1,12 +1,14 @@
 # Domain model: Invoicing
 
+Invoicing module 
+
 ## Invoice (aggregate root)
 
-The aggregate root of the invoicing module. It represents the system's main entity and encapsulates the majority of the complexity.
+The aggregate root of the invoicing module.
 
 | Field        | Type                           | Rules                                                                                | Nullable |
 | ------------ | ------------------------------ | ------------------------------------------------------------------------------------ | -------- |
-| Id           | `Guid`                         | - Technical identity(persistencia)                                                   | No       |
+| Id           | `Guid`                         | - Technical identity                                                                 | No       |
 | TenantId     | `Guid`                         | - Owner identity (invoice issuer)                                                    | No       |
 | CustomerId   | `Guid`                         | - Recipient of the invoice (invoice recipient)<br>- Null if is an simplified invoice | Yes      |
 | Header       | `InvoiceHeader`                | - VO                                                                                 | No       |
@@ -16,12 +18,32 @@ The aggregate root of the invoicing module. It represents the system's main enti
 | Audit        | `AuditInfo`                    | - CreatedAt, CreatedBy, UpdatedAt...                                                 | No       |
 
 ### Invariants
+
 - `Data.TotalAmount` = sum of bases + amounts of `InvoiceLine` list.
 - An `Issued` invoice is inmutable.
 - Only a `Draft` invoice can be converted into an `Issued` invoice.
-- An invoice must have at least a detail line.
-- The InvoiceHeader field number is calculated and assigned solely during the issuance process, via a database transaction. This ensures the integrity and sequential continuity of the numbers—with no gaps—while also preventing potential race conditions and concurrency conflicts.
-- `Header.IssuedAtUtc` cannot be null or future when the invoice is being issued.
+
+Regarding the operation type:
+
+- Create Draft:
+	- The `Status` must be set to `Draft` and not to `Issued`.
+	- An uncompleted invoice can be saved as a draft; final validation takes place during the issuance process. So:
+		- It can accept zero or null invoice lines.
+		- It can save `CustomerId` to null when is specified as a no simplified invoice.
+		
+- Update Draft (without issuing):
+	- The `Status` must be set to `Draft` and not to `Issued`.
+	- An uncompleted invoice can be saved as a draft; final validation takes place during the issuance process. So:
+		- It can accept zero or null invoice lines.
+		- It can save `CustomerId` to null when is specified as a no simplified invoice.
+		
+- Issue:
+	- The  `Header.Number` is calculated and assigned solely during the issuance process, via issuing database transaction. This ensures the integrity and sequential continuity of the numbers—with no gaps—while also preventing potential race conditions and concurrency conflicts.
+	- The `Status` must be `Draft` and not `Issued`.
+	- The `Header.IssuedAtUtc` cannot be null or future.
+	- If is a simplified invoice (`HeaderIsSimplified == true`), `CustomerId` must be null.
+	- If is not a simplified invoice (`HeaderIsSimplified == false`), `CustomerId` must be valid and not null.
+	- The invoice must have at least a detail line. And, consequently, at least a breakdown line.
 
 ## Entities
 
@@ -40,7 +62,6 @@ The aggregate root of the invoicing module. It represents the system's main enti
 | Number       | `uint`                 | - Greater than 0<br>- Related to the series | Yes      |
 | IssuedAtUtc  | `DateTimeOffset`       | - Non-future date                           | Yes      |
 | IsSimplified | `bool`                 | - Default: false                            | No       |
-- The "Number" field is only set in the database transaction when the invoice is issued. "InvoiceHeader" can only obtain this value via an invoice that has been previously loaded and issued using EF Core.
 
 ### InvoiceData
 | Field            | Type                         | Rules                                   |
@@ -102,4 +123,4 @@ The aggregate root of the invoicing module. It represents the system's main enti
 - All decimal values ​​are rounded away from zero (not banker's rounding).
 
 ---
-_Last review: 2026-10-10_
+_Last review: 2026-10-17_
