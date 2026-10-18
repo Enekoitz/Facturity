@@ -22,7 +22,7 @@ internal sealed class CrearClienteHandler(IClientesRepository repoCliente, IIden
             return Result.Fail<Guid>(domicilioResult.Errors);
 
         // TODO: Pendiente de quitar de aquí e implementar tenantId desde claims con seguridad vía JWT access token, etc.
-        var tenantIdResult = TenantId.Crear(3);
+        var tenantIdResult = TenantId.Crear(Guid.NewGuid());
 
         var id = Guid.NewGuid();
         var clienteResult = Cliente.Crear(id, tenantIdResult.Value, command.Alias, identificacionFiscalResult.Value, command.RazonSocial,
