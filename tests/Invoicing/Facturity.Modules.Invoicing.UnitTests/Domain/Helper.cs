@@ -32,8 +32,6 @@ internal static class Helper
     
     internal static Result<InvoiceHeader> CreateInvoiceHeader(
         Guid seriesId,
-        bool isSimplified,
-        DateTimeOffset? issuedAtUtc,
-        TimeProvider fakeTimeProvider) =>
-        InvoiceHeader.Create(seriesId, isSimplified, issuedAtUtc, fakeTimeProvider);
+        bool isSimplified) =>
+        InvoiceHeader.Create(seriesId, isSimplified);
 }
