@@ -1,6 +1,6 @@
-using Facturity.Modules.Invoicing.UnitTests.Domain;
+using Facturity.Modules.Invoicing.Domain;
 
-namespace Facturity.Modules.Invoicing.Domain;
+namespace Facturity.Modules.Invoicing.UnitTests.Domain;
 
 public class InvoiceHeaderTests
 {
@@ -11,7 +11,7 @@ public class InvoiceHeaderTests
     {
         var seriesId = Guid.NewGuid(); 
         
-        var result = Helper.CreateInvoiceHeader(seriesId, isSimplified);
+        var result = Build.Header(seriesId, isSimplified);
 
         Assert.True(result.IsSuccess);
         Assert.Equal(seriesId, result.Value.SeriesId);
@@ -25,7 +25,7 @@ public class InvoiceHeaderTests
         const bool isSimplified = false;
         DateTimeOffset? issuedAtUtc = null;
         
-        var result = Helper.CreateInvoiceHeader(seriesId, isSimplified);
+        var result = Build.Header(seriesId, isSimplified);
 
         Assert.True(result.IsFailure);
         Assert.Contains(InvoiceHeaderError.SeriesIdEmpty, result.Errors);
@@ -39,7 +39,7 @@ public class InvoiceHeaderTests
         
         var issuedAtUtc = new DateTimeOffset(2026, 12, 29, 09, 00,00, TimeSpan.Zero);
         
-        var header = Helper.CreateInvoiceHeader(seriesId, isSimplified).Value;
+        var header = Build.Header(seriesId, isSimplified).Value;
         
         header = header.WithIssuance(issuedAtUtc);
 

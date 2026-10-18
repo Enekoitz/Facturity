@@ -1,4 +1,6 @@
-﻿namespace Facturity.Modules.Invoicing.Domain;
+﻿using Facturity.Modules.Invoicing.Domain;
+
+namespace Facturity.Modules.Invoicing.UnitTests.Domain;
 
 public class UnitPriceTests
 {

@@ -1,6 +1,4 @@
-﻿using Facturity.Modules.SharedKernel.Domain;
-
-namespace Facturity.Modules.Invoicing.Domain;
+﻿namespace Facturity.Modules.Invoicing.Domain;
 
 internal record BreakdownLine
 {

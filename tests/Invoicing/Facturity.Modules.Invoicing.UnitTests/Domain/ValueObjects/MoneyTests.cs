@@ -1,6 +1,7 @@
-﻿using Facturity.Modules.Invoicing.UnitTests.Domain;
+﻿using Facturity.Modules.Invoicing.Domain;
+using Facturity.Modules.Invoicing.UnitTests.Domain;
 
-namespace Facturity.Modules.Invoicing.Domain;
+namespace Facturity.Modules.Invoicing.UnitTests.Domain;
 
 public class MoneyExtensionsTests
 {
@@ -19,9 +20,9 @@ public class MoneyExtensionsTests
     [Fact]
     public void Sum_WithSingleItem_ShouldReturnThatAmount()
     {
-        var items = new[] { new Item(Helper.GetMoney(10.50m)) };
+        var items = new[] { new Item(Build.GetMoney(10.50m)) };
 
-        Assert.Equal(Helper.GetMoney(10.50m), items.Sum(i => i.Amount));
+        Assert.Equal(Build.GetMoney(10.50m), items.Sum(i => i.Amount));
     }
 
     [Fact]
@@ -29,27 +30,27 @@ public class MoneyExtensionsTests
     {
         var items = new[]
         {
-            new Item(Helper.GetMoney(10.50m)),
-            new Item(Helper.GetMoney(0.25m)),
-            new Item(Helper.GetMoney(5.00m))
+            new Item(Build.GetMoney(10.50m)),
+            new Item(Build.GetMoney(0.25m)),
+            new Item(Build.GetMoney(5.00m))
         };
 
-        Assert.Equal(Helper.GetMoney(15.75m), items.Sum(i => i.Amount));
+        Assert.Equal(Build.GetMoney(15.75m), items.Sum(i => i.Amount));
     }
 
     [Fact]
     public void Sum_ShouldUseTheSelector()
     {
-        var items = new[] { (A: Helper.GetMoney(1m), B: Helper.GetMoney(100m)), (A: Helper.GetMoney(2m), B: Helper.GetMoney(200m)) };
+        var items = new[] { (A: Build.GetMoney(1m), B: Build.GetMoney(100m)), (A: Build.GetMoney(2m), B: Build.GetMoney(200m)) };
 
-        Assert.Equal(Helper.GetMoney(3m), items.Sum(i => i.A));
-        Assert.Equal(Helper.GetMoney(300m), items.Sum(i => i.B));
+        Assert.Equal(Build.GetMoney(3m), items.Sum(i => i.A));
+        Assert.Equal(Build.GetMoney(300m), items.Sum(i => i.B));
     }
 
     [Fact]
     public void Sum_ShouldNotDependOnOrder()
     {
-        var a = new[] { new Item(Helper.GetMoney(1.10m)), new Item(Helper.GetMoney(2.20m)), new Item(Helper.GetMoney(3.30m)) };
+        var a = new[] { new Item(Build.GetMoney(1.10m)), new Item(Build.GetMoney(2.20m)), new Item(Build.GetMoney(3.30m)) };
         var b = a.Reverse().ToArray();
 
         Assert.Equal(a.Sum(i => i.Amount), b.Sum(i => i.Amount));
