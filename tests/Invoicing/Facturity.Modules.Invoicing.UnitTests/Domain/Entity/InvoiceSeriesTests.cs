@@ -1,7 +1,7 @@
-using Facturity.Modules.Invoicing.UnitTests.Domain;
+using Facturity.Modules.Invoicing.Domain;
 using Facturity.Modules.SharedKernel.Domain;
 
-namespace Facturity.Modules.Invoicing.Domain;
+namespace Facturity.Modules.Invoicing.UnitTests.Domain;
 
 public class InvoiceSeriesTests
 {
@@ -10,7 +10,7 @@ public class InvoiceSeriesTests
     {
         var name = Utilities.GetRandomLength(InvoiceSeries.NameMaxLength);
         
-        var result = Helper.CreateSeries(name);
+        var result = Build.CreateSeries(name);
 
         Assert.True(result.IsSuccess);
     }
@@ -18,7 +18,7 @@ public class InvoiceSeriesTests
     [Fact]
     public void Create_ShouldKeepInputValues()
     {
-        var result = Helper.CreateLine(description: "Consulting", units: 2.5m, unitPrice: 10m, taxRate: 10m);
+        var result = Build.CreateLine(description: "Consulting", units: 2.5m, unitPrice: 10m, taxRate: 10m);
 
         Assert.Equal("Consulting", result.Value.Description);
         Assert.Equal(2.5m, result.Value.Units);
@@ -32,7 +32,7 @@ public class InvoiceSeriesTests
     [InlineData("   ")]
     public void Create_WithNullOrBlankName_ShouldFail(string? name)
     {
-        var result = Helper.CreateSeries(name);
+        var result = Build.CreateSeries(name);
 
         Assert.True(result.IsFailure);
         Assert.Contains(InvoiceSeriesErrors.NullOrEmptyName, result.Errors);
@@ -44,7 +44,7 @@ public class InvoiceSeriesTests
     {
         var name = new string('a', InvoiceSeries.NameMaxLength + 1);
 
-        var result = Helper.CreateSeries(name);
+        var result = Build.CreateSeries(name);
 
         Assert.True(result.IsFailure);
         Assert.Contains(InvoiceSeriesErrors.ExceededMaximumLengthName, result.Errors);
@@ -54,7 +54,7 @@ public class InvoiceSeriesTests
     [Fact]
     public void Create_ShouldTrimName()
     {
-        var result = Helper.CreateSeries("  DFB_MLC     ");
+        var result = Build.CreateSeries("  DFB_MLC     ");
 
         Assert.Equal("DFB_MLC", result.Value.Name);
     }

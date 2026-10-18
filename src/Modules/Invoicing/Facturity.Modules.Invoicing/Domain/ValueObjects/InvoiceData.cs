@@ -1,11 +1,10 @@
-﻿using System.Collections.ObjectModel;
-using Facturity.Modules.SharedKernel.Domain;
+﻿using Facturity.Modules.SharedKernel.Domain;
 
 namespace Facturity.Modules.Invoicing.Domain;
 
 internal sealed record InvoiceData
 {
-    internal const int DescriptionMaxLength = 500;
+    internal const int DescriptionMaxLength = 250;
     private readonly List<InvoiceLine> _lines;
     
     internal string Description { get; private init; }
@@ -27,7 +26,7 @@ internal sealed record InvoiceData
         string description, 
         IReadOnlyList<InvoiceLine> invoiceLines, 
         DateTimeOffset? transactionAtUtc,
-        TimeProvider timeProvider)
+        DateTimeOffset now)
     {
         var errors = new List<Error>();
 
@@ -41,7 +40,7 @@ internal sealed record InvoiceData
         if(invoiceLines is null || !invoiceLines.Any())
             errors.Add(InvoiceDataError.EmptyInvoiceLinesList);
         
-        if(transactionAtUtc is not null && transactionAtUtc > timeProvider.GetUtcNow())
+        if(transactionAtUtc > now)
             errors.Add(InvoiceDataError.FutureDateTransactionAtUtc);
         
         if(errors.Count > 0)

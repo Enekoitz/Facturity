@@ -1,7 +1,7 @@
-using Facturity.Modules.Invoicing.UnitTests.Domain;
+using Facturity.Modules.Invoicing.Domain;
 using Facturity.Modules.SharedKernel.Domain;
 
-namespace Facturity.Modules.Invoicing.Domain;
+namespace Facturity.Modules.Invoicing.UnitTests.Domain;
 
 public class BreakdownLineTests
 {
@@ -18,7 +18,7 @@ public class BreakdownLineTests
     [Fact]
     public void CreateList_WithNoEmptyInvoiceLinesList_ShouldCreateBreakdownLinesReadOnlyList()
     {
-        var invoiceLines = Helper.GetInvoiceLinesSampleList();
+        var invoiceLines = Build.GetInvoiceLinesSampleList();
         
         var result = BreakdownLine.CreateList(invoiceLines);
         
