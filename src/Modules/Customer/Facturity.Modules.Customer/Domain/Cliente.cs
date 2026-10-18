@@ -57,9 +57,6 @@ public sealed class Cliente : AggregateRoot<Guid>
         if (id == Guid.Empty)
             errores.Add(ClienteErrors.IdInvalido);
 
-        if (tenantId.Value <= 0)
-            errores.Add(TenantErrors.IdInvalido);
-
         ValidarAlias(alias, errores);
 
         var tipoDenominacionFiscal = ObtenerTipoDenominacionFiscal(

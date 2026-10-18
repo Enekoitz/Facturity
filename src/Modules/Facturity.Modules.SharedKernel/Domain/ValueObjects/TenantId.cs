@@ -2,35 +2,35 @@
 
 public readonly record struct TenantId
 {
-    public long Value { get; }
+    public Guid Value { get; }
 
-    private TenantId(long value)
+    private TenantId(Guid value)
     {
-        if (value <= 0)
-            throw new ArgumentException("El TenantId debe ser un entero positivo.", nameof(value));
+        if (value == Guid.Empty)
+            throw new ArgumentException("TenantId must be a non-empty Guid value.", nameof(value));
 
         Value = value;
     }
 
-    public static TenantId From(long value) => new(value);
+    public static TenantId From(Guid value) => new(value);
 
-    public static Result<TenantId> Crear(long value)
+    public static Result<TenantId> Crear(Guid value)
     {
-        if (value <= 0)
-            return Result.Fail<TenantId>(Error.Validation("TenantIdInvalido", "TenantId inválido."));
+        if (value == Guid.Empty)
+            return Result.Fail<TenantId>(Error.Validation("Tenant.InvalidTenantID", "Invalid TenantId."));
 
         return Result.Ok(new TenantId(value));
     }
 
     public static TenantId Parse(string value)
     {
-        if (!long.TryParse(value, out var id))
-            throw new InvalidOperationException("TenantId inválido.");
+        if (!Guid.TryParse(value, out var id))
+            throw new InvalidOperationException("Invalid TenantId.");
 
         return new TenantId(id);
     }
 
     public override string ToString() => Value.ToString();
 
-    public static explicit operator long(TenantId tenantId) => tenantId.Value;
+    public static explicit operator Guid(TenantId tenantId) => tenantId.Value;
 }
