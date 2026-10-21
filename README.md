@@ -26,9 +26,7 @@ flowchart TD
 |-------| ---------------------------------------------------------------- |
 | **Auth** | Autenticación JWT, refresh tokens             |
 | **Customer** | Gestión de clientes con validaciones y reglas de negocio         |
-| **Invoicing** | Emisión, estados, transiciones y numeración correlativa de facturas |
-| **TaxEngine** | Cálculo de impuestos configurable y aislado por tenant           |
-| **TenantManagement**          | Gestión de tenants                                                               |
+| **Invoicing** | Emisión, estados, transiciones y numeración correlativa de facturas ||
 
 ### Roadmap
 | Módulo                        | Descripción                                                                      |
@@ -36,19 +34,21 @@ flowchart TD
 | **Dashboards**                | Dashboardas, informes y reportes a partir de los datos generados y almacenados.  |
 | **Comunicación con Hacienda** | Envío directo de la factura en formato XML válido a la hacienda correspondiente. |
 
----
+| **TenantManagement**          | Gestión de tenants                                                               |---
+
 ## **Funcionalidades**
 
 ### v1
 - Gestión de clientes
 - Gestión de series
 - Gestión y consultas avanzadas de facturas
-- Generación de XML válido TicketBAI
-- Generación de PDF de factura
 - Autenticación y autorización, refresh tokens, RBAC
-- Auditoría y trazabilidad completa de operaciones
 
 ### Roadmap
+- Gestión de tenants
+- Generación de PDF de factura
+- Generación de XML válido TicketBAI
+- Auditoría y trazabilidad completa de operaciones
 - Comunicación y envío directo a Hacienda / Diputación Foral de Bizkaia
 - Generación de QR obligatorio TicketBAI
 - Dashboards y generación de reportes personalizados
@@ -81,8 +81,7 @@ flowchart TD
 - **Caché:** Redis
 
 ### Patrones y librerías
-- **Mapeo**: Mapster
-- **Mensajería**: Outbox Pattern (Implementación propia)
+- **Mensajería**: Outbox Pattern (Implementación propia)(ROADMAP)
 - **Validación:** FluentValidation
 - **Logging:** Serilog
 - **Documentación API**: Scalar
