@@ -13,7 +13,7 @@ internal sealed class ActualizarClienteHandler(IClientesRepository repo, IIdenti
         if (cliente == null)
             return Result.Fail(ClienteErrors.NoEncontrado);
 
-        Result<IIdentificacionFiscal>? identificacionFiscalResult = null;
+        Result<IIdentificacionFiscal> identificacionFiscalResult = null;
         if (command.IdentificacionFiscalValor is not null && command.IdentificacionFiscalTipo is not null)
         {
             identificacionFiscalResult = identificacionFiscalFactory.Crear(
@@ -34,7 +34,7 @@ internal sealed class ActualizarClienteHandler(IClientesRepository repo, IIdenti
                 return Result.Fail(ClienteErrors.IdentificacionFiscalEnUso);
         }
 
-        Result<Domicilio>? domicilioResult = null;
+        Result<Domicilio> domicilioResult = null;
         if (command.IdentificacionFiscalValor is not null && command.IdentificacionFiscalTipo is not null)
         {
             domicilioResult = Domicilio.Crear(command.Direccion!, command.CodigoPostal, command.Municipio, 
@@ -44,8 +44,8 @@ internal sealed class ActualizarClienteHandler(IClientesRepository repo, IIdenti
                 return Result.Fail(domicilioResult.Errors);
         }
 
-        var identificacionFiscal = identificacionFiscalResult?.Value;
-        var domicilio = domicilioResult?.Value;
+        var identificacionFiscal = identificacionFiscalResult == default ? null :  identificacionFiscalResult.Value;
+        var domicilio = domicilioResult == default ? null : domicilioResult.Value;
         
         var result = cliente.Actualizar(identificacionFiscal, command.RazonSocial,
                                         command.Nombre, command.PrimerApellido, command.SegundoApellido, 

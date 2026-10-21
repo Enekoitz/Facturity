@@ -161,7 +161,7 @@ public static class CrearClienteTestsHelper
     public static Result<Cliente> CrearCliente(DatosCrearClienteRecord datosCliente, string alias = "MARCOS")
     {
         var id = Guid.NewGuid();
-        var tenantId = TenantId.Crear(122).Value;
+        var tenantId = TenantId.Crear(Guid.NewGuid()).Value;
         
         var result = Cliente.Crear(id, tenantId, alias, datosCliente.IdentificacionFiscal, datosCliente.RazonSocial, 
             datosCliente.Nombre, datosCliente.PrimerApellido, datosCliente.SegundoApellido, datosCliente.Domicilio);

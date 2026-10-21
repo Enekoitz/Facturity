@@ -1,9 +1,7 @@
 ﻿using Facturity.Modules.Customer.Domain;
-using Facturity.Modules.SharedKernel.Abstractions;
 using Facturity.Modules.SharedKernel.Domain;
 using FluentAssertions;
 using Microsoft.Extensions.Time.Testing;
-using Xunit;
 
 namespace Facturity.Modules.Customer.UnitTests.Domain;
 
@@ -17,7 +15,7 @@ public abstract class ClienteTests
         {
             string alias = "MARCOS";
             var id = Guid.NewGuid();
-            var tenantId = TenantId.Crear(122).Value;
+            var tenantId = TenantId.Crear(Guid.NewGuid()).Value;
             
             var result = CrearClienteTestsHelper.CrearCliente(datosCrearClienteRecord, id, tenantId, alias);
 
@@ -311,7 +309,7 @@ public abstract class ClienteTests
         ReconstruirClienteTestsHelper.DatosRecord datosCliente)
     {
         var id = Guid.NewGuid();
-        var tenantId = TenantId.Crear(122).Value;
+        var tenantId = TenantId.Crear(Guid.NewGuid()).Value;
         const string alias = "MARCOS";
         
         // Posterior a todas las fechas del conjunto
@@ -333,7 +331,7 @@ public abstract class ClienteTests
         ReconstruirClienteTestsHelper.DatosRecord datosCliente)
     {
         var id = Guid.NewGuid();
-        var tenantId = TenantId.Crear(122).Value;
+        var tenantId = TenantId.Crear(Guid.NewGuid()).Value;
         const string alias = "MARCOS";
         
         // Anterior a todas las fechas del conjunto
@@ -353,7 +351,7 @@ public abstract class ClienteTests
     public void ReconstruirCliente_FechasActivacionDesactivacionSimultaneas_Fallo()
     {
         var id = Guid.NewGuid();
-        var tenantId = TenantId.Crear(122).Value;
+        var tenantId = TenantId.Crear(Guid.NewGuid()).Value;
         const string alias = "MARCOS";
         
         var activatedAtUtc = new DateTimeOffset(2026, 05, 11, 05, 12, 23, TimeSpan.Zero);

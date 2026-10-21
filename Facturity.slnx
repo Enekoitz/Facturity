@@ -33,5 +33,7 @@
   <Folder Name="/Tests/Modules/Customer/">
     <Project Path="tests/Customer/Facturity.Modules.Customer.UnitTests/Facturity.Modules.Customer.UnitTests.csproj" />
   </Folder>
-  <Folder Name="/Tests/Modules/Invoicing/" />
+  <Folder Name="/Tests/Modules/Invoicing/">
+    <Project Path="tests/Invoicing/Facturity.Modules.Invoicing.UnitTests/Facturity.Modules.Invoicing.UnitTests.csproj" />
+  </Folder>
 </Solution>

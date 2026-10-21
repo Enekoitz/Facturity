@@ -8,7 +8,7 @@ public interface IResultBase
     Error FirstError { get; }
 }
 
-public sealed class Result : IResultBase
+public readonly record struct Result : IResultBase
 {
     private readonly List<Error> _errors;
 
@@ -53,7 +53,7 @@ public sealed class Result : IResultBase
         Result<TValue>.Fail(errors);
 }
 
-public sealed class Result<TValue> : IResultBase
+public readonly record struct Result<TValue> : IResultBase
 {
     private readonly List<Error> _errors;
     private readonly TValue? _value;
