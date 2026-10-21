@@ -51,7 +51,7 @@
 | RNF-012 | Documentación           | _La documentación del sistema debe de estar actualizada y cubrir todo aquello que no pueda ser explicado directamente viendo el sistema, o que sea muy complejo_ |           |
 
 ## Reglas de negocio
-_Reglas que el sistema debe respetar. Detalle de entidades en el [modelo de dominio](domain-model.md)._
+_Reglas que el sistema debe respetar. Detalle de entidades en el [modelo de dominio](invoicing.md)._
 
 (Pendiente definir - Prioridad baja porque lo importante está directamente en el modelo de dominio)
 
