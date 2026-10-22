@@ -34,5 +34,6 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-	</PropertyGroup>
+	  <UserSecretsId>d53f5011-a08e-4a75-9221-6a2f0ac5dccc</UserSecretsId>
+  </PropertyGroup>
 </Project>
