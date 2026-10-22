@@ -23,6 +23,7 @@
     <File Path=".gitignore" />
     <File Path="compose.yaml" />
     <File Path="Facturity.slnx" />
+    <File Path="LICENSE" />
     <File Path="README.md" />
   </Folder>
   <Folder Name="/Tests/">
