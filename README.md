@@ -1,134 +1,212 @@
-## **Descripción**
-**Facturity** es una API REST multi-tenant de gestión de facturación diseñada para cubrir las obligaciones fiscales de cualquier empresa, física o jurídica. Construida con .NET sobre una arquitectura limpia con organización vertical por features y orientada al dominio, expone un conjunto de módulos cohesionados que cubren desde la gestión de clientes y series de facturación hasta la emisión de facturas y el cálculo de impuestos, con soporte nativo para múltiples tenants, trazabilidad completa de operaciones y un sistema de identidad y permisos por tenant.
+# Facturity
+
+![CI](https://github.com/Enekoitz/Facturity/actions/workflows/ci.yaml/badge.svg)
+![.NET](https://img.shields.io/badge/.NET-10-512BD4)
+![License](https://img.shields.io/badge/license-All%20rights%20reserved-lightgrey)
+
+> **Status:** v1 under active development. This is a portfolio project.
+
+## **Description**
+**Facturity** is a multi-tenant REST API for invoicing management, designed to address the tax compliance requirements of any business, whether an individual or a legal entity. It is a modular monolith built with .NET 10 Minimal API, where each module follows a hybrid and pragmatic architecture: Clean Architecture combined with Vertical Slice Architecture for feature organization. It provides a set of cohesive modules that cover everything from customer management and invoice numbering sequences to invoice issuance and tax calculation. It includes native support for multiple tenants, full operational traceability, and a tenant-specific identity and permissions system.
 
 ```mermaid
 flowchart TD
-    %% Actores
-    usuario("👤 Usuario")
+    %% Actors
+    user("👤 User")
 
-    %% Sistema
+    %% System
     facturity["🏢 Facturity API REST multi-tenant"]
 
-    %% Externos
-    hacienda[("🏛️ TicketBAI Hacienda (simulación)")]
+    %% External
+    tax-authority[("🏛️ Tax authority")]
     db[("🗄️ PostgreSQL")]
 
-    %% Relaciones
-    usuario -->|Opera facturas y otras gestiones varias| facturity
-    facturity -->|Envía XML firmado| hacienda
-    facturity -->|Persistencia de datos| db
+    %% Relations
+    user -->|Manage invoices, series, products and customers| facturity
+    facturity -->|"Send signed XML (planned)"| tax-authority
+    facturity -->|Data persistence| db
 ```
 
 ---
-## **Módulos**
+## **Modules**
 ### v1
-| Módulo | Descripción                                                      |
-|-------| ---------------------------------------------------------------- |
-| **Auth** | Autenticación JWT, refresh tokens             |
-| **Customer** | Gestión de clientes con validaciones y reglas de negocio         |
-| **Invoicing** | Emisión, estados, transiciones y numeración correlativa de facturas ||
+| Module | Description |
+|--------|-------------|
+| **Auth** | JWT authentication, refresh tokens |
+| **Customer** | Customer management with validations and business rules |
+| **Product** | Products management |
+| **Invoicing** | Issuing, statuses, transitions and sequential numbering of invoices |
+| **TenantManagement** | Tenant management |
 
 ### Roadmap
-| Módulo                        | Descripción                                                                      |
-|-------------------------------|----------------------------------------------------------------------------------|
-| **Dashboards**                | Dashboardas, informes y reportes a partir de los datos generados y almacenados.  |
-| **Comunicación con Hacienda** | Envío directo de la factura en formato XML válido a la hacienda correspondiente. |
-
-| **TenantManagement**          | Gestión de tenants                                                               |---
-
-## **Funcionalidades**
-
-### v1
-- Gestión de clientes
-- Gestión de series
-- Gestión y consultas avanzadas de facturas
-- Autenticación y autorización, refresh tokens, RBAC
-
-### Roadmap
-- Gestión de tenants
-- Generación de PDF de factura
-- Generación de XML válido TicketBAI
-- Auditoría y trazabilidad completa de operaciones
-- Comunicación y envío directo a Hacienda / Diputación Foral de Bizkaia
-- Generación de QR obligatorio TicketBAI
-- Dashboards y generación de reportes personalizados
+| Module | Description |
+|--------|-------------|
+| **Dashboards** | Dashboards, reports and analytics built from the generated and stored data. |
+| **TaxAuthorityIntegration** | Direct submission of the invoice in valid XML format to the relevant tax authority (Hacienda, the Spanish Tax Agency). |
 
 ---
-## **Actores**
+## **Features**
 
-### V1
-| Actor            | Descripción              | Necesita                                                         |
-| ---------------- | ------------------------ | ---------------------------------------------------------------- |
-| **Usuario**      | Opera el día a día       | Gestionar clientes, productos y facturas                         |
+### v1
+- Customer management
+- Invoice series management
+- Invoice management and advanced queries
+- Authentication and authorization, refresh tokens, RBAC
+- Tenant management
 
 ### Roadmap
-| Actor                       | Descripción                       | Necesita                                               |
-| --------------------------- | --------------------------------- | ------------------------------------------------------ |
-| **Super Admin**  | Administra la plataforma | Gestionar tenants, usuarios y configuración global               |
-| **Tenant Admin** | Administra su empresa    | Gestionar usuarios, series, impuestos y configuración del tenant |
-| **Usuario de solo lectura** | Acceso externo (contable, gestor) | Consultar facturas e informes sin poder modificar nada |
+- Invoice PDF generation
+- Valid TicketBAI XML generation
+- Full auditing and traceability of operations
+- Direct submission to the Provincial Tax Authority of Bizkaia (Diputación Foral de Bizkaia)
+- Mandatory TicketBAI QR code generation
+- Dashboards and custom report generation
+
+---
+## **Actors**
+
+### v1
+| Actor | Description | Needs |
+|-------|-------------|-------|
+| **User** | Handles day-to-day operations | Manage customers, products and invoices |
+
+### Roadmap
+| Actor | Description | Needs |
+|-------|-------------|-------|
+| **Super Admin** | Manages the platform | Manage tenants, users and global configuration |
+| **Tenant Admin** | Manages their company | Manage users, series, taxes and tenant configuration |
+| **Read-only user** | External access (accountant, tax advisor) | View invoices and reports without being able to modify anything |
 
 ---
 ## **Tech Stack**
 
 ### Backend
 - **Framework:** .NET 10 (LTS)
-- **Lenguaje:** C# 14
-- **Arquitectura de sistema:** Monolito Modular Evolutivo
-- **Arquitectura de software:** Híbrida `Clean Architecture` con`Vertical Slice Architecture` en capa de Features
-- **Base de datos:** PostgreSQL 16
+- **Language:** C# 14
+- **System architecture:** Modular Monolith
+- **Software architecture:** Hybrid `Clean Architecture` with `Vertical Slice Architecture` in the Features layer
+- **Database:** PostgreSQL 16
 - **ORM:** EF Core 10
-- **Caché:** Redis
+- **Cache:** Redis
 
-### Patrones y librerías
-- **Mensajería**: Outbox Pattern (Implementación propia)(ROADMAP)
-- **Validación:** FluentValidation
+### Patterns and libraries
+- **Messaging:** Outbox Pattern (custom implementation) (ROADMAP)
+- **Validation:** FluentValidation
 - **Logging:** Serilog
-- **Documentación API**: Scalar
+- **API documentation:** Scalar
 
 ### Testing
 - **Unit & Integration:** xUnit, FluentAssertions, Testcontainers
-- **Arquitectura:** NetArchTest
+- **Architecture:** NetArchTest
 
-### Infraestructura
-- **Contenedores:** Docker
+### Infrastructure
+- **Containers:** Docker
 - **CI/CD:** GitHub Actions
-- **Deploy:** Azure App Service o Azure Container Apps
-- **Cloud**: Azure
+- **Deploy:** Azure App Service or Azure Container Apps
+- **Cloud:** Azure
 
-### Seguridad: 
-- **Autenticación:** ASP.NET Core Identity + JWT Access Token y Refresh Tokens (Implementación propia)
-- **Autorización:** Permisos por tenant
+### Security
+- **Authentication:** ASP.NET Core Identity + JWT access tokens and refresh tokens (custom implementation)
+- **Authorization:** Per-tenant permissions
 
 ---
-### Roadmap técnico
-- MassTransit + Azure Service Bus 
-- Usuario de solo lectura 
-- Generación de QR TicketBAI 
-- Generación de PDF de factura 
-- Comunicación y envío directo a Hacienda
+### Technical Roadmap
+- MassTransit + Azure Service Bus
+- Read-only user
+- TicketBAI QR code generation
+- Invoice PDF generation
+- Direct submission to Hacienda
 
-## **Estructura de la solución**
+---
+## **Getting Started**
+
+### Prerequisites
+- .NET 10 SDK
+- Docker (PostgreSQL, Redis and Testcontainers for the integration tests)
+- *(Optional)* [Seq](https://datalust.co/seq) for structured log visualization
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/Enekoitz/Facturity.git
+cd Facturity
+```
+
+### 2. Configure secrets
+The repository contains **no secrets**. For local development use [.NET User Secrets](https://learn.microsoft.com/aspnet/core/security/app-secrets):
+
+```bash
+cd src/Host/Facturity.API
+dotnet user-secrets init
+dotnet user-secrets set "ConnectionStrings:FacturityDbConnectionString" "Host=localhost;Port=5432;Database=facturity;Username=postgres;Password=<your-password>"
+dotnet user-secrets set "Jwt:SigningKey" "<random-string-of-at-least-32-chars>"
+```
+
+To generate a signing key: `openssl rand -base64 64`
+
+### 3. Start the infrastructure
+```bash
+cp .env.example .env     # set your own values
+docker compose up -d
+```
+
+### 4. Apply migrations and run
+```bash
+# TODO: adjust projects to your solution
+dotnet ef database update --project <infrastructure-project> --startup-project src/Host/Facturity.API
+dotnet run --project src/Host/Facturity.API
+```
+
+### 5. Explore the API
+Interactive documentation (Scalar) is available at `http://localhost:<port>/scalar`.
+
+---
+## **Configuration**
+
+| Key | Description | Required |
+|-----|-------------|----------|
+| `ConnectionStrings:FacturityDbConnectionString` | PostgreSQL connection string | Yes |
+| `Jwt:SigningKey` | Signing key for access tokens (min. 32 chars) | Yes |
+| `Jwt:Issuer` / `Jwt:Audience` | Token issuer and audience | No (defaults in `appsettings.json`) |
+| `Jwt:ExpirationMinutes` | Access token lifetime (default: 15) | No |
+| `RefreshToken:ExpirationDays` | Refresh token lifetime (default: 21) | No |
+| `Serilog:...:apiKey` | Seq API key | No |
+
+Outside of development, pass these values as environment variables, using `__` as the nesting separator (e.g. `Jwt__SigningKey`).
+
+---
+## **Running the tests**
+
+```bash
+dotnet test
+```
+
+| Suite | Description |
+|-------|-------------|
+| `Facturity.<module-name>.UnitTests` | Domain and feature logic per module |
+| `Facturity.IntegrationTests` | End-to-end through the API with a real PostgreSQL (Testcontainers, requires Docker) |
+| `Facturity.ArchitectureTests` | Enforces architectural rules (NetArchTest) |
+
+---
+## **Solution Structure**
 
 ```text
 Facturity/
 ├── src/
 │   ├── Host/
 │   │   └── Facturity.API/
-│   ├── Modules/
-│   │   ├── [module_x]/
-│   │   │   ├── Facturity.Modules.[module_x]
-|   |   |   |   |
-|   |   |   |   ├── Domain/
-|   |   |   |   ├── Features/
-|   |   |   |   ├── Infrastructure/
-│   │   │   └── ...
-│   │	├── Facturity.Modules.Bootstrapper
-│   │	└── Facturity.Modules.SharedKernel
+│   └── Modules/
+│       ├── [module_x]/
+│       │   └── Facturity.Modules.[module_x]/
+│       │       ├── Domain/
+│       │       ├── Features/
+│       │       └── Infrastructure/
+│       ├── ...
+│       ├── Facturity.Modules.Bootstrapper/
+│       └── Facturity.Modules.SharedKernel/
 ├── tests/
 │   ├── Modules/
 │   │   ├── [module_x]/
-|   |   |   └──Facturity.Modules.[module_x].UnitTests
+│   │   │   └── Facturity.Modules.[module_x].UnitTests/
 │   │   └── ...
 │   ├── Facturity.IntegrationTests/
 │   │   ├── [module_x]/
@@ -139,3 +217,25 @@ Facturity/
 ├── README.md
 └── Facturity.slnx
 ```
+
+---
+## **CI/CD**
+
+- **CI (GitHub Actions):** build and test on every pull request and push to `main`.
+- **CD:** planned, deployment to Azure *(roadmap)*.
+
+---
+## **Feedback and contributions**
+
+This is a personal portfolio project, so **pull requests are not accepted**. Comments and suggestions are welcome through issues or by contacting me directly.
+
+---
+## **License**
+
+Copyright (c) 2026 Enekoitz Bilbao. All rights reserved.
+The source code is for portfolio purposes only. See [LICENSE](LICENSE).
+
+---
+## **Author**
+
+**Enekoitz Bilbao**: [LinkedIn](https://www.linkedin.com/in/ebilbaocaicedo/) / ebilbaocaicedo@gmail.com
