@@ -1,34 +1,34 @@
-# Cómo contribuir
+# How to Contribute
 
-## Flujo de trabajo (GitHub flow)
+## Workflow (GitHub flow)
 
-1. Crea una rama desde `main` con prefijo según el tipo de cambio:
-   - `feature/...`, `fix/...`, `docs/...`
-	
-1. Haz commits pequeños y con mensaje claro.
-	
-2. Abre un PR usando la plantilla.
-	
-3. Fusiona tras revisión (o autorrevisión si trabajas solo).
+1. Create a branch from `main` with a prefix matching the type of change:
+   - `feat/...`, `fix/...`, `docs/...`
 
-## Reglas para la documentación
+2. Make small commits with clear messages.
 
-- **Una rama por unidad de cambio**, no por sesión de pensamiento.
-	
-- Si el cambio de código afecta a la doc, **actualízala en el mismo PR** (`docs-as-code`).
-	
-- Cambios de alcance, arquitectura o decisiones importantes → **nuevo ADR**.
-	
-- Correcciones menores (erratas, glosario) pueden ir directas a `main` si trabajas solo.
-	
-- Backlog y tareas **no** se documentan aquí: van al gestor de tareas **GitHub Issues**.
+3. Open a PR using the template.
 
-## Convenciones
+4. Merge after review (or self-review if you work alone).
 
-- Commits: `tipo: descripción` (`docs: actualizar alcance`, `feat(api): añadir manejador global de excepciones`, etc.).
-	
-- Nombres de archivo en minúsculas y con guiones.
-	
-- Diagramas con Mermaid siempre que sea posible.
-	
-- Cada documento termina con `Última revisión: fecha`.
+## Documentation rules
+
+- **One branch per unit of change**, not per thinking session.
+
+- If a code change affects the docs, **update them in the same PR** (`docs-as-code`).
+
+- Changes to scope, architecture or important decisions → **new ADR** (Architecture Decision Record).
+
+- Minor fixes (typos, glossary) can go straight to `main` if you work alone.
+
+- Backlog and tasks are **not** documented here: they go to the task manager, **GitHub Issues**.
+
+## Conventions
+
+- Commits: `type: description` (`docs: update scope`, `feat(api): add global exception handler`, etc.).
+
+- File names in lowercase with hyphens.
+
+- Diagrams with Mermaid whenever possible.
+
+- Every document ends with `Last reviewed: date`.
