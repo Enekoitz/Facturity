@@ -5,26 +5,32 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+    
+permissions:
+  contents: read
 
-# Cancela ejecuciones anteriores del mismo PR si llega un nuevo push
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+  
+env:
+  ConnectionStrings__FacturityDbConnectionString: Host=localhost;Port=5432;Database=facturity;Username=postgres;Password=ci-password
+  Jwt__SigningKey: clave-solo-para-tests-que-no-vale-para-nada-0123456789abcdef
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout código
+      - name: Code Checkout
         uses: actions/checkout@v4
 
-      - name: Configurar .NET 10
+      - name: Configure .NET 10
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
 
-      - name: Cache de paquetes NuGet
+      - name: NuGet Packages Cache
         uses: actions/cache@v4
         with:
           path: ~/.nuget/packages
@@ -32,19 +38,19 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nuget-
 
-      - name: Restaurar dependencias
+      - name: Restore Dependencies
         run: dotnet restore
 
-#      - name: Verificar formato de código
+#      - name: Verify code format
 #        run: dotnet format --verify-no-changes --severity error
 
-      - name: Compilar
+      - name: Compile
         run: dotnet build --no-restore --configuration Release
 
-      - name: Ejecutar tests
+      - name: Execute Tests
         run: dotnet test --no-build --configuration Release --logger "trx;LogFileName=test-results.trx"
 
-      - name: Publicar resultados de tests
+      - name: Publish Tests Results
         if: always()
         uses: actions/upload-artifact@v4
         with:
