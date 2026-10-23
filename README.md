@@ -1,6 +1,6 @@
 # Facturity
 
-![CI](https://github.com/Enekoitz/Facturity/actions/workflows/ci.yaml/badge.svg)
+[![CI](https://github.com/Enekoitz/Facturity/actions/workflows/ci.yaml/badge.svg)](https://github.com/Enekoitz/Facturity/actions/workflows/ci.yaml)
 ![.NET](https://img.shields.io/badge/.NET-10-512BD4)
 ![License](https://img.shields.io/badge/license-All%20rights%20reserved-lightgrey)
 
@@ -151,8 +151,16 @@ docker compose up -d
 
 ### 4. Apply migrations and run
 ```bash
-# TODO: adjust projects to your solution
-dotnet ef database update --project <infrastructure-project> --startup-project src/Host/Facturity.API
+dotnet ef database update \
+  --project src/Modules/Auth/Facturity.Modules.Auth \
+  --startup-project src/Host/Facturity.API \
+  --context AuthDbContext
+
+dotnet ef database update \
+  --project src/Modules/Customer/Facturity.Modules.Customer \
+  --startup-project src/Host/Facturity.API \
+  --context CustomerDbContext
+
 dotnet run --project src/Host/Facturity.API
 ```
 
@@ -213,7 +221,7 @@ Facturity/
 │   │   └── ...
 │   └── Facturity.ArchitectureTests/
 ├── docs/
-├── docker-compose.yml
+├── compose.yml
 ├── README.md
 └── Facturity.slnx
 ```
