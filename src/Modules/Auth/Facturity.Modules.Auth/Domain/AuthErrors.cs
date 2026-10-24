@@ -5,8 +5,8 @@ namespace Facturity.Modules.Auth.Domain;
 internal static class AuthErrors
 {
     internal static readonly Error InvalidLogin =
-        Error.Validation("Auth.InvalidLogin", "That email and password combination is incorrect.");
+        Error.Validation("Auth.InvalidLogin", "Invalid email or password.");
     
     internal static readonly Error InvalidRefreshToken =
-        Error.Unauthorized("Auth.InvalidRefreshToken", "El refresh token no es válido.");
+        Error.Unauthorized("Auth.InvalidRefreshToken", "Invalid refresh token.");
 }
