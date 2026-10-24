@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Facturity.Modules.Customer.UnitTests.Domain;
 
-public class NifEspanolTests
+public class SpanishTaxIdTests
 {
     [Theory]
     [InlineData("12345678Z")] // DNI
@@ -12,7 +12,7 @@ public class NifEspanolTests
     public void CrearNifEspanol_ValorNifValido_Exito(string valorNif)
     {
         // Act
-        var result = NifEspanol.Crear(valorNif);
+        var result = SpanishTaxId.Crear(valorNif);
 
         // Assert
         Assert.True(result.IsSuccess);
@@ -25,11 +25,11 @@ public class NifEspanolTests
     public void CrearNifEspanol_TipoCif_DebeSerPersonaJuridica_Exito(string valorNif)
     {
         // Act
-        var result = NifEspanol.Crear(valorNif);
+        var result = SpanishTaxId.Crear(valorNif);
 
         // Assert
         Assert.True(result.IsSuccess);
-        Assert.Equal(true, result.Value.EsPersonaJuridica);
+        Assert.Equal(true, result.Value.IsLegalEntity);
     }
     
     [Theory]
@@ -38,11 +38,11 @@ public class NifEspanolTests
     public void CrearNifEspanol_TipoNifNie_NoDebeSerPersonaJuridica_Exito(string valorNif)
     {
         // Act
-        var result = NifEspanol.Crear(valorNif);
+        var result = SpanishTaxId.Crear(valorNif);
 
         // Assert
         Assert.True(result.IsSuccess);
-        Assert.Equal(false, result.Value.EsPersonaJuridica);
+        Assert.Equal(false, result.Value.IsLegalEntity);
     }
 
     [Theory]
@@ -55,7 +55,7 @@ public class NifEspanolTests
     public void CrearNifEspanol_ValorNifInvalido_Fallo(string valorNif)
     {
         // Act
-        var result = NifEspanol.Crear(valorNif);
+        var result = SpanishTaxId.Crear(valorNif);
 
         // Assert
         Assert.True(result.IsFailure);

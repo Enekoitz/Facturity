@@ -11,7 +11,7 @@ public static class DependencyInjection
     {
         services.AddScoped<ICommandHandler<CrearClienteCommand, Result<Guid>>, CrearClienteHandler>();
         services.AddScoped<ICommandHandler<ActualizarClienteCommand, Result>, ActualizarClienteHandler>();
-        services.AddScoped<IQueryHandler<ListarClientesQuery, Result<IEnumerable<Cliente>>>, ListarClientesHandler>();
+        services.AddScoped<IQueryHandler<ListarClientesQuery, Result<IEnumerable<Domain.Customer>>>, ListarClientesHandler>();
         services.AddScoped<ICommandHandler<EliminarClienteCommand, Result>, EliminarClienteHandler>();
         services.AddScoped<IQueryHandler<ObtenerClientePorIdQuery, Result<ClienteDto>>, ObtenerClientePorIdHandler>();
         services.AddScoped<ICommandHandler<DesactivarClienteCommand, Result>, DesactivarClienteHandler>();

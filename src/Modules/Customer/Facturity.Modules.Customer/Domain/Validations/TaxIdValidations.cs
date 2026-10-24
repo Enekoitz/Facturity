@@ -2,56 +2,54 @@
 
 namespace Facturity.Modules.Customer.Domain;
 
-public static partial class IdentificacionFiscalValidaciones
+public static partial class TaxIdValidations
 {
-    private const string LetrasNif = "TRWAGMYFPDXBNJZSQVHLCKE";
+    //TODO:Translate into english
+    private const string SpanishTaxIdLetters = "TRWAGMYFPDXBNJZSQVHLCKE";
 
-    private static readonly HashSet<string> PaisesUe = new(StringComparer.OrdinalIgnoreCase)
+    private static readonly HashSet<string> UeCountries = new(StringComparer.OrdinalIgnoreCase)
     {
         "AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "EL", "FI",
         "FR", "HR", "HU", "IE", "IT", "LT", "LU", "LV", "MT", "NL",
         "PL", "PT", "RO", "SE", "SI", "SK"
     };
 
-    public static bool EsNifValido(string? valor, out string codigoError, out string descripcionError)
+    public static bool IsValidSpanishTaxId(string? value, out string errorCode, out string errorDescription)
     {
-        codigoError = string.Empty;
-        descripcionError = string.Empty;
+        errorCode = string.Empty;
+        errorDescription = string.Empty;
 
-        if (string.IsNullOrWhiteSpace(valor))
+        if (string.IsNullOrWhiteSpace(value))
         {
-            codigoError = "Cliente.IdentificacionFiscal.NifVacio";
-            descripcionError = "El Nif está vacío.";
+            errorCode = "Cliente.IdentificacionFiscal.NifVacio";
+            errorDescription = "El Nif está vacío.";
             return false;
         }
 
-        valor = valor.Trim().ToUpper();
+        value = value.Trim().ToUpper();
 
-        if (valor.Length != 9)
+        if (value.Length != 9)
         {
-            codigoError = "Cliente.IdentificacionFiscal.NifLongitudInvalida";
-            descripcionError = "El Nif debe tener 9 caracteres.";
+            errorCode = "Cliente.IdentificacionFiscal.NifLongitudInvalida";
+            errorDescription = "El Nif debe tener 9 caracteres.";
             return false;
         }
 
-        // Nif (persona física)
-        if (EsDni(valor))
-            return EsDniValido(valor, out codigoError, out descripcionError);
+        if (IsDni(value))
+            return IsValidDni(value, out errorCode, out errorDescription);
 
-        // Nie (extranjero)
-        if (EsNie(valor))
-            return EsNieValido(valor, out codigoError, out descripcionError);
+        if (IsNie(value))
+            return IsValidNie(value, out errorCode, out errorDescription);
 
-        // Cif / Nif persona jurídica
-        if (EsCif(valor))
-            return EsCifValido(valor, out codigoError, out descripcionError);
+        if (IsCif(value))
+            return IsValidCif(value, out errorCode, out errorDescription);
 
-        codigoError = "Cliente.IdentificacionFiscal.NifFormatoInvalido";
-        descripcionError = "El Nif no tiene un formato o dígito de control válido";
+        errorCode = "Cliente.IdentificacionFiscal.NifFormatoInvalido";
+        errorDescription = "El Nif no tiene un formato o dígito de control válido";
         return false;
     }
 
-    public static bool EsDniValido(string nif, out string codigoError, out string descripcionError)
+    public static bool IsValidDni(string nif, out string codigoError, out string descripcionError)
     {
         codigoError = string.Empty;
         descripcionError = string.Empty;
@@ -89,7 +87,7 @@ public static partial class IdentificacionFiscalValidaciones
         }
 
         int number = int.Parse(nif[..8]);
-        char expectedLetter = LetrasNif[number % 23];
+        char expectedLetter = SpanishTaxIdLetters[number % 23];
         char actualLetter = nif[^1];
 
         if (expectedLetter != actualLetter)
@@ -104,7 +102,7 @@ public static partial class IdentificacionFiscalValidaciones
         }
     }
 
-    public static bool EsNieValido(string nie, out string codigoError, out string descripcionError)
+    public static bool IsValidNie(string nie, out string codigoError, out string descripcionError)
     {
         codigoError = string.Empty;
         descripcionError = string.Empty;
@@ -161,7 +159,7 @@ public static partial class IdentificacionFiscalValidaciones
             return false;
         }
             
-        char expectedLetter = LetrasNif[number % 23];
+        char expectedLetter = SpanishTaxIdLetters[number % 23];
         char actualLetter = nie[^1];
 
         if (expectedLetter != actualLetter)
@@ -174,7 +172,7 @@ public static partial class IdentificacionFiscalValidaciones
         return true;
     }
 
-    public static bool EsCifValido(string cif, out string codigoError, out string descripcionError)
+    public static bool IsValidCif(string cif, out string codigoError, out string descripcionError)
     {
         codigoError = string.Empty;
         descripcionError = string.Empty;
@@ -268,9 +266,9 @@ public static partial class IdentificacionFiscalValidaciones
         return true;
     }
 
-    public static bool EsIdOtroExtranjeroValido(
+    public static bool IsValidOtherTaxId(
         string codigoPais, 
-        TiposIdentificacionFiscal tipo, 
+        TaxIdType tipo, 
         string id, 
         out string codigoError, 
         out string descripcionError)
@@ -289,7 +287,7 @@ public static partial class IdentificacionFiscalValidaciones
             codigoError = "Cliente.IdentificacionFiscal.IdOtroExtranjeroIdVacio";
             descripcionError = "El identificador extranjero no puede estar vacío.";
         }
-        else if (tipo == TiposIdentificacionFiscal.Nif)
+        else if (tipo == TaxIdType.TaxId)
         {
             codigoError = "Cliente.IdentificacionFiscal.IdOtroExtranjeroInvalido";
             descripcionError = "El identificador extranjero no puede ser de tipo NIF español.";
@@ -318,7 +316,7 @@ public static partial class IdentificacionFiscalValidaciones
                 descripcionError = "El identificador extranjero debe tener entre 1 y 20 caracteres.";
             }
             // 4. Regla específica para NIF-IVA Intracomunitario (Tipo 02)
-            else if (tipo == TiposIdentificacionFiscal.NifIvaComunitario && !EsPaisUe(codigoPais))
+            else if (tipo == TaxIdType.IntraCommunityVatId && !EsPaisUe(codigoPais))
             {
                 codigoError = "Cliente.IdentificacionFiscal.IdOtroExtranjeroNifIvaInvalido";
                 descripcionError = $"El tipo NIF-IVA (02) solo es válido para países miembros de la UE. '{codigoPais}' no pertenece a la UE.";
@@ -335,7 +333,7 @@ public static partial class IdentificacionFiscalValidaciones
     }
 
     public static bool EsPaisUe(string codigoPais)
-        => !string.IsNullOrWhiteSpace(codigoPais) && PaisesUe.Contains(codigoPais.Trim());
+        => !string.IsNullOrWhiteSpace(codigoPais) && UeCountries.Contains(codigoPais.Trim());
 
     private static bool TieneCaracteresInvalidosXml(string texto)
     {
@@ -347,7 +345,7 @@ public static partial class IdentificacionFiscalValidaciones
     /// Valida un Dni (Nif de persona física española).
     /// Formato: 8 números + letra de control.
     /// </summary>
-    public static bool EsDni(string valor)
+    public static bool IsDni(string valor)
     {
         if (string.IsNullOrWhiteSpace(valor)) return false;
 
@@ -356,7 +354,7 @@ public static partial class IdentificacionFiscalValidaciones
         if (!regex.IsMatch(valor)) return false;
 
         int numero = int.Parse(valor[..8]);
-        char letraEsperada = LetrasNif[numero % 23];
+        char letraEsperada = SpanishTaxIdLetters[numero % 23];
         return valor[^1] == letraEsperada;
     }
 
@@ -364,7 +362,7 @@ public static partial class IdentificacionFiscalValidaciones
     /// Valida un Nie (Nif de extranjeros residentes en España).
     /// Formato: X/Y/Z + 7 números + letra de control.
     /// </summary>
-    public static bool EsNie(string valor)
+    public static bool IsNie(string valor)
     {
         if (string.IsNullOrWhiteSpace(valor)) return false;
 
@@ -386,7 +384,7 @@ public static partial class IdentificacionFiscalValidaciones
         string numeroCompleto = primeraParte.ToString() + valor.Substring(1, 7);
         int numero = int.Parse(numeroCompleto);
 
-        char letraEsperada = LetrasNif[numero % 23];
+        char letraEsperada = SpanishTaxIdLetters[numero % 23];
         return valor[^1] == letraEsperada;
     }
 
@@ -394,7 +392,7 @@ public static partial class IdentificacionFiscalValidaciones
     /// Valida un Cif (Nif de persona jurídica española).
     /// Formato: letra inicial (A-H, J-N, P-S, U-V) + 7 dígitos + dígito de control.
     /// </summary>
-    public static bool EsCif(string valor)
+    public static bool IsCif(string valor)
     {
         if (string.IsNullOrWhiteSpace(valor)) return false;
 

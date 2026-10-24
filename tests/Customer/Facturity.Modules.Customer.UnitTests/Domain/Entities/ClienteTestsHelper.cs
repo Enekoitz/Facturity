@@ -9,12 +9,12 @@ public static class ActualizarClienteTestsHelper
 {
     public sealed record DatosRecord(
         string Alias,
-        IIdentificacionFiscal  IdentificacionFiscal,
+        ITaxId  TaxId,
         string? RazonSocial,
         string? Nombre,
         string? PrimerApellido,
         string? SegundoApellido,
-        Domicilio? Domicilio
+        Address? Domicilio
     ){}
 }
 
@@ -31,44 +31,44 @@ public class ActualizarClienteTestsObjetos
     public static readonly ActualizarClienteTestsHelper.DatosRecord Cliente1 = 
         new(
             "MARC",
-            NifEspanol.Crear("47180975V").Value, 
+            SpanishTaxId.Crear("47180975V").Value, 
             null, 
             "Marcos Alexis", 
             "García", 
             "Machado",
-            Domicilio.Crear("Calle Ramón y Cajal 34", null, null, null, null, null).Value
+            Address.Crear("Calle Ramón y Cajal 34", null, null, null, null, null).Value
         );
 
     public static readonly ActualizarClienteTestsHelper.DatosRecord Cliente2 = 
         new(
             "FTNPARK",
-            NifEspanol.Crear("A31497027").Value, 
+            SpanishTaxId.Crear("A31497027").Value, 
             "FitnessPark", 
             null, 
             null, 
             null,
-            Domicilio.Crear("Polígono Industrial Lapatza, Aldatza Kalea, 2", "48970", "Basauri", "Bizkaia", "Euskadi", "España").Value
+            Address.Crear("Polígono Industrial Lapatza, Aldatza Kalea, 2", "48970", "Basauri", "Bizkaia", "Euskadi", "España").Value
         );
 
     public static readonly ActualizarClienteTestsHelper.DatosRecord Cliente3 = 
         new(
             "FRANC",
-            IdOtroExtranjero.Crear("CR-2024-000123", 
-                TiposIdentificacionFiscal.CertificadoResidencia,
+            OtherTaxId.Create("CR-2024-000123", 
+                TaxIdType.ResidenceCertificate,
                 "FR").Value, 
             "Francais S.A.", 
             null, 
             null, 
             null,
-            Domicilio.Crear("33, Chemin de Saugane", "12290", "Prades-Salars", "Aveyron", "Occitanie", "France").Value
+            Address.Crear("33, Chemin de Saugane", "12290", "Prades-Salars", "Aveyron", "Occitanie", "France").Value
         );
 }
 
 public static class ReconstruirClienteTestsHelper
 {
     public sealed record DatosRecord(
-        IIdentificacionFiscal  IdentificacionFiscal,
-        Domicilio? Domicilio,
+        ITaxId  TaxId,
+        Address? Domicilio,
         string? RazonSocial,
         string? Nombre,
         string? PrimerApellido,
@@ -79,8 +79,8 @@ public static class ReconstruirClienteTestsHelper
         ){}
 
     public static readonly DatosRecord DatosClienteObjeto = new(
-        NifEspanol.Crear("47180975V").Value, 
-        Domicilio.Crear("Calle Ramón y Cajal 34", null, null, null, null, null).Value, 
+        SpanishTaxId.Crear("47180975V").Value, 
+        Address.Crear("Calle Ramón y Cajal 34", null, null, null, null, null).Value, 
         null, 
         "Marcos Alexis", 
         "García", 
@@ -102,8 +102,8 @@ public class ReconstruirClienteTestsObjetos : TheoryData<ReconstruirClienteTests
     
     public static readonly ReconstruirClienteTestsHelper.DatosRecord ClienteConActivatedAtUtc = 
         new(
-            NifEspanol.Crear("47180975V").Value, 
-            Domicilio.Crear("Calle Ramón y Cajal 34", null, null, null, null, null).Value, 
+            SpanishTaxId.Crear("47180975V").Value, 
+            Address.Crear("Calle Ramón y Cajal 34", null, null, null, null, null).Value, 
             null, 
             "Marcos Alexis", 
             "García", 
@@ -115,8 +115,8 @@ public class ReconstruirClienteTestsObjetos : TheoryData<ReconstruirClienteTests
 
     public static readonly ReconstruirClienteTestsHelper.DatosRecord ClienteConDeactivatedAtUtc = 
         new(
-            NifEspanol.Crear("47180975V").Value, 
-            Domicilio.Crear("Calle Ramón y Cajal 34", null, null, null, null, null).Value, 
+            SpanishTaxId.Crear("47180975V").Value, 
+            Address.Crear("Calle Ramón y Cajal 34", null, null, null, null, null).Value, 
             null, 
             "Marcos Alexis", 
             "García", 
@@ -128,8 +128,8 @@ public class ReconstruirClienteTestsObjetos : TheoryData<ReconstruirClienteTests
     
     public static readonly ReconstruirClienteTestsHelper.DatosRecord ClienteConDeletedAtUtc = 
         new(
-            NifEspanol.Crear("47180975V").Value, 
-            Domicilio.Crear("Calle Ramón y Cajal 34", null, null, null, null, null).Value, 
+            SpanishTaxId.Crear("47180975V").Value, 
+            Address.Crear("Calle Ramón y Cajal 34", null, null, null, null, null).Value, 
             null, 
             "Marcos Alexis", 
             "García", 
@@ -143,27 +143,27 @@ public class ReconstruirClienteTestsObjetos : TheoryData<ReconstruirClienteTests
 public static class CrearClienteTestsHelper
 {
     public sealed record DatosCrearClienteRecord(
-        IIdentificacionFiscal  IdentificacionFiscal,
-        Domicilio? Domicilio,
+        ITaxId  TaxId,
+        Address? Domicilio,
         string? RazonSocial,
         string? Nombre,
         string? PrimerApellido,
         string? SegundoApellido){}
     
-    public static Result<Cliente> CrearCliente(DatosCrearClienteRecord datosCliente, in Guid id , in TenantId tenantId, in string alias)
+    public static Result<Customer.Domain.Customer> CrearCliente(DatosCrearClienteRecord datosCliente, in Guid id , in TenantId tenantId, in string alias)
     {
-        var result = Cliente.Crear(id, tenantId, alias, datosCliente.IdentificacionFiscal, datosCliente.RazonSocial, 
+        var result = Customer.Domain.Customer.Crear(id, tenantId, alias, datosCliente.TaxId, datosCliente.RazonSocial, 
             datosCliente.Nombre, datosCliente.PrimerApellido, datosCliente.SegundoApellido, datosCliente.Domicilio);
 
         return result;
     }
     
-    public static Result<Cliente> CrearCliente(DatosCrearClienteRecord datosCliente, string alias = "MARCOS")
+    public static Result<Customer.Domain.Customer> CrearCliente(DatosCrearClienteRecord datosCliente, string alias = "MARCOS")
     {
         var id = Guid.NewGuid();
         var tenantId = TenantId.Crear(Guid.NewGuid()).Value;
         
-        var result = Cliente.Crear(id, tenantId, alias, datosCliente.IdentificacionFiscal, datosCliente.RazonSocial, 
+        var result = Customer.Domain.Customer.Crear(id, tenantId, alias, datosCliente.TaxId, datosCliente.RazonSocial, 
             datosCliente.Nombre, datosCliente.PrimerApellido, datosCliente.SegundoApellido, datosCliente.Domicilio);
 
         return result;
@@ -180,26 +180,26 @@ public class CrearClienteTestsObjetos : TheoryData<CrearClienteTestsHelper.Datos
             
         Add(ClienteIdOtroCertificadoResidencia1);
             
-        Add(new CrearClienteTestsHelper.DatosCrearClienteRecord(IdOtroExtranjero.Crear("CR-2024-000123", TiposIdentificacionFiscal.CertificadoResidencia,
+        Add(new CrearClienteTestsHelper.DatosCrearClienteRecord(OtherTaxId.Create("CR-2024-000123", TaxIdType.ResidenceCertificate,
                 "FR").Value, null, "Marcos Siderúrgicas S.L.", null, null, null
         ));
     }
     
     public static readonly CrearClienteTestsHelper.DatosCrearClienteRecord ClienteNifNoPersonaJuridica1 = new (
-        NifEspanol.Crear("47180975V").Value,
-        Domicilio.Crear("Calle Ramón y Cajal 34", null, null, null,
+        SpanishTaxId.Crear("47180975V").Value,
+        Address.Crear("Calle Ramón y Cajal 34", null, null, null,
             null, null).Value, null, "Marcos Alexis", "García", "Machado"
     );
 
     public static readonly CrearClienteTestsHelper.DatosCrearClienteRecord ClienteNifPersonaJuridica1 = new (
-        NifEspanol.Crear("U89145882").Value,
-        Domicilio.Crear("Calle Ramón y Cajal 34", null, null, null,
+        SpanishTaxId.Crear("U89145882").Value,
+        Address.Crear("Calle Ramón y Cajal 34", null, null, null,
             null, null).Value,
         "Marcos Siderúrgicas S.L.", null, null, null
     );
     
-    public static readonly CrearClienteTestsHelper.DatosCrearClienteRecord ClienteIdOtroCertificadoResidencia1 = new (IdOtroExtranjero.Crear("CR-2024-000123", TiposIdentificacionFiscal.CertificadoResidencia,
-            "FR").Value, Domicilio.Crear("Calle Ramón y Cajal 23", "48001", "Bilbao",
+    public static readonly CrearClienteTestsHelper.DatosCrearClienteRecord ClienteIdOtroCertificadoResidencia1 = new (OtherTaxId.Create("CR-2024-000123", TaxIdType.ResidenceCertificate,
+            "FR").Value, Address.Crear("Calle Ramón y Cajal 23", "48001", "Bilbao",
             "Bizkaia", "País Vasco", "España").Value, "Marcos Siderúrgicas S.L.", null, null, null
     );
 }

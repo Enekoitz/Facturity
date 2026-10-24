@@ -1,6 +1,6 @@
 ﻿namespace Facturity.Modules.Customer.Domain;
 
-public enum TiposNifEspanol
+public enum SpanishTaxIdSubtype
 {
     Dni = 1,
     Nie = 2,

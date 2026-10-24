@@ -5,7 +5,7 @@ using Facturity.Modules.SharedKernel.Abstractions;
 
 namespace Facturity.Modules.Customer.Infrastructure;
 
-internal  class ClientesRepository(ClientesDbContext context, IIdentificacionFiscalFactory identificacionFiscalFactory) 
+internal  class ClientesRepository(ClientesDbContext context, ITaxIdFactory taxIdFactory) 
     : IClientesRepository
 {
 
@@ -20,7 +20,7 @@ internal  class ClientesRepository(ClientesDbContext context, IIdentificacionFis
 
     public async Task<bool> IdentificacionFiscalEnUsoAsync(
         string valor, 
-        TiposIdentificacionFiscal tipo, 
+        TaxIdType tipo, 
         string? codigoPais, 
         CancellationToken ct = default)
     {
@@ -32,24 +32,24 @@ internal  class ClientesRepository(ClientesDbContext context, IIdentificacionFis
     }
 
     public async Task GuardarAsync(
-        Cliente cliente, 
+        Domain.Customer customer, 
         CancellationToken ct = default)
     {
-        var clienteRecord = cliente.ToRecord();
+        var clienteRecord = customer.ToRecord();
         await context.Clientes.AddAsync(clienteRecord, ct);
         await context.SaveChangesAsync(ct);
     }
     
     public async Task ActualizarAsync(
-        Cliente cliente, 
+        Domain.Customer customer, 
         CancellationToken ct = default)
     {
-        var clienteRecord = cliente.ToRecord();
+        var clienteRecord = customer.ToRecord();
         context.Clientes.Update(clienteRecord);
         await context.SaveChangesAsync(ct);
     }
 
-    public async Task<Cliente?> ObtenerClientePorIdAsync(
+    public async Task<Domain.Customer?> ObtenerClientePorIdAsync(
         Guid id, 
         CancellationToken ct = default)
     {
@@ -60,7 +60,7 @@ internal  class ClientesRepository(ClientesDbContext context, IIdentificacionFis
         if (clienteRecord == null)
             return null; 
 
-        var cliente = clienteRecord.FromRecord(identificacionFiscalFactory)
+        var cliente = clienteRecord.FromRecord(taxIdFactory)
             ?? throw new InvalidOperationException($"El registro con ID '{id}' tiene un estado corrupto o no válido para el dominio.");
 
         return cliente;
@@ -121,7 +121,7 @@ internal  class ClientesRepository(ClientesDbContext context, IIdentificacionFis
                 .SetProperty(c => c.DeactivatedAtUtc, newDeactivatedAtUtc), cancellationToken:ct);
     }
     
-    public async Task<IEnumerable<Cliente>> ListarClientesAsync(
+    public async Task<IEnumerable<Domain.Customer>> ListarClientesAsync(
         ListarClientesQuery query, 
         CancellationToken ct = default)
     {
@@ -165,6 +165,6 @@ internal  class ClientesRepository(ClientesDbContext context, IIdentificacionFis
             .ToListAsync(ct);
         
         return clienteRecords
-            .Select(c => c.FromRecord(identificacionFiscalFactory)).ToList()!;
+            .Select(c => c.FromRecord(taxIdFactory)).ToList()!;
     }
 }

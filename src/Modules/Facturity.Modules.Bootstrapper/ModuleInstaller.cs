@@ -25,7 +25,7 @@ public static class ModuleInstaller
         
         private void AddCustomerModuleServices(string connString)
         {
-            services.AddScoped<IIdentificacionFiscalFactory, IdentificacionFiscalFactory>();
+            services.AddScoped<ITaxIdFactory, TaxIdFactory>();
             services.AddClientesFeatures();
             services.AddClientesInfrastructure(connString);
 

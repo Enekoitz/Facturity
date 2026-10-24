@@ -5,31 +5,31 @@ namespace Facturity.Modules.Customer.Infrastructure;
 
 public static class ClienteMapper
 {
-    public static ClienteRecord ToRecord(this Cliente cliente)
+    public static ClienteRecord ToRecord(this Domain.Customer customer)
     {
 
-        (string valor, TiposIdentificacionFiscal tipo, string codigoPais) = cliente.IdentificacionFiscal.ObtenerValoresComunes();
+        (string valor, TaxIdType tipo, string codigoPais) = customer.TaxId.GetCommonValues();
 
         return new ClienteRecord(
-            cliente.Id,
-            cliente.Alias,
+            customer.Id,
+            customer.Alias,
             valor,
             tipo,
             codigoPais,
-            cliente.RazonSocial,
-            cliente.Nombre,
-            cliente.PrimerApellido,
-            cliente.SegundoApellido,
-            cliente.Domicilio,
-            cliente.ActivatedAtUtc,
-            cliente.DeactivatedAtUtc,
-            cliente.DeletedAtUtc);
+            customer.RazonSocial,
+            customer.Nombre,
+            customer.PrimerApellido,
+            customer.SegundoApellido,
+            customer.Domicilio,
+            customer.ActivatedAtUtc,
+            customer.DeactivatedAtUtc,
+            customer.DeletedAtUtc);
     }
 
-    public static Cliente? FromRecord(this ClienteRecord clienteRecord, IIdentificacionFiscalFactory identificacionFiscalFactory)
+    public static Domain.Customer? FromRecord(this ClienteRecord clienteRecord, ITaxIdFactory taxIdFactory)
     {
 
-        var identificacionFiscalResult = identificacionFiscalFactory.Crear(clienteRecord.IdentificacionFiscalValor, 
+        var identificacionFiscalResult = taxIdFactory.Create(clienteRecord.IdentificacionFiscalValor, 
             clienteRecord.IdentificacionFiscalTipo, clienteRecord.IdentificacionFiscalCodigoPais);
         
         if (identificacionFiscalResult.IsFailure)
@@ -37,7 +37,7 @@ public static class ClienteMapper
 
         var tenantIdResult = TenantId.Crear(Guid.NewGuid());
 
-        var clienteResult = Cliente.Reconstruir(
+        var clienteResult = Domain.Customer.Reconstruir(
             clienteRecord.Id, 
             tenantIdResult.Value, 
             clienteRecord.Alias, 

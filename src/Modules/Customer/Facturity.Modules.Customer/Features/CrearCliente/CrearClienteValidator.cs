@@ -7,41 +7,38 @@ internal class CrearClienteValidator: AbstractValidator<CrearClienteCommand>
 {
     public CrearClienteValidator()
     {
-        // Datos del Cliente
         RuleFor(c => c.Alias)
             .NotEmpty()
-            .MaximumLength(ClienteParametros.AliasMaxLength);
+            .MaximumLength(Parameters.Customer.AliasMaxLength);
         
         RuleFor(c => c.Nombre)
-            .MaximumLength(ClienteParametros.NombreMaxLength);
+            .MaximumLength(Parameters.Customer.NameMaxLength);
         
         RuleFor(c => c.PrimerApellido)
-            .MaximumLength(ClienteParametros.ApellidoMaxLength);
+            .MaximumLength(Parameters.Customer.SurnameMaxLength);
         
         RuleFor(c => c.SegundoApellido)
-            .MaximumLength(ClienteParametros.ApellidoMaxLength);
+            .MaximumLength(Parameters.Customer.SurnameMaxLength);
         
-        // Datos del Domicilio
         RuleFor(c => c.CodigoPostal)
-            .MaximumLength(DomicilioParametros.CodigoPostalLength);
+            .MaximumLength(Parameters.Address.PostalCodeExactLength);
         
         RuleFor(c => c.Direccion)
             .NotEmpty()
-            .MaximumLength(DomicilioParametros.DireccionMaxLength);
+            .MaximumLength(Parameters.Address.AddressMaxLength);
         
         RuleFor(c => c.Municipio)
-            .MaximumLength(DomicilioParametros.MunicipioMaxLength);
+            .MaximumLength(Parameters.Address.CityMaxLength);
         
         RuleFor(c => c.Provincia)
-            .MaximumLength(DomicilioParametros.ProvinciaMaxLength);
+            .MaximumLength(Parameters.Address.StateMaxLength);
         
         RuleFor(c => c.Region)
-            .MaximumLength(DomicilioParametros.RegionMaxLength);
+            .MaximumLength(Parameters.Address.RegionMaxLength);
         
         RuleFor(c => c.Pais)
-            .MaximumLength(DomicilioParametros.PaisMaxLength);
+            .MaximumLength(Parameters.Address.CountryMaxLength);
         
-        // Datos de la Identificación Fiscal
         RuleFor(c => c.IdentificacionFiscalValor)
             .NotEmpty()
             .MaximumLength(30);
@@ -52,6 +49,6 @@ internal class CrearClienteValidator: AbstractValidator<CrearClienteCommand>
         RuleFor(c => c.IdentificacionFiscalCodigoPais)
             .Matches(@"^[A-Za-z]{2}$")
             .When(c => c.IdentificacionFiscalCodigoPais != null)
-            .WithMessage("El código ISO debe ser nulo o contener exactamente 2 letras.");
+            .WithMessage("The ISO code must be null or contain exactly 2 letters.");
     }
 }

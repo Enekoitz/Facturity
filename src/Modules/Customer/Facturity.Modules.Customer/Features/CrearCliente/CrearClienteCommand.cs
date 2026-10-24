@@ -7,7 +7,7 @@ namespace Facturity.Modules.Customer.Features;
 internal record CrearClienteCommand(
     string Alias,
     string IdentificacionFiscalValor,
-    TiposIdentificacionFiscal IdentificacionFiscalTipo,
+    TaxIdType IdentificacionFiscalTipo,
     string? IdentificacionFiscalCodigoPais,
     string? RazonSocial,
     string? Nombre,

@@ -12,7 +12,7 @@ public class ListarClientesEndpoint : IClientesEndpoint
     {
         app.MapGet("/", async (
                 [AsParameters] ListarClientesRequest request,
-                IQueryHandler<ListarClientesQuery, Result<IEnumerable<Cliente>>> handler,
+                IQueryHandler<ListarClientesQuery, Result<IEnumerable<Facturity.Modules.Customer.Domain.Customer>>> handler,
                 HttpContext httpContext,
                 CancellationToken ct) =>
         {

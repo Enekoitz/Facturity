@@ -7,7 +7,7 @@ namespace Facturity.Modules.Customer.Features;
 internal record ActualizarClienteCommand(
     Guid Id,
     string? IdentificacionFiscalValor,
-    TiposIdentificacionFiscal? IdentificacionFiscalTipo,
+    TaxIdType? IdentificacionFiscalTipo,
     string? IdentificacionFiscalCodigoPais,
     string? RazonSocial,
     string? Nombre,

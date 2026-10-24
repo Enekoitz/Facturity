@@ -4,19 +4,19 @@ using Facturity.Modules.SharedKernel.Domain;
 
 namespace Facturity.Modules.Customer.Features;
 
-internal sealed class CrearClienteHandler(IClientesRepository repoCliente, IIdentificacionFiscalFactory identificacionFiscalFactory) 
+internal sealed class CrearClienteHandler(IClientesRepository repoCliente, ITaxIdFactory taxIdFactory) 
     : ICommandHandler<CrearClienteCommand, Result<Guid>>
 {
     private readonly IClientesRepository _repoCliente = repoCliente;
-    private readonly IIdentificacionFiscalFactory _identificacionFiscalFactory = identificacionFiscalFactory;
+    private readonly ITaxIdFactory _taxIdFactory = taxIdFactory;
 
     public async Task<Result<Guid>> HandleAsync(CrearClienteCommand command, CancellationToken ct)
     {
-        var identificacionFiscalResult = _identificacionFiscalFactory.Crear(command.IdentificacionFiscalValor, command.IdentificacionFiscalTipo, command.IdentificacionFiscalCodigoPais);
+        var identificacionFiscalResult = _taxIdFactory.Create(command.IdentificacionFiscalValor, command.IdentificacionFiscalTipo, command.IdentificacionFiscalCodigoPais);
         if (identificacionFiscalResult.IsFailure)
             return Result.Fail<Guid>(identificacionFiscalResult.Errors);
 
-        var domicilioResult = Domicilio.Crear(command.Direccion, command.CodigoPostal, command.Municipio, 
+        var domicilioResult = Address.Crear(command.Direccion, command.CodigoPostal, command.Municipio, 
                                                 command.Provincia, command.Region, command.Pais);
         if (domicilioResult.IsFailure)
             return Result.Fail<Guid>(domicilioResult.Errors);
@@ -25,7 +25,7 @@ internal sealed class CrearClienteHandler(IClientesRepository repoCliente, IIden
         var tenantIdResult = TenantId.Crear(Guid.NewGuid());
 
         var id = Guid.NewGuid();
-        var clienteResult = Cliente.Crear(id, tenantIdResult.Value, command.Alias, identificacionFiscalResult.Value, command.RazonSocial,
+        var clienteResult = Domain.Customer.Crear(id, tenantIdResult.Value, command.Alias, identificacionFiscalResult.Value, command.RazonSocial,
                                             command.Nombre, command.PrimerApellido, command.SegundoApellido, domicilioResult.Value);
         if (clienteResult.IsFailure)
             return Result.Fail<Guid>(clienteResult.Errors);

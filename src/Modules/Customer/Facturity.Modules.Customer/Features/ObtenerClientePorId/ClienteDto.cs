@@ -5,7 +5,7 @@ namespace Facturity.Modules.Customer.Features;
 internal sealed record ClienteDto(
     string Alias,
     string IdentificacionFiscalValor,
-    TiposIdentificacionFiscal IdentificacionFiscalTipo,
+    TaxIdType IdentificacionFiscalTipo,
     string? IdentificacionFiscalCodigoPais,
     string? RazonSocial,
     string? Nombre,
@@ -20,28 +20,28 @@ internal sealed record ClienteDto(
 
 internal static class ClienteDtoExtensions
 {
-    internal static ClienteDto ToDto(this Cliente cliente)
+    internal static ClienteDto ToDto(this Domain.Customer customer)
     {
         (string identificacionFiscalValor, 
-            TiposIdentificacionFiscal identificacionFiscalTipo, 
-            string identificacionFiscalCodigoPais) = cliente.IdentificacionFiscal.ObtenerValoresComunes();
+            TaxIdType identificacionFiscalTipo, 
+            string identificacionFiscalCodigoPais) = customer.TaxId.GetCommonValues();
         
         return new ClienteDto(
-            cliente.Alias,
+            customer.Alias,
             identificacionFiscalValor,
             identificacionFiscalTipo,
-            identificacionFiscalTipo == TiposIdentificacionFiscal.Nif 
+            identificacionFiscalTipo == TaxIdType.TaxId 
                 ? null 
                 : identificacionFiscalCodigoPais,
-            cliente.RazonSocial,
-            cliente.Nombre,
-            cliente.PrimerApellido,
-            cliente.SegundoApellido,
-            cliente.Domicilio?.Direccion,
-            cliente.Domicilio?.CodigoPostal?.Valor,
-            cliente.Domicilio?.Municipio,
-            cliente.Domicilio?.Provincia,
-            cliente.Domicilio?.Region,
-            cliente.Domicilio?.Pais);
+            customer.RazonSocial,
+            customer.Nombre,
+            customer.PrimerApellido,
+            customer.SegundoApellido,
+            customer.Domicilio?.Street,
+            customer.Domicilio?.PostalCode?.Valor,
+            customer.Domicilio?.City,
+            customer.Domicilio?.State,
+            customer.Domicilio?.Region,
+            customer.Domicilio?.Country);
     }
 }

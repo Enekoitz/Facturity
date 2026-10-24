@@ -2,36 +2,36 @@
 
 namespace Facturity.Modules.Customer.Domain;
 
-public sealed class Cliente : AggregateRoot<Guid>
+public sealed class Customer : AggregateRoot<Guid>
 {
     public string Alias { get; private set; }
-    public IIdentificacionFiscal IdentificacionFiscal { get; private set; }
+    public ITaxId TaxId { get; private set; }
     public string? RazonSocial { get; private set; }
     public string? Nombre { get; private set; }
     public string? PrimerApellido { get; private set; }
     public string? SegundoApellido { get; private set; }
-    public Domicilio? Domicilio { get; private set; }
+    public Address? Domicilio { get; private set; }
     public DateTimeOffset? ActivatedAtUtc { get; private set; }
     public DateTimeOffset? DeactivatedAtUtc { get; private set; }
     public bool IsActive => ActivatedAtUtc is not null && DeactivatedAtUtc is null;
     public DateTimeOffset? DeletedAtUtc { get; private set; }
     
-    private Cliente() { }
+    private Customer() { }
 
-    private Cliente(
+    private Customer(
         Guid id,
         TenantId tenantId,
         string alias,
-        IIdentificacionFiscal identificacionFiscal,
+        ITaxId taxId,
         string? razonSocial,
         string? nombre,
         string? primerApellido,
         string? segundoApellido,
-        Domicilio? domicilio,
+        Address? domicilio,
         DateTimeOffset activatedAtUtc) : base(id, tenantId)
     {
         Alias = alias;
-        IdentificacionFiscal = identificacionFiscal;
+        TaxId = taxId;
         RazonSocial = razonSocial;
         Nombre = nombre;
         PrimerApellido = primerApellido;
@@ -40,27 +40,27 @@ public sealed class Cliente : AggregateRoot<Guid>
         ActivatedAtUtc = activatedAtUtc;
     }
 
-    public static Result<Cliente> Crear(
+    public static Result<Customer> Crear(
         Guid id,
         TenantId tenantId,
         string alias,
-        IIdentificacionFiscal identificacionFiscal,
+        ITaxId taxId,
         string? razonSocial,
         string? nombre,
         string? primerApellido,
         string? segundoApellido,
-        Domicilio? domicilio) 
+        Address? domicilio) 
     {
 
         var errores = new List<Error>();
 
         if (id == Guid.Empty)
-            errores.Add(ClienteErrors.IdInvalido);
+            errores.Add(CustomerErrors.IdInvalid);
 
         ValidarAlias(alias, errores);
 
         var tipoDenominacionFiscal = ObtenerTipoDenominacionFiscal(
-            identificacionFiscal.EsPersonaJuridica, 
+            taxId.IsLegalEntity, 
             razonSocial,
             nombre);
 
@@ -68,14 +68,14 @@ public sealed class Cliente : AggregateRoot<Guid>
             nombre, primerApellido, segundoApellido, errores);
 
         if (errores.Count > 0)
-            return Result.Fail<Cliente>(errores);
+            return Result.Fail<Customer>(errores);
         
         var activatedAtUtc = DateTimeOffset.UtcNow;
 
-        return Result.Ok(new Cliente(id,
+        return Result.Ok(new Customer(id,
                                     tenantId,
                                     alias,
-                                    identificacionFiscal,
+                                    taxId,
                                     razonSocial,
                                     nombre,
                                     primerApellido,
@@ -84,28 +84,28 @@ public sealed class Cliente : AggregateRoot<Guid>
                                     activatedAtUtc));
     }
     
-    public static Result<Cliente> Reconstruir(
+    public static Result<Customer> Reconstruir(
         Guid id,
         TenantId tenantId,
         string alias,
-        IIdentificacionFiscal identificacionFiscal,
+        ITaxId taxId,
         string? razonSocial,
         string? nombre,
         string? primerApellido,
         string? segundoApellido,
-        Domicilio? domicilio,
+        Address? domicilio,
         DateTimeOffset? activatedAtUtc,
         DateTimeOffset? deactivatedAtUtc,
         DateTimeOffset? deletedAtUtc,
         TimeProvider timeProvider) 
     {
-        var clienteResult = Crear(id, tenantId, alias, identificacionFiscal, razonSocial, nombre, primerApellido, segundoApellido, domicilio);
+        var clienteResult = Crear(id, tenantId, alias, taxId, razonSocial, nombre, primerApellido, segundoApellido, domicilio);
 
         if (clienteResult.IsFailure)
             return clienteResult;
         
         if (deletedAtUtc is not null && deletedAtUtc > timeProvider.GetUtcNow().UtcDateTime)
-            return Result<Cliente>.Fail(ClienteErrors.FechaFutura);
+            return Result<Customer>.Fail(CustomerErrors.InvalidFutureDate);
         
         var cliente = clienteResult.Value;
         
@@ -115,7 +115,7 @@ public sealed class Cliente : AggregateRoot<Guid>
         ValidarActivacionDesactivacion(activatedAtUtc, deactivatedAtUtc, errores, timeProvider);
         
         if(errores.Count > 0)
-            return Result.Fail<Cliente>(errores);
+            return Result.Fail<Customer>(errores);
        
         cliente.ActivatedAtUtc =  activatedAtUtc;
         cliente.DeactivatedAtUtc = deactivatedAtUtc;
@@ -124,17 +124,17 @@ public sealed class Cliente : AggregateRoot<Guid>
     }
 
     public Result Actualizar(
-        IIdentificacionFiscal? identificacionFiscal,
+        ITaxId? identificacionFiscal,
         string? razonSocial,
         string? nombre,
         string? primerApellido,
         string? segundoApellido,
-        Domicilio? domicilio)
+        Address? domicilio)
     {
         var errores = new List<Error>();
         
         var tipoDenominacionFiscal = ObtenerTipoDenominacionFiscal(
-            identificacionFiscal.EsPersonaJuridica, 
+            identificacionFiscal.IsLegalEntity, 
             razonSocial,
             nombre);
 
@@ -146,12 +146,12 @@ public sealed class Cliente : AggregateRoot<Guid>
 
         (RazonSocial, Nombre, PrimerApellido, SegundoApellido) = tipoDenominacionFiscal switch
         {
-            TipoDenominacionFiscal.RazonSocial => (razonSocial, (string?)null, (string?)null, (string?)null),
-            TipoDenominacionFiscal.NombreApellidos => ((string?)null, nombre, primerApellido, segundoApellido),
+            TaxDesignationType.LegalName => (razonSocial, (string?)null, (string?)null, (string?)null),
+            TaxDesignationType.FirsLastName => ((string?)null, nombre, primerApellido, segundoApellido),
             _ => (null, null, null, null)
         };
             
-        IdentificacionFiscal = identificacionFiscal;
+        TaxId = identificacionFiscal;
         Domicilio = domicilio;
         
         return Result.Ok();
@@ -162,31 +162,31 @@ public sealed class Cliente : AggregateRoot<Guid>
         List<Error> errores)
     {
         if (Validate.EsVacio(alias))
-            errores.Add(ClienteErrors.AliasInvalido);
+            errores.Add(CustomerErrors.AliasEmpty);
 
-        if (Validate.SuperaLongitudMaxima(alias, ClienteParametros.AliasMaxLength))
-            errores.Add(ClienteErrors.AliasDemasiadoLargo);
+        if (Validate.SuperaLongitudMaxima(alias, Parameters.Customer.AliasMaxLength))
+            errores.Add(CustomerErrors.AliasTooLong);
     }
 
-    internal static TipoDenominacionFiscal? ObtenerTipoDenominacionFiscal(
+    internal static TaxDesignationType? ObtenerTipoDenominacionFiscal(
         bool? esPersonaJuridica,
         string? razonSocial,
         string? nombre)
     {
         return (esPersonaJuridica, razonSocial, nombre) switch
         {
-            (false, _, _) => TipoDenominacionFiscal.NombreApellidos,
-            (true, _, _)  => TipoDenominacionFiscal.RazonSocial,
+            (false, _, _) => TaxDesignationType.FirsLastName,
+            (true, _, _)  => TaxDesignationType.LegalName,
     
-            var (_, r, _) when !string.IsNullOrWhiteSpace(r) => TipoDenominacionFiscal.RazonSocial,
-            var (_, _, n) when !string.IsNullOrWhiteSpace(n) => TipoDenominacionFiscal.NombreApellidos,
+            var (_, r, _) when !string.IsNullOrWhiteSpace(r) => TaxDesignationType.LegalName,
+            var (_, _, n) when !string.IsNullOrWhiteSpace(n) => TaxDesignationType.FirsLastName,
     
             _ => null
         };
     }
 
     private static void ValidarNombresApellidosRazonSocial(
-        TipoDenominacionFiscal? tipoDenominacionFiscal,
+        TaxDesignationType? tipoDenominacionFiscal,
         string? razonSocial,
         string? nombre,
         string? primerApellido,
@@ -196,17 +196,17 @@ public sealed class Cliente : AggregateRoot<Guid>
     {
         switch (tipoDenominacionFiscal, razonSocial, nombre)
         {
-            case (TipoDenominacionFiscal.RazonSocial, _, _):
+            case (TaxDesignationType.LegalName, _, _):
                 ValidarRazonSocial(razonSocial, errores);
                 break;
 
-            case (TipoDenominacionFiscal.NombreApellidos, _, _):
+            case (TaxDesignationType.FirsLastName, _, _):
                 ValidarNombreApellido(nombre, primerApellido, segundoApellido, errores);
                 break;
 
             case (null, _, _):
             default:
-                errores.Add(ClienteErrors.DenominacionFiscalInvalida);
+                errores.Add(CustomerErrors.InvalidTaxDesignationType);
                 break;
         }
     }
@@ -218,19 +218,19 @@ public sealed class Cliente : AggregateRoot<Guid>
         List<Error> errores)
     {
         if(Validate.EsVacio(nombre))
-            errores.Add(ClienteErrors.NombreVacio);
+            errores.Add(CustomerErrors.NameEmpty);
 
-        if (Validate.SuperaLongitudMaxima(nombre, ClienteParametros.NombreMaxLength))
-            errores.Add(ClienteErrors.NombreDemasiadoLargo);
+        if (Validate.SuperaLongitudMaxima(nombre, Parameters.Customer.NameMaxLength))
+            errores.Add(CustomerErrors.NameTooLong);
 
         if (string.IsNullOrWhiteSpace(primerApellido))
-            errores.Add(ClienteErrors.PrimerApellidoVacio);
+            errores.Add(CustomerErrors.FirstSurnameEmpty);
 
-        if (Validate.SuperaLongitudMaxima(primerApellido, ClienteParametros.ApellidoMaxLength))
-            errores.Add(ClienteErrors.PrimerApellidoDemasiadoLargo);
+        if (Validate.SuperaLongitudMaxima(primerApellido, Parameters.Customer.SurnameMaxLength))
+            errores.Add(CustomerErrors.FirstSurnameTooLong);
 
-        if (!string.IsNullOrWhiteSpace(segundoApellido) && Validate.SuperaLongitudMaxima(segundoApellido, ClienteParametros.ApellidoMaxLength))
-            errores.Add(ClienteErrors.SegundoApellidoDemasiadoLargo);
+        if (!string.IsNullOrWhiteSpace(segundoApellido) && Validate.SuperaLongitudMaxima(segundoApellido, Parameters.Customer.SurnameMaxLength))
+            errores.Add(CustomerErrors.SecondSurnameTooLong);
     }
 
     private static void ValidarRazonSocial(
@@ -238,10 +238,10 @@ public sealed class Cliente : AggregateRoot<Guid>
         List<Error> errores)
     {
         if (Validate.EsVacio(razonSocial))
-            errores.Add(ClienteErrors.RazonSocialVacio);
+            errores.Add(CustomerErrors.LegalNameEmpty);
 
-        if (Validate.SuperaLongitudMaxima(razonSocial, ClienteParametros.RazonSocialMaxLength))
-            errores.Add(ClienteErrors.RazonSocialDemasiadoLargo);
+        if (Validate.SuperaLongitudMaxima(razonSocial, Parameters.Customer.LegalNameMaxLength))
+            errores.Add(CustomerErrors.LegalNameTooLong);
     }
 
     private static void ValidarActivacionDesactivacion(
@@ -252,13 +252,13 @@ public sealed class Cliente : AggregateRoot<Guid>
     {
         if (activatedAtUtc is not null && deactivatedAtUtc is not null)
         {
-            errores.Add(ClienteErrors.ActivacionDesactivacionSimultanea);
+            errores.Add(CustomerErrors.SimultaneousActivationDeactivationDate);
         }
         else if ((activatedAtUtc is not null && activatedAtUtc > timeProvider.GetUtcNow().UtcDateTime) 
                  || 
                  (deactivatedAtUtc is not null && deactivatedAtUtc > timeProvider.GetUtcNow().UtcDateTime))
         {
-            errores.Add(ClienteErrors.FechaFutura);
+            errores.Add(CustomerErrors.InvalidFutureDate);
         }
     }
 }

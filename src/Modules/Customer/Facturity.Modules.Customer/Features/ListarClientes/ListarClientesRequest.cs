@@ -19,14 +19,14 @@ internal static class ListarClientesRequestMapperExtension
 {
     internal static Result<ListarClientesQuery> MapToQuery(this ListarClientesRequest request)
     {
-        TiposIdentificacionFiscal? codigoIdentificacionFiscal;
+        TaxIdType? codigoIdentificacionFiscal;
         if (string.IsNullOrWhiteSpace(request.IdentificacionTipoCodigo))
             codigoIdentificacionFiscal = null;
-        else if (Enum.TryParse<TiposIdentificacionFiscal>(request.IdentificacionTipoCodigo, ignoreCase: true, out var e)
-                 && Enum.IsDefined(typeof(TiposIdentificacionFiscal), e))
+        else if (Enum.TryParse<TaxIdType>(request.IdentificacionTipoCodigo, ignoreCase: true, out var e)
+                 && Enum.IsDefined(typeof(TaxIdType), e))
             codigoIdentificacionFiscal = e;
         else
-            return Result.Fail<ListarClientesQuery>(ClienteErrors.TipoIdentificacionFiscalInvalido);
+            return Result.Fail<ListarClientesQuery>(CustomerErrors.TaxIdTypeInvalid);
 
         int page =  request.Page <= 0 ? 1 : request.Page;
         int size = request.Size switch

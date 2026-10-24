@@ -5,7 +5,7 @@ using Microsoft.Extensions.Time.Testing;
 
 namespace Facturity.Modules.Customer.UnitTests.Domain;
 
-public abstract class ClienteTests
+public abstract class CustomerTests
 {
     public class CrearClienteTests
     {
@@ -24,7 +24,7 @@ public abstract class ClienteTests
             Assert.Equal(id, result.Value.Id);
             Assert.Equal(tenantId, result.Value.TenantId);
             Assert.Equal(alias, result.Value.Alias);
-            Assert.Equal(datosCrearClienteRecord.IdentificacionFiscal, result.Value.IdentificacionFiscal);
+            Assert.Equal(datosCrearClienteRecord.TaxId, result.Value.TaxId);
             Assert.Equal(datosCrearClienteRecord.Domicilio, result.Value.Domicilio);
             Assert.Equal(datosCrearClienteRecord.RazonSocial, result.Value.RazonSocial);
             Assert.Equal(datosCrearClienteRecord.Nombre, result.Value.Nombre);
@@ -49,14 +49,14 @@ public abstract class ClienteTests
             Assert.True(result.IsFailure);
 
             result.Errors.Should().Contain(string.IsNullOrWhiteSpace(razonSocialNuloVacio)
-                ? ClienteErrors.RazonSocialVacio
-                : ClienteErrors.RazonSocialDemasiadoLargo);
+                ? CustomerErrors.LegalNameEmpty
+                : CustomerErrors.LegalNameTooLong);
 
-            result.Errors.Should().NotContain(ClienteErrors.NombreVacio);
-            result.Errors.Should().NotContain(ClienteErrors.NombreDemasiadoLargo);
-            result.Errors.Should().NotContain(ClienteErrors.PrimerApellidoVacio);
-            result.Errors.Should().NotContain(ClienteErrors.PrimerApellidoDemasiadoLargo);
-            result.Errors.Should().NotContain(ClienteErrors.SegundoApellidoDemasiadoLargo);
+            result.Errors.Should().NotContain(CustomerErrors.NameEmpty);
+            result.Errors.Should().NotContain(CustomerErrors.NameTooLong);
+            result.Errors.Should().NotContain(CustomerErrors.FirstSurnameEmpty);
+            result.Errors.Should().NotContain(CustomerErrors.FirstSurnameTooLong);
+            result.Errors.Should().NotContain(CustomerErrors.SecondSurnameTooLong);
         }
         
         [Theory]
@@ -74,15 +74,15 @@ public abstract class ClienteTests
             Assert.True(result.IsFailure);
 
             result.Errors.Should().Contain(string.IsNullOrWhiteSpace(nombre)
-                ? ClienteErrors.NombreVacio
-                : ClienteErrors.NombreDemasiadoLargo);
+                ? CustomerErrors.NameEmpty
+                : CustomerErrors.NameTooLong);
             
             result.Errors.Should().Contain(string.IsNullOrWhiteSpace(nombre)
-                ? ClienteErrors.PrimerApellidoVacio
-                : ClienteErrors.PrimerApellidoDemasiadoLargo);
+                ? CustomerErrors.FirstSurnameEmpty
+                : CustomerErrors.FirstSurnameTooLong);
 
-            result.Errors.Should().NotContain(ClienteErrors.RazonSocialVacio);
-            result.Errors.Should().NotContain(ClienteErrors.RazonSocialDemasiadoLargo);
+            result.Errors.Should().NotContain(CustomerErrors.LegalNameEmpty);
+            result.Errors.Should().NotContain(CustomerErrors.LegalNameTooLong);
         }
         
         [Theory]
@@ -98,13 +98,13 @@ public abstract class ClienteTests
             var result = CrearClienteTestsHelper.CrearCliente(datosCliente);
 
             result.IsFailure.Should().BeTrue();
-            result.Errors.Should().Contain(ClienteErrors.DenominacionFiscalInvalida);
-            result.Errors.Should().NotContain(ClienteErrors.RazonSocialVacio);
-            result.Errors.Should().NotContain(ClienteErrors.RazonSocialDemasiadoLargo);
-            result.Errors.Should().NotContain(ClienteErrors.NombreVacio);
-            result.Errors.Should().NotContain(ClienteErrors.NombreDemasiadoLargo);
-            result.Errors.Should().NotContain(ClienteErrors.PrimerApellidoVacio);
-            result.Errors.Should().NotContain(ClienteErrors.PrimerApellidoDemasiadoLargo);
+            result.Errors.Should().Contain(CustomerErrors.InvalidTaxDesignationType);
+            result.Errors.Should().NotContain(CustomerErrors.LegalNameEmpty);
+            result.Errors.Should().NotContain(CustomerErrors.LegalNameTooLong);
+            result.Errors.Should().NotContain(CustomerErrors.NameEmpty);
+            result.Errors.Should().NotContain(CustomerErrors.NameTooLong);
+            result.Errors.Should().NotContain(CustomerErrors.FirstSurnameEmpty);
+            result.Errors.Should().NotContain(CustomerErrors.FirstSurnameTooLong);
         }
 
         [Fact]
@@ -112,17 +112,17 @@ public abstract class ClienteTests
         {
             var datosCliente = CrearClienteTestsObjetos.ClienteNifPersonaJuridica1 with 
             { 
-                RazonSocial = Utilities.GetRandomLength(ClienteParametros.RazonSocialMaxLength + 1), 
+                RazonSocial = Utilities.GetRandomLength(Parameters.Customer.LegalNameMaxLength + 1), 
                 Nombre = null, 
                 PrimerApellido = null 
             };
             var result = CrearClienteTestsHelper.CrearCliente(datosCliente);
 
-            result.Errors.Should().Contain(ClienteErrors.RazonSocialDemasiadoLargo);
-            result.Errors.Should().NotContain(ClienteErrors.NombreVacio);
-            result.Errors.Should().NotContain(ClienteErrors.NombreDemasiadoLargo);
-            result.Errors.Should().NotContain(ClienteErrors.PrimerApellidoVacio);
-            result.Errors.Should().NotContain(ClienteErrors.PrimerApellidoDemasiadoLargo);
+            result.Errors.Should().Contain(CustomerErrors.LegalNameTooLong);
+            result.Errors.Should().NotContain(CustomerErrors.NameEmpty);
+            result.Errors.Should().NotContain(CustomerErrors.NameTooLong);
+            result.Errors.Should().NotContain(CustomerErrors.FirstSurnameEmpty);
+            result.Errors.Should().NotContain(CustomerErrors.FirstSurnameTooLong);
         }
 
         [Fact]
@@ -131,17 +131,17 @@ public abstract class ClienteTests
             var datosCliente = CrearClienteTestsObjetos.ClienteNifNoPersonaJuridica1 with 
             { 
                 RazonSocial = null,
-                Nombre = Utilities.GetRandomLength(ClienteParametros.NombreMaxLength + 1),
-                PrimerApellido = Utilities.GetRandomLength(ClienteParametros.ApellidoMaxLength + 1)
+                Nombre = Utilities.GetRandomLength(Parameters.Customer.NameMaxLength + 1),
+                PrimerApellido = Utilities.GetRandomLength(Parameters.Customer.SurnameMaxLength + 1)
             };
             var result = CrearClienteTestsHelper.CrearCliente(datosCliente);
 
-            result.Errors.Should().Contain(ClienteErrors.NombreDemasiadoLargo);
-            result.Errors.Should().Contain(ClienteErrors.PrimerApellidoDemasiadoLargo);
-            result.Errors.Should().NotContain(ClienteErrors.NombreVacio);
-            result.Errors.Should().NotContain(ClienteErrors.PrimerApellidoVacio);
-            result.Errors.Should().NotContain(ClienteErrors.RazonSocialVacio);
-            result.Errors.Should().NotContain(ClienteErrors.RazonSocialDemasiadoLargo);
+            result.Errors.Should().Contain(CustomerErrors.NameTooLong);
+            result.Errors.Should().Contain(CustomerErrors.FirstSurnameTooLong);
+            result.Errors.Should().NotContain(CustomerErrors.NameEmpty);
+            result.Errors.Should().NotContain(CustomerErrors.FirstSurnameEmpty);
+            result.Errors.Should().NotContain(CustomerErrors.LegalNameEmpty);
+            result.Errors.Should().NotContain(CustomerErrors.LegalNameTooLong);
         }
         
         [Fact]
@@ -152,17 +152,17 @@ public abstract class ClienteTests
                 RazonSocial = null,
                 Nombre = "Marcos",
                 PrimerApellido = "García",
-                SegundoApellido = Utilities.GetRandomLength(ClienteParametros.ApellidoMaxLength + 1)
+                SegundoApellido = Utilities.GetRandomLength(Parameters.Customer.SurnameMaxLength + 1)
             };
             var result = CrearClienteTestsHelper.CrearCliente(datosCliente);
 
-            result.Errors.Should().Contain(ClienteErrors.SegundoApellidoDemasiadoLargo);
-            result.Errors.Should().NotContain(ClienteErrors.NombreDemasiadoLargo);
-            result.Errors.Should().NotContain(ClienteErrors.PrimerApellidoDemasiadoLargo);
-            result.Errors.Should().NotContain(ClienteErrors.NombreVacio);
-            result.Errors.Should().NotContain(ClienteErrors.PrimerApellidoVacio);
-            result.Errors.Should().NotContain(ClienteErrors.RazonSocialVacio);
-            result.Errors.Should().NotContain(ClienteErrors.RazonSocialDemasiadoLargo);
+            result.Errors.Should().Contain(CustomerErrors.SecondSurnameTooLong);
+            result.Errors.Should().NotContain(CustomerErrors.NameTooLong);
+            result.Errors.Should().NotContain(CustomerErrors.FirstSurnameTooLong);
+            result.Errors.Should().NotContain(CustomerErrors.NameEmpty);
+            result.Errors.Should().NotContain(CustomerErrors.FirstSurnameEmpty);
+            result.Errors.Should().NotContain(CustomerErrors.LegalNameEmpty);
+            result.Errors.Should().NotContain(CustomerErrors.LegalNameTooLong);
         }
     }
 
@@ -316,8 +316,8 @@ public abstract class ClienteTests
         var fakeCurrentTime = new DateTimeOffset(2026, 11, 30, 08, 00 ,00, TimeSpan.Zero);
         var fakeTimeProvider = new FakeTimeProvider(fakeCurrentTime);
         
-        var result = Cliente.Reconstruir(
-            id, tenantId, alias, datosCliente.IdentificacionFiscal, datosCliente.RazonSocial, 
+        var result = Customer.Domain.Customer.Reconstruir(
+            id, tenantId, alias, datosCliente.TaxId, datosCliente.RazonSocial, 
             datosCliente.Nombre, datosCliente.PrimerApellido, datosCliente.SegundoApellido, 
             datosCliente.Domicilio, datosCliente.ActivatedAtUtc, datosCliente.DeactivatedAtUtc, 
             datosCliente.DeletedAtUtc, fakeTimeProvider);
@@ -338,13 +338,13 @@ public abstract class ClienteTests
         var fakeCurrentTime = new DateTimeOffset(2026, 06, 12, 08, 43, 11, TimeSpan.Zero); 
         var fakeTimeProvider = new FakeTimeProvider(fakeCurrentTime);
         
-        var result = Cliente.Reconstruir(id, tenantId, alias, datosCliente.IdentificacionFiscal, datosCliente.RazonSocial, 
+        var result = Customer.Domain.Customer.Reconstruir(id, tenantId, alias, datosCliente.TaxId, datosCliente.RazonSocial, 
             datosCliente.Nombre, datosCliente.PrimerApellido, datosCliente.SegundoApellido, 
             datosCliente.Domicilio, datosCliente.ActivatedAtUtc, datosCliente.DeactivatedAtUtc, 
             datosCliente.DeletedAtUtc, fakeTimeProvider);
         
         Assert.True(result.IsFailure);
-        result.Errors.Should().Contain(ClienteErrors.FechaFutura);
+        result.Errors.Should().Contain(CustomerErrors.InvalidFutureDate);
     }
     
     [Fact]
@@ -367,13 +367,13 @@ public abstract class ClienteTests
         var fakeCurrentTime = new DateTimeOffset(2026, 06, 12, 08, 43, 11, TimeSpan.Zero); 
         var fakeTimeProvider = new FakeTimeProvider(fakeCurrentTime);
         
-        var result = Cliente.Reconstruir(id, tenantId, alias, datosCliente.IdentificacionFiscal, datosCliente.RazonSocial, 
+        var result = Customer.Domain.Customer.Reconstruir(id, tenantId, alias, datosCliente.TaxId, datosCliente.RazonSocial, 
             datosCliente.Nombre, datosCliente.PrimerApellido, datosCliente.SegundoApellido, 
             datosCliente.Domicilio, datosCliente.ActivatedAtUtc, datosCliente.DeactivatedAtUtc, 
             datosCliente.DeletedAtUtc, fakeTimeProvider);
         
         Assert.True(result.IsFailure);
-        result.Errors.Should().Contain(ClienteErrors.ActivacionDesactivacionSimultanea);
+        result.Errors.Should().Contain(CustomerErrors.SimultaneousActivationDeactivationDate);
     }
 }
     

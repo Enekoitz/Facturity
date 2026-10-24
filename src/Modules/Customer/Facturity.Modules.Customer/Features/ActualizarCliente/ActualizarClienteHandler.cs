@@ -4,19 +4,19 @@ using Facturity.Modules.SharedKernel.Domain;
 
 namespace Facturity.Modules.Customer.Features;
 
-internal sealed class ActualizarClienteHandler(IClientesRepository repo, IIdentificacionFiscalFactory identificacionFiscalFactory) 
+internal sealed class ActualizarClienteHandler(IClientesRepository repo, ITaxIdFactory taxIdFactory) 
     : ICommandHandler<ActualizarClienteCommand, Result>
 {
     public async Task<Result> HandleAsync(ActualizarClienteCommand command, CancellationToken ct)
     {
         var cliente = await repo.ObtenerClientePorIdAsync(command.Id, ct);
         if (cliente == null)
-            return Result.Fail(ClienteErrors.NoEncontrado);
+            return Result.Fail(CustomerErrors.NotFound);
 
-        Result<IIdentificacionFiscal> identificacionFiscalResult = null;
+        Result<ITaxId> identificacionFiscalResult = null;
         if (command.IdentificacionFiscalValor is not null && command.IdentificacionFiscalTipo is not null)
         {
-            identificacionFiscalResult = identificacionFiscalFactory.Crear(
+            identificacionFiscalResult = taxIdFactory.Create(
                 command.IdentificacionFiscalValor, 
                 command.IdentificacionFiscalTipo.Value, 
                 command.IdentificacionFiscalCodigoPais)!;
@@ -31,13 +31,13 @@ internal sealed class ActualizarClienteHandler(IClientesRepository repo, IIdenti
                 ct)!;
             
             if (identificacionFiscalEnUso)
-                return Result.Fail(ClienteErrors.IdentificacionFiscalEnUso);
+                return Result.Fail(CustomerErrors.TaxIdInUse);
         }
 
-        Result<Domicilio> domicilioResult = null;
+        Result<Address> domicilioResult = null;
         if (command.IdentificacionFiscalValor is not null && command.IdentificacionFiscalTipo is not null)
         {
-            domicilioResult = Domicilio.Crear(command.Direccion!, command.CodigoPostal, command.Municipio, 
+            domicilioResult = Address.Crear(command.Direccion!, command.CodigoPostal, command.Municipio, 
                 command.Provincia, command.Region, command.Pais);
         
             if (domicilioResult.IsFailure)

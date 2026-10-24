@@ -26,7 +26,7 @@ public class ClienteConfiguration : IEntityTypeConfiguration<ClienteRecord>
             .IsRequired()
             .HasColumnName("identificacion_fiscal_tipo");
 
-        builder.HasOne<TipoIdentificacionFiscal>()
+        builder.HasOne<TaxIdTypesCatalog>()
             .WithMany()
             .HasForeignKey(c => (int)c.IdentificacionFiscalTipo)
             .OnDelete(DeleteBehavior.Restrict);
@@ -60,13 +60,13 @@ public class ClienteConfiguration : IEntityTypeConfiguration<ClienteRecord>
         
         builder.OwnsOne(c => c.Domicilio, d =>
         {
-            d.Property(x => x.Direccion).HasMaxLength(200).HasColumnName(colNameDireccion).IsRequired();
-            d.Property(x => x.Municipio).HasMaxLength(100).HasColumnName(colNameMunicipio);
-            d.Property(x => x.Provincia).HasMaxLength(50).HasColumnName(colNameProvincia);
+            d.Property(x => x.Street).HasMaxLength(200).HasColumnName(colNameDireccion).IsRequired();
+            d.Property(x => x.City).HasMaxLength(100).HasColumnName(colNameMunicipio);
+            d.Property(x => x.State).HasMaxLength(50).HasColumnName(colNameProvincia);
             d.Property(x => x.Region).HasMaxLength(50).HasColumnName(colNameRegion);
-            d.Property(x => x.Pais).HasMaxLength(60).HasColumnName(colNamePais);
+            d.Property(x => x.Country).HasMaxLength(60).HasColumnName(colNamePais);
 
-            d.OwnsOne(x => x.CodigoPostal, cp =>
+            d.OwnsOne(x => x.PostalCode, cp =>
             {
                 cp.Property(c => c.Valor)
                     .HasMaxLength(5)

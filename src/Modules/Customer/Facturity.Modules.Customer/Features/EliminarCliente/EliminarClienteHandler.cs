@@ -13,8 +13,8 @@ internal sealed class EliminarClienteHandler(IClientesRepository repo)
 
         return softDeleteResult.Result switch
         {
-            SoftDeleteResultTypes.AlreadyDeleted => Result.Fail(ClienteErrors.EliminadoPreviamente),
-            SoftDeleteResultTypes.NotFound => Result.Fail(ClienteErrors.NoEncontrado),
+            SoftDeleteResultTypes.AlreadyDeleted => Result.Fail(CustomerErrors.AlreadyDeleted),
+            SoftDeleteResultTypes.NotFound => Result.Fail(CustomerErrors.NotFound),
             SoftDeleteResultTypes.Deleted => Result.Ok(),
             _ => Result.Fail(Error.Unexpected("Cliente.Error", "Ha ocurrido un error durante la operación."))
         };

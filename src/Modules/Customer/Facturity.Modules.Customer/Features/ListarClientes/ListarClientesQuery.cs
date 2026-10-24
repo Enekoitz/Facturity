@@ -6,11 +6,11 @@ namespace Facturity.Modules.Customer.Features;
 
 internal sealed record ListarClientesQuery(
     string? Alias, 
-    TiposIdentificacionFiscal? IdentificacionFiscalTipo, 
+    TaxIdType? IdentificacionFiscalTipo, 
     string? IdentificacionFiscalValor, 
     string? IdentificacionFiscalCodigoPais,
     string? DenominacionFiscalBusqueda,
     string? DireccionBusqueda,
     bool? Activo,
     int Page,
-    int Size) : IQuery<Result<IEnumerable<Cliente>>>;
+    int Size) : IQuery<Result<IEnumerable<Domain.Customer>>>;

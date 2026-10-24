@@ -13,7 +13,7 @@ public class CodigoPostalTests
     {
 
         // Act
-        var result = CodigoPostal.Crear(codigoPostalEntrada);
+        var result = PostalCode.Crear(codigoPostalEntrada);
 
         // Assert
         Assert.True(result.IsFailure);
@@ -27,7 +27,7 @@ public class CodigoPostalTests
         string cp = "12f&3";
 
         // Act
-        var result = CodigoPostal.Crear(cp);
+        var result = PostalCode.Crear(cp);
 
         // Assert
         Assert.True(result.IsFailure);
@@ -41,7 +41,7 @@ public class CodigoPostalTests
         string cp = "123456";
 
         // Act
-        var result = CodigoPostal.Crear(cp);
+        var result = PostalCode.Crear(cp);
 
         // Assert
         Assert.True(result.IsFailure);
@@ -55,7 +55,7 @@ public class CodigoPostalTests
         string cp = "02344";
 
         // Act
-        var result = CodigoPostal.Crear(cp);
+        var result = PostalCode.Crear(cp);
 
         // Assert
         Assert.True(result.IsSuccess);

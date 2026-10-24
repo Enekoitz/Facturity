@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Facturity.Modules.Customer.UnitTests.Domain;
 
-public class DomicilioTests
+public class AddressTests
 {
     [Theory]
     [InlineData(null)]
@@ -19,7 +19,7 @@ public class DomicilioTests
         string? pais = null;
 
         // Act
-        var result = Domicilio.Crear(direccion, cp, municipio, provincia, region, pais);
+        var result = Address.Crear(direccion, cp, municipio, provincia, region, pais);
 
         // Assert
         Assert.True(result.IsFailure);
@@ -37,7 +37,7 @@ public class DomicilioTests
         string? pais = null;
 
         // Act
-        var result = Domicilio.Crear(direccion, cp, municipio, provincia, region, pais);
+        var result = Address.Crear(direccion, cp, municipio, provincia, region, pais);
 
         // Assert
         Assert.True(result.IsSuccess);
