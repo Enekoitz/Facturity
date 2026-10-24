@@ -8,7 +8,7 @@ public static class JwtExtension
 {
     public static void AddJwtSettings(this IServiceCollection services, IConfiguration configuration)
     {
-        // 1. Mapeo y validación de JwtSettings con IOptions
+        // 1. Mapping and validation of JwtSettings using IOptions
         services.AddOptions<JwtOptions>()
             .Bind(configuration.GetSection(JwtOptions.SectionName))
             .Validate(options => !string.IsNullOrWhiteSpace(options.SigningKey) && options.SigningKey.Length >= 32,
@@ -18,13 +18,13 @@ public static class JwtExtension
             .Validate(options => options.ExpirationMinutes > 0, "Jwt:ExpirationMinutes debe ser mayor a 0.")
             .ValidateOnStart();
 
-        // 2. Extraer valores necesarios para el Middleware de Auth
+        // 2. Extract the values required for the Auth middleware
         var jwtSettings = configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>()
             ?? throw new InvalidOperationException("No se encontró la sección 'Jwt' en la configuración.");
 
         var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SigningKey));
 
-        // 3. Configuración del esquema de JwtBearer
+        // 3. JwtBearer scheme configuration
         services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
