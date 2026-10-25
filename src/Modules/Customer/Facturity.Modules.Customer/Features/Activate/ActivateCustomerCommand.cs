@@ -3,4 +3,4 @@ using Facturity.Modules.SharedKernel.Domain;
 
 namespace Facturity.Modules.Customer.Features;
 
-internal sealed record ActivarClienteCommand(Guid Id) : ICommand<Result>;
+internal sealed record ActivateCustomerCommand(Guid Id) : ICommand<Result>;

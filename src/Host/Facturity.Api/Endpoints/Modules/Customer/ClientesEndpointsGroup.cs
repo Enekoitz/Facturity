@@ -13,7 +13,7 @@ internal static class ClientesEndpointsGroup
         new ObtenerClientePorIdEndpoint().MapEndpoint(clientesGroup);
         new ListarClientesEndpoint().MapEndpoint(clientesGroup);
         new DesactivarClienteEndpoint().MapEndpoint(clientesGroup);
-        new ActivarClienteEndpoint().MapEndpoint(clientesGroup);
+        new ActivateCustomerEndpoint().MapEndpoint(clientesGroup);
         new EliminarClienteEndpoint().MapEndpoint(clientesGroup);
     }
 }
