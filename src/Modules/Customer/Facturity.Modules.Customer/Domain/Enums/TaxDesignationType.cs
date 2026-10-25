@@ -3,5 +3,5 @@
 internal enum TaxDesignationType
 {
     LegalName = 1,
-    FirsLastName = 2
+    FullName = 2
 }

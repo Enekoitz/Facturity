@@ -47,7 +47,7 @@ internal sealed class ActualizarClienteHandler(IClientesRepository repo, ITaxIdF
         var identificacionFiscal = identificacionFiscalResult == default ? null :  identificacionFiscalResult.Value;
         var domicilio = domicilioResult == default ? null : domicilioResult.Value;
         
-        var result = cliente.Actualizar(identificacionFiscal, command.RazonSocial,
+        var result = cliente.Update(identificacionFiscal, command.RazonSocial,
                                         command.Nombre, command.PrimerApellido, command.SegundoApellido, 
                                         domicilio);
         

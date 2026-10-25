@@ -152,7 +152,7 @@ public static class CrearClienteTestsHelper
     
     public static Result<Customer.Domain.Customer> CrearCliente(DatosCrearClienteRecord datosCliente, in Guid id , in TenantId tenantId, in string alias)
     {
-        var result = Customer.Domain.Customer.Crear(id, tenantId, alias, datosCliente.TaxId, datosCliente.RazonSocial, 
+        var result = Customer.Domain.Customer.Create(id, tenantId, alias, datosCliente.TaxId, datosCliente.RazonSocial, 
             datosCliente.Nombre, datosCliente.PrimerApellido, datosCliente.SegundoApellido, datosCliente.Domicilio);
 
         return result;
@@ -163,7 +163,7 @@ public static class CrearClienteTestsHelper
         var id = Guid.NewGuid();
         var tenantId = TenantId.Crear(Guid.NewGuid()).Value;
         
-        var result = Customer.Domain.Customer.Crear(id, tenantId, alias, datosCliente.TaxId, datosCliente.RazonSocial, 
+        var result = Customer.Domain.Customer.Create(id, tenantId, alias, datosCliente.TaxId, datosCliente.RazonSocial, 
             datosCliente.Nombre, datosCliente.PrimerApellido, datosCliente.SegundoApellido, datosCliente.Domicilio);
 
         return result;

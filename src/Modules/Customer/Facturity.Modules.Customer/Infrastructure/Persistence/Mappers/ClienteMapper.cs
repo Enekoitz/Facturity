@@ -16,11 +16,11 @@ public static class ClienteMapper
             valor,
             tipo,
             codigoPais,
-            customer.RazonSocial,
-            customer.Nombre,
-            customer.PrimerApellido,
-            customer.SegundoApellido,
-            customer.Domicilio,
+            customer.LegalName,
+            customer.Name,
+            customer.FirstSurname,
+            customer.SecondSurname,
+            customer.Address,
             customer.ActivatedAtUtc,
             customer.DeactivatedAtUtc,
             customer.DeletedAtUtc);
@@ -37,7 +37,7 @@ public static class ClienteMapper
 
         var tenantIdResult = TenantId.Crear(Guid.NewGuid());
 
-        var clienteResult = Domain.Customer.Reconstruir(
+        var clienteResult = Domain.Customer.Rebuild(
             clienteRecord.Id, 
             tenantIdResult.Value, 
             clienteRecord.Alias, 

@@ -33,15 +33,15 @@ internal static class ClienteDtoExtensions
             identificacionFiscalTipo == TaxIdType.TaxId 
                 ? null 
                 : identificacionFiscalCodigoPais,
-            customer.RazonSocial,
-            customer.Nombre,
-            customer.PrimerApellido,
-            customer.SegundoApellido,
-            customer.Domicilio?.Street,
-            customer.Domicilio?.PostalCode?.Valor,
-            customer.Domicilio?.City,
-            customer.Domicilio?.State,
-            customer.Domicilio?.Region,
-            customer.Domicilio?.Country);
+            customer.LegalName,
+            customer.Name,
+            customer.FirstSurname,
+            customer.SecondSurname,
+            customer.Address?.Street,
+            customer.Address?.PostalCode?.Valor,
+            customer.Address?.City,
+            customer.Address?.State,
+            customer.Address?.Region,
+            customer.Address?.Country);
     }
 }

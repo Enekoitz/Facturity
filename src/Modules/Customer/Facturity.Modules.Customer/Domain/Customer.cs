@@ -6,11 +6,11 @@ public sealed class Customer : AggregateRoot<Guid>
 {
     public string Alias { get; private set; }
     public ITaxId TaxId { get; private set; }
-    public string? RazonSocial { get; private set; }
-    public string? Nombre { get; private set; }
-    public string? PrimerApellido { get; private set; }
-    public string? SegundoApellido { get; private set; }
-    public Address? Domicilio { get; private set; }
+    public string? LegalName { get; private set; }
+    public string? Name { get; private set; }
+    public string? FirstSurname { get; private set; }
+    public string? SecondSurname { get; private set; }
+    public Address? Address { get; private set; }
     public DateTimeOffset? ActivatedAtUtc { get; private set; }
     public DateTimeOffset? DeactivatedAtUtc { get; private set; }
     public bool IsActive => ActivatedAtUtc is not null && DeactivatedAtUtc is null;
@@ -23,52 +23,52 @@ public sealed class Customer : AggregateRoot<Guid>
         TenantId tenantId,
         string alias,
         ITaxId taxId,
-        string? razonSocial,
-        string? nombre,
-        string? primerApellido,
-        string? segundoApellido,
-        Address? domicilio,
+        string? legalName,
+        string? name,
+        string? firstSurname,
+        string? secondSurname,
+        Address? address,
         DateTimeOffset activatedAtUtc) : base(id, tenantId)
     {
         Alias = alias;
         TaxId = taxId;
-        RazonSocial = razonSocial;
-        Nombre = nombre;
-        PrimerApellido = primerApellido;
-        SegundoApellido = segundoApellido;
-        Domicilio = domicilio;
+        LegalName = legalName;
+        Name = name;
+        FirstSurname = firstSurname;
+        SecondSurname = secondSurname;
+        Address = address;
         ActivatedAtUtc = activatedAtUtc;
     }
 
-    public static Result<Customer> Crear(
+    public static Result<Customer> Create(
         Guid id,
         TenantId tenantId,
         string alias,
         ITaxId taxId,
-        string? razonSocial,
-        string? nombre,
-        string? primerApellido,
-        string? segundoApellido,
-        Address? domicilio) 
+        string? legalName,
+        string? name,
+        string? firstSurname,
+        string? secondSurname,
+        Address? address) 
     {
 
-        var errores = new List<Error>();
+        var errors = new List<Error>();
 
         if (id == Guid.Empty)
-            errores.Add(CustomerErrors.IdInvalid);
+            errors.Add(CustomerErrors.IdInvalid);
 
-        ValidarAlias(alias, errores);
+        ValidateAlias(alias, errors);
 
         var tipoDenominacionFiscal = ObtenerTipoDenominacionFiscal(
             taxId.IsLegalEntity, 
-            razonSocial,
-            nombre);
+            legalName,
+            name);
 
-        ValidarNombresApellidosRazonSocial(tipoDenominacionFiscal, razonSocial, 
-            nombre, primerApellido, segundoApellido, errores);
+        ValidateLegalNameOrFullName(tipoDenominacionFiscal, legalName, 
+            name, firstSurname, secondSurname, errors);
 
-        if (errores.Count > 0)
-            return Result.Fail<Customer>(errores);
+        if (errors.Count > 0)
+            return Result.Fail<Customer>(errors);
         
         var activatedAtUtc = DateTimeOffset.UtcNow;
 
@@ -76,189 +76,190 @@ public sealed class Customer : AggregateRoot<Guid>
                                     tenantId,
                                     alias,
                                     taxId,
-                                    razonSocial,
-                                    nombre,
-                                    primerApellido,
-                                    segundoApellido,
-                                    domicilio,
+                                    legalName,
+                                    name,
+                                    firstSurname,
+                                    secondSurname,
+                                    address,
                                     activatedAtUtc));
     }
     
-    public static Result<Customer> Reconstruir(
+    public static Result<Customer> Rebuild(
         Guid id,
         TenantId tenantId,
         string alias,
         ITaxId taxId,
-        string? razonSocial,
-        string? nombre,
-        string? primerApellido,
-        string? segundoApellido,
-        Address? domicilio,
+        string? legalName,
+        string? name,
+        string? firstSurname,
+        string? secondSurname,
+        Address? address,
         DateTimeOffset? activatedAtUtc,
         DateTimeOffset? deactivatedAtUtc,
         DateTimeOffset? deletedAtUtc,
         TimeProvider timeProvider) 
     {
-        var clienteResult = Crear(id, tenantId, alias, taxId, razonSocial, nombre, primerApellido, segundoApellido, domicilio);
+        var customerResult = Create(id, tenantId, alias, taxId, legalName, name, firstSurname, secondSurname, address);
 
-        if (clienteResult.IsFailure)
-            return clienteResult;
+        if (customerResult.IsFailure)
+            return customerResult;
         
         if (deletedAtUtc is not null && deletedAtUtc > timeProvider.GetUtcNow().UtcDateTime)
             return Result<Customer>.Fail(CustomerErrors.InvalidFutureDate);
         
-        var cliente = clienteResult.Value;
+        var customer = customerResult.Value;
         
-        cliente.DeletedAtUtc = deletedAtUtc;
+        customer.DeletedAtUtc = deletedAtUtc;
 
         var errores = new List<Error>();
-        ValidarActivacionDesactivacion(activatedAtUtc, deactivatedAtUtc, errores, timeProvider);
+        ValidateActivationOrDeactivation(activatedAtUtc, deactivatedAtUtc, errores, timeProvider);
         
         if(errores.Count > 0)
             return Result.Fail<Customer>(errores);
        
-        cliente.ActivatedAtUtc =  activatedAtUtc;
-        cliente.DeactivatedAtUtc = deactivatedAtUtc;
+        customer.ActivatedAtUtc =  activatedAtUtc;
+        customer.DeactivatedAtUtc = deactivatedAtUtc;
             
-        return Result.Ok(cliente);
+        return Result.Ok(customer);
     }
 
-    public Result Actualizar(
-        ITaxId? identificacionFiscal,
-        string? razonSocial,
-        string? nombre,
-        string? primerApellido,
-        string? segundoApellido,
-        Address? domicilio)
+    public Result Update(
+        ITaxId? taxId,
+        string? legalName,
+        string? name,
+        string? firstSurname,
+        string? secondSurname,
+        Address? address)
     {
         var errores = new List<Error>();
         
         var tipoDenominacionFiscal = ObtenerTipoDenominacionFiscal(
-            identificacionFiscal.IsLegalEntity, 
-            razonSocial,
-            nombre);
+            taxId?.IsLegalEntity, 
+            legalName,
+            name);
 
-        ValidarNombresApellidosRazonSocial(tipoDenominacionFiscal, razonSocial, 
-            nombre, primerApellido, segundoApellido, errores);
+        ValidateLegalNameOrFullName(tipoDenominacionFiscal, legalName, 
+            name, firstSurname, secondSurname, errores);
 
         if (errores.Count > 0)
             Result.Fail(errores);
 
-        (RazonSocial, Nombre, PrimerApellido, SegundoApellido) = tipoDenominacionFiscal switch
+        (LegalName, Name, FirstSurname, SecondSurname) = tipoDenominacionFiscal switch
         {
-            TaxDesignationType.LegalName => (razonSocial, (string?)null, (string?)null, (string?)null),
-            TaxDesignationType.FirsLastName => ((string?)null, nombre, primerApellido, segundoApellido),
+            TaxDesignationType.LegalName => (legalName, (string?)null, (string?)null, (string?)null),
+            TaxDesignationType.FullName => ((string?)null, name, firstSurname, secondSurname),
             _ => (null, null, null, null)
         };
             
-        TaxId = identificacionFiscal;
-        Domicilio = domicilio;
+        TaxId = taxId ?? TaxId;
+        Address = address ?? Address;
         
         return Result.Ok();
     }
 
-    private static void ValidarAlias(
-        string alias,
-        List<Error> errores)
-    {
-        if (Validate.EsVacio(alias))
-            errores.Add(CustomerErrors.AliasEmpty);
-
-        if (Validate.SuperaLongitudMaxima(alias, Parameters.Customer.AliasMaxLength))
-            errores.Add(CustomerErrors.AliasTooLong);
-    }
-
     internal static TaxDesignationType? ObtenerTipoDenominacionFiscal(
-        bool? esPersonaJuridica,
-        string? razonSocial,
-        string? nombre)
+        bool? isLegalEntity,
+        string? legalName,
+        string? name)
     {
-        return (esPersonaJuridica, razonSocial, nombre) switch
+        return (esPersonaJuridica: isLegalEntity, razonSocial: legalName, nombre: name) switch
         {
-            (false, _, _) => TaxDesignationType.FirsLastName,
+            (false, _, _) => TaxDesignationType.FullName,
             (true, _, _)  => TaxDesignationType.LegalName,
     
             var (_, r, _) when !string.IsNullOrWhiteSpace(r) => TaxDesignationType.LegalName,
-            var (_, _, n) when !string.IsNullOrWhiteSpace(n) => TaxDesignationType.FirsLastName,
+            var (_, _, n) when !string.IsNullOrWhiteSpace(n) => TaxDesignationType.FullName,
     
             _ => null
         };
     }
+    
+    private static void ValidateAlias(
+        string alias,
+        List<Error> errors)
+    {
+        if (Validate.IsEmpty(alias))
+            errors.Add(CustomerErrors.AliasEmpty);
 
-    private static void ValidarNombresApellidosRazonSocial(
-        TaxDesignationType? tipoDenominacionFiscal,
-        string? razonSocial,
-        string? nombre,
-        string? primerApellido,
-        string? segundoApellido,
-        List<Error> errores
+        if (Validate.ExceedsMaximumLength(alias, Parameters.Customer.AliasMaxLength))
+            errors.Add(CustomerErrors.AliasTooLong);
+    }
+
+    private static void ValidateLegalNameOrFullName(
+        TaxDesignationType? taxDesignationType,
+        string? legalName,
+        string? name,
+        string? firstSurname,
+        string? secondSurname,
+        List<Error> errors
         )
     {
-        switch (tipoDenominacionFiscal, razonSocial, nombre)
+        switch (taxDesignationType, legalName, name)
         {
             case (TaxDesignationType.LegalName, _, _):
-                ValidarRazonSocial(razonSocial, errores);
+                ValidateLegalName(legalName, errors);
                 break;
 
-            case (TaxDesignationType.FirsLastName, _, _):
-                ValidarNombreApellido(nombre, primerApellido, segundoApellido, errores);
+            case (TaxDesignationType.FullName, _, _):
+                ValidateFullName(name, firstSurname, secondSurname, errors);
                 break;
 
-            case (null, _, _):
+            // case (null, _, _):
+                
             default:
-                errores.Add(CustomerErrors.InvalidTaxDesignationType);
+                errors.Add(CustomerErrors.InvalidTaxDesignationType);
                 break;
         }
     }
 
-    private static void ValidarNombreApellido(
-        string? nombre, 
-        string? primerApellido, 
-        string? segundoApellido, 
-        List<Error> errores)
+    private static void ValidateFullName(
+        string? name, 
+        string? firstSurname, 
+        string? secondSurname, 
+        List<Error> errors)
     {
-        if(Validate.EsVacio(nombre))
-            errores.Add(CustomerErrors.NameEmpty);
+        if(Validate.IsEmpty(name))
+            errors.Add(CustomerErrors.NameEmpty);
 
-        if (Validate.SuperaLongitudMaxima(nombre, Parameters.Customer.NameMaxLength))
-            errores.Add(CustomerErrors.NameTooLong);
+        if (Validate.ExceedsMaximumLength(name, Parameters.Customer.NameMaxLength))
+            errors.Add(CustomerErrors.NameTooLong);
 
-        if (string.IsNullOrWhiteSpace(primerApellido))
-            errores.Add(CustomerErrors.FirstSurnameEmpty);
+        if (string.IsNullOrWhiteSpace(firstSurname))
+            errors.Add(CustomerErrors.FirstSurnameEmpty);
 
-        if (Validate.SuperaLongitudMaxima(primerApellido, Parameters.Customer.SurnameMaxLength))
-            errores.Add(CustomerErrors.FirstSurnameTooLong);
+        if (Validate.ExceedsMaximumLength(firstSurname, Parameters.Customer.SurnameMaxLength))
+            errors.Add(CustomerErrors.FirstSurnameTooLong);
 
-        if (!string.IsNullOrWhiteSpace(segundoApellido) && Validate.SuperaLongitudMaxima(segundoApellido, Parameters.Customer.SurnameMaxLength))
-            errores.Add(CustomerErrors.SecondSurnameTooLong);
+        if (!string.IsNullOrWhiteSpace(secondSurname) && Validate.ExceedsMaximumLength(secondSurname, Parameters.Customer.SurnameMaxLength))
+            errors.Add(CustomerErrors.SecondSurnameTooLong);
     }
 
-    private static void ValidarRazonSocial(
-        string? razonSocial,
-        List<Error> errores)
+    private static void ValidateLegalName(
+        string? legalName,
+        List<Error> errors)
     {
-        if (Validate.EsVacio(razonSocial))
-            errores.Add(CustomerErrors.LegalNameEmpty);
+        if (Validate.IsEmpty(legalName))
+            errors.Add(CustomerErrors.LegalNameEmpty);
 
-        if (Validate.SuperaLongitudMaxima(razonSocial, Parameters.Customer.LegalNameMaxLength))
-            errores.Add(CustomerErrors.LegalNameTooLong);
+        if (Validate.ExceedsMaximumLength(legalName, Parameters.Customer.LegalNameMaxLength))
+            errors.Add(CustomerErrors.LegalNameTooLong);
     }
 
-    private static void ValidarActivacionDesactivacion(
+    private static void ValidateActivationOrDeactivation(
         DateTimeOffset? activatedAtUtc, 
         DateTimeOffset? deactivatedAtUtc,
-        List<Error> errores,
+        List<Error> errors,
         TimeProvider timeProvider)
     {
         if (activatedAtUtc is not null && deactivatedAtUtc is not null)
         {
-            errores.Add(CustomerErrors.SimultaneousActivationDeactivationDate);
+            errors.Add(CustomerErrors.SimultaneousActivationDeactivationDate);
         }
-        else if ((activatedAtUtc is not null && activatedAtUtc > timeProvider.GetUtcNow().UtcDateTime) 
+        else if ((activatedAtUtc is not null && activatedAtUtc > timeProvider.GetUtcNow()) 
                  || 
-                 (deactivatedAtUtc is not null && deactivatedAtUtc > timeProvider.GetUtcNow().UtcDateTime))
+                 (deactivatedAtUtc is not null && deactivatedAtUtc > timeProvider.GetUtcNow()))
         {
-            errores.Add(CustomerErrors.InvalidFutureDate);
+            errors.Add(CustomerErrors.InvalidFutureDate);
         }
     }
 }

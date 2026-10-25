@@ -15,10 +15,10 @@ public sealed record PostalCode
 
     public static Result<PostalCode> Crear(string codigoPostal)
     {
-        if (Validate.EsVacio(codigoPostal))
+        if (Validate.IsEmpty(codigoPostal))
             return Result.Fail<PostalCode>(PostalCodeErrors.Empty);
 
-        if (Validate.NoEsLongitudExacta(codigoPostal, Parameters.Address.PostalCodeExactLength))
+        if (Validate.NotExactLength(codigoPostal, Parameters.Address.PostalCodeExactLength))
             return Result.Fail<PostalCode>(PostalCodeErrors.TooLong);
 
         if (!codigoPostal.All(char.IsDigit))

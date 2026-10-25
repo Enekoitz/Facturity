@@ -25,11 +25,11 @@ public abstract class CustomerTests
             Assert.Equal(tenantId, result.Value.TenantId);
             Assert.Equal(alias, result.Value.Alias);
             Assert.Equal(datosCrearClienteRecord.TaxId, result.Value.TaxId);
-            Assert.Equal(datosCrearClienteRecord.Domicilio, result.Value.Domicilio);
-            Assert.Equal(datosCrearClienteRecord.RazonSocial, result.Value.RazonSocial);
-            Assert.Equal(datosCrearClienteRecord.Nombre, result.Value.Nombre);
-            Assert.Equal(datosCrearClienteRecord.PrimerApellido, result.Value.PrimerApellido);
-            Assert.Equal(datosCrearClienteRecord.SegundoApellido, result.Value.SegundoApellido);
+            Assert.Equal(datosCrearClienteRecord.Domicilio, result.Value.Address);
+            Assert.Equal(datosCrearClienteRecord.RazonSocial, result.Value.LegalName);
+            Assert.Equal(datosCrearClienteRecord.Nombre, result.Value.Name);
+            Assert.Equal(datosCrearClienteRecord.PrimerApellido, result.Value.FirstSurname);
+            Assert.Equal(datosCrearClienteRecord.SegundoApellido, result.Value.SecondSurname);
         }
 
         [Theory]
@@ -316,7 +316,7 @@ public abstract class CustomerTests
         var fakeCurrentTime = new DateTimeOffset(2026, 11, 30, 08, 00 ,00, TimeSpan.Zero);
         var fakeTimeProvider = new FakeTimeProvider(fakeCurrentTime);
         
-        var result = Customer.Domain.Customer.Reconstruir(
+        var result = Customer.Domain.Customer.Rebuild(
             id, tenantId, alias, datosCliente.TaxId, datosCliente.RazonSocial, 
             datosCliente.Nombre, datosCliente.PrimerApellido, datosCliente.SegundoApellido, 
             datosCliente.Domicilio, datosCliente.ActivatedAtUtc, datosCliente.DeactivatedAtUtc, 
@@ -338,7 +338,7 @@ public abstract class CustomerTests
         var fakeCurrentTime = new DateTimeOffset(2026, 06, 12, 08, 43, 11, TimeSpan.Zero); 
         var fakeTimeProvider = new FakeTimeProvider(fakeCurrentTime);
         
-        var result = Customer.Domain.Customer.Reconstruir(id, tenantId, alias, datosCliente.TaxId, datosCliente.RazonSocial, 
+        var result = Customer.Domain.Customer.Rebuild(id, tenantId, alias, datosCliente.TaxId, datosCliente.RazonSocial, 
             datosCliente.Nombre, datosCliente.PrimerApellido, datosCliente.SegundoApellido, 
             datosCliente.Domicilio, datosCliente.ActivatedAtUtc, datosCliente.DeactivatedAtUtc, 
             datosCliente.DeletedAtUtc, fakeTimeProvider);
@@ -367,7 +367,7 @@ public abstract class CustomerTests
         var fakeCurrentTime = new DateTimeOffset(2026, 06, 12, 08, 43, 11, TimeSpan.Zero); 
         var fakeTimeProvider = new FakeTimeProvider(fakeCurrentTime);
         
-        var result = Customer.Domain.Customer.Reconstruir(id, tenantId, alias, datosCliente.TaxId, datosCliente.RazonSocial, 
+        var result = Customer.Domain.Customer.Rebuild(id, tenantId, alias, datosCliente.TaxId, datosCliente.RazonSocial, 
             datosCliente.Nombre, datosCliente.PrimerApellido, datosCliente.SegundoApellido, 
             datosCliente.Domicilio, datosCliente.ActivatedAtUtc, datosCliente.DeactivatedAtUtc, 
             datosCliente.DeletedAtUtc, fakeTimeProvider);

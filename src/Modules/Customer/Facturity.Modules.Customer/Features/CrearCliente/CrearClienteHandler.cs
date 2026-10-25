@@ -25,7 +25,7 @@ internal sealed class CrearClienteHandler(IClientesRepository repoCliente, ITaxI
         var tenantIdResult = TenantId.Crear(Guid.NewGuid());
 
         var id = Guid.NewGuid();
-        var clienteResult = Domain.Customer.Crear(id, tenantIdResult.Value, command.Alias, identificacionFiscalResult.Value, command.RazonSocial,
+        var clienteResult = Domain.Customer.Create(id, tenantIdResult.Value, command.Alias, identificacionFiscalResult.Value, command.RazonSocial,
                                             command.Nombre, command.PrimerApellido, command.SegundoApellido, domicilioResult.Value);
         if (clienteResult.IsFailure)
             return Result.Fail<Guid>(clienteResult.Errors);

@@ -53,7 +53,7 @@ public class OtherTaxIdTests
     public void EsPaisUE_EsCodigoPaisISO2UEValido_Fallo(string codigoPaisUe)
     {
         // Act
-        var result = TaxIdValidations.EsPaisUe(codigoPaisUe);
+        var result = TaxIdValidations.IsEuCountry(codigoPaisUe);
 
         // Assert
         Assert.True(result);
