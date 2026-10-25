@@ -37,7 +37,7 @@ internal sealed class UpdateCustomerHandler(ICustomerRepository repo, ITaxIdFact
         Result<Address> addressResult = default;
         if (command.TaxIdValue is not null && command.TaxIdType is not null)
         {
-            addressResult = Address.Crear(command.Street!, command.PostalCode, command.City, 
+            addressResult = Address.Create(command.Street!, command.PostalCode, command.City, 
                 command.State, command.Region, command.Country);
         
             if (addressResult.IsFailure)

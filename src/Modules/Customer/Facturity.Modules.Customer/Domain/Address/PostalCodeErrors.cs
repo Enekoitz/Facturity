@@ -10,7 +10,7 @@ internal static class PostalCodeErrors
     
     internal static readonly Error TooLong =
         Error.Validation("Customer.Address.PostalCode.TooLong",
-            $"Postal code must not exceed {Parameters.Address.PostalCodeExactLength} characters.");
+            $"Postal code must not exceed {Parameters.AddressParameters.PostalCodeExactLength} characters.");
     
     internal static readonly Error NotNumber =
         Error.Validation("Customer.Address.PostalCode.NotDigit",

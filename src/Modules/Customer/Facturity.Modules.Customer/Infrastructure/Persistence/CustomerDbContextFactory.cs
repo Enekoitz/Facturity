@@ -5,11 +5,11 @@ using System.IO;
 
 namespace Facturity.Modules.Customer.Infrastructure;
 
-public class ClientesDbContextFactory : IDesignTimeDbContextFactory<ClientesDbContext>
+public class CustomerDbContextFactory : IDesignTimeDbContextFactory<CustomerDbContext>
 {
     private const string NombreConnectionString = "FacturityDbConnectionString";
     
-    public ClientesDbContext CreateDbContext(string[] args)
+    public CustomerDbContext CreateDbContext(string[] args)
     {
         
         var config = new ConfigurationBuilder()
@@ -18,11 +18,11 @@ public class ClientesDbContextFactory : IDesignTimeDbContextFactory<ClientesDbCo
             .AddJsonFile("appsettings.Development.json", optional: true)
             .Build();
 
-        var optionsBuilder = new DbContextOptionsBuilder<ClientesDbContext>();
+        var optionsBuilder = new DbContextOptionsBuilder<CustomerDbContext>();
         optionsBuilder.UseNpgsql(
             config.GetConnectionString(NombreConnectionString),
-            o => o.MigrationsHistoryTable("__EFMigrationsHistory", "customers"));
+            o => o.MigrationsHistoryTable("__EFMigrationsHistory", "customer"));
 
-        return new ClientesDbContext(optionsBuilder.Options);
+        return new CustomerDbContext(optionsBuilder.Options);
     }
 }

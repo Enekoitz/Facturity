@@ -4,11 +4,11 @@ using Facturity.Modules.Customer.Domain;
 
 namespace Facturity.Modules.Customer.Infrastructure;
 
-public class TiposIdentificacionFiscalConfiguration : IEntityTypeConfiguration<TaxIdTypesCatalog>
+public class TaxIdTypeConfiguration : IEntityTypeConfiguration<TaxIdTypesCatalog>
 {
     public void Configure(EntityTypeBuilder<TaxIdTypesCatalog> builder)
     {
-        builder.ToTable("catalogo_tipos_identificacion_fiscal");
+        builder.ToTable("tax_id_types_catalog");
 
         builder.HasKey(c => c.Id);
         builder.Property(c => c.Id)
@@ -19,29 +19,29 @@ public class TiposIdentificacionFiscalConfiguration : IEntityTypeConfiguration<T
         builder.Property(c => c.Code)
             .IsRequired()
             .HasMaxLength(20)
-            .HasColumnName("codigo");
+            .HasColumnName("code");
 
         builder.Property(c => c.Name)
             .IsRequired()
             .HasMaxLength(100)
-            .HasColumnName("nombre");
+            .HasColumnName("name");
 
         builder.Property(c => c.FullName)
             .IsRequired()
             .HasMaxLength(200)
-            .HasColumnName("nombre_completo");
+            .HasColumnName("full_name");
 
         builder.Property(e => e.TicketBaiCode)
             .HasMaxLength(3)
-            .HasColumnName("codigo_ticketbai_bizkaia");
+            .HasColumnName("code_ticket_bai_bizkaia");
 
         builder.HasData(
-            TaxIdTypesCatalog.Nif,
-            TaxIdTypesCatalog.NifIvaComunitario,
-            TaxIdTypesCatalog.Pasaporte,
-            TaxIdTypesCatalog.DocumentoIdentidadPaisOrigen,
-            TaxIdTypesCatalog.CertificadoResidencia,
-            TaxIdTypesCatalog.OtroDocumentoProbatorio
+            TaxIdTypesCatalog.SpanishTaxId,
+            TaxIdTypesCatalog.IntraCommunityVatId,
+            TaxIdTypesCatalog.Passport,
+            TaxIdTypesCatalog.CountryOfOriginIdentityDocument,
+            TaxIdTypesCatalog.ResidenceCertificate,
+            TaxIdTypesCatalog.OtherSupportingDocument
         );
     }
 }

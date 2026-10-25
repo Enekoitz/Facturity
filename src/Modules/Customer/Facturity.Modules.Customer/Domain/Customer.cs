@@ -181,7 +181,7 @@ public sealed class Customer : AggregateRoot<Guid>
         if (Validate.IsEmpty(alias))
             errors.Add(CustomerErrors.AliasEmpty);
 
-        if (Validate.ExceedsMaximumLength(alias, Parameters.Customer.AliasMaxLength))
+        if (Validate.ExceedsMaximumLength(alias, Parameters.CustomerParameters.AliasMaxLength))
             errors.Add(CustomerErrors.AliasTooLong);
     }
 
@@ -221,16 +221,16 @@ public sealed class Customer : AggregateRoot<Guid>
         if(Validate.IsEmpty(name))
             errors.Add(CustomerErrors.NameEmpty);
 
-        if (Validate.ExceedsMaximumLength(name, Parameters.Customer.NameMaxLength))
+        if (Validate.ExceedsMaximumLength(name, Parameters.CustomerParameters.NameMaxLength))
             errors.Add(CustomerErrors.NameTooLong);
 
         if (string.IsNullOrWhiteSpace(firstSurname))
             errors.Add(CustomerErrors.FirstSurnameEmpty);
 
-        if (Validate.ExceedsMaximumLength(firstSurname, Parameters.Customer.SurnameMaxLength))
+        if (Validate.ExceedsMaximumLength(firstSurname, Parameters.CustomerParameters.SurnameMaxLength))
             errors.Add(CustomerErrors.FirstSurnameTooLong);
 
-        if (!string.IsNullOrWhiteSpace(secondSurname) && Validate.ExceedsMaximumLength(secondSurname, Parameters.Customer.SurnameMaxLength))
+        if (!string.IsNullOrWhiteSpace(secondSurname) && Validate.ExceedsMaximumLength(secondSurname, Parameters.CustomerParameters.SurnameMaxLength))
             errors.Add(CustomerErrors.SecondSurnameTooLong);
     }
 
@@ -241,7 +241,7 @@ public sealed class Customer : AggregateRoot<Guid>
         if (Validate.IsEmpty(legalEntityName))
             errors.Add(CustomerErrors.LegalNameEmpty);
 
-        if (Validate.ExceedsMaximumLength(legalEntityName, Parameters.Customer.LegalNameMaxLength))
+        if (Validate.ExceedsMaximumLength(legalEntityName, Parameters.CustomerParameters.LegalNameMaxLength))
             errors.Add(CustomerErrors.LegalNameTooLong);
     }
 

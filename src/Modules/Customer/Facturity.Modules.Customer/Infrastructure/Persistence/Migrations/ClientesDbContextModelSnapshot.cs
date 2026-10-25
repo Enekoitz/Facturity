@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Facturity.Modules.Customer.Infrastructure.Persistence.Migrations
 {
-    [DbContext(typeof(ClientesDbContext))]
+    [DbContext(typeof(CustomerDbContext))]
     partial class ClientesDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
@@ -208,7 +208,7 @@ namespace Facturity.Modules.Customer.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.OwnsOne("Facturity.Modules.Customer.Domain.Domicilio", "Domicilio", b1 =>
+                    b.OwnsOne("Facturity.Modules.Customer.Domain.Address", "Address", b1 =>
                         {
                             b1.Property<Guid>("ClienteRecordId")
                                 .HasColumnType("uuid");
@@ -268,7 +268,7 @@ namespace Facturity.Modules.Customer.Infrastructure.Persistence.Migrations
                             b1.Navigation("PostalCode");
                         });
 
-                    b.Navigation("Domicilio");
+                    b.Navigation("Address");
                 });
 #pragma warning restore 612, 618
         }

@@ -68,5 +68,5 @@ internal static class Build
     }
 
     internal static TenantId Tenant()
-        => TenantId.Crear(Guid.NewGuid()).Value;
+        => TenantId.Create(Guid.NewGuid()).Value;
 }

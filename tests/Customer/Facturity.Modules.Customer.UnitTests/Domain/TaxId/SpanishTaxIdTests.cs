@@ -1,5 +1,4 @@
 ﻿using Facturity.Modules.Customer.Domain;
-using Xunit;
 
 namespace Facturity.Modules.Customer.UnitTests.Domain;
 
@@ -9,25 +8,21 @@ public class SpanishTaxIdTests
     [InlineData("12345678Z")] // DNI
     [InlineData("X1234567L")] // NIE
     [InlineData("A12345674")] // CIF
-    public void CrearNifEspanol_ValorNifValido_Exito(string valorNif)
+    public void Create_WithValidData_Success(string value)
     {
-        // Act
-        var result = SpanishTaxId.Crear(valorNif);
+        var result = SpanishTaxId.Create(value);
 
-        // Assert
         Assert.True(result.IsSuccess);
         Assert.Empty(result.Errors);
-        Assert.Equal(valorNif, result.Value.Valor);
+        Assert.Equal(value, result.Value.Value);
     }
     
     [Theory]
     [InlineData("A12345674")] // CIF
-    public void CrearNifEspanol_TipoCif_DebeSerPersonaJuridica_Exito(string valorNif)
+    public void Create_SubtypeCifMustBeLegalEntity_Success(string value)
     {
-        // Act
-        var result = SpanishTaxId.Crear(valorNif);
+        var result = SpanishTaxId.Create(value);
 
-        // Assert
         Assert.True(result.IsSuccess);
         Assert.Equal(true, result.Value.IsLegalEntity);
     }
@@ -35,12 +30,10 @@ public class SpanishTaxIdTests
     [Theory]
     [InlineData("12345678Z")] // DNI
     [InlineData("X1234567L")] // NIE
-    public void CrearNifEspanol_TipoNifNie_NoDebeSerPersonaJuridica_Exito(string valorNif)
+    public void Create_SubtypeDniNieMustNotBeLegalEntity_Success(string value)
     {
-        // Act
-        var result = SpanishTaxId.Crear(valorNif);
+        var result = SpanishTaxId.Create(value);
 
-        // Assert
         Assert.True(result.IsSuccess);
         Assert.Equal(false, result.Value.IsLegalEntity);
     }
@@ -52,12 +45,10 @@ public class SpanishTaxIdTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void CrearNifEspanol_ValorNifInvalido_Fallo(string valorNif)
+    public void Create_WithInvalidData_Failure(string value)
     {
-        // Act
-        var result = SpanishTaxId.Crear(valorNif);
+        var result = SpanishTaxId.Create(value);
 
-        // Assert
         Assert.True(result.IsFailure);
         Assert.NotEmpty(result.Errors);
     }

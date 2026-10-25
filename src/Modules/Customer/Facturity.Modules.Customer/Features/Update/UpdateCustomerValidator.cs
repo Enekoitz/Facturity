@@ -12,32 +12,32 @@ internal sealed class UpdateCustomerValidator: AbstractValidator<UpdateCustomerC
             .WithMessage("Customer identifier is required.");
         
         RuleFor(c => c.Name)
-            .MaximumLength(Parameters.Customer.NameMaxLength);
+            .MaximumLength(Parameters.CustomerParameters.NameMaxLength);
         
         RuleFor(c => c.FirstSurname)
-            .MaximumLength(Parameters.Customer.SurnameMaxLength);
+            .MaximumLength(Parameters.CustomerParameters.SurnameMaxLength);
         
         RuleFor(c => c.SecondSurname)
-            .MaximumLength(Parameters.Customer.SurnameMaxLength);
+            .MaximumLength(Parameters.CustomerParameters.SurnameMaxLength);
         
         RuleFor(c => c.PostalCode)
-            .MaximumLength(Parameters.Address.PostalCodeExactLength);
+            .MaximumLength(Parameters.AddressParameters.PostalCodeExactLength);
         
         RuleFor(c => c.Street)
             .NotEmpty()
-            .MaximumLength(Parameters.Address.AddressMaxLength);
+            .MaximumLength(Parameters.AddressParameters.AddressMaxLength);
         
         RuleFor(c => c.City)
-            .MaximumLength(Parameters.Address.CityMaxLength);
+            .MaximumLength(Parameters.AddressParameters.CityMaxLength);
         
         RuleFor(c => c.State)
-            .MaximumLength(Parameters.Address.StateMaxLength);
+            .MaximumLength(Parameters.AddressParameters.StateMaxLength);
         
         RuleFor(c => c.Region)
-            .MaximumLength(Parameters.Address.RegionMaxLength);
+            .MaximumLength(Parameters.AddressParameters.RegionMaxLength);
         
         RuleFor(c => c.Country)
-            .MaximumLength(Parameters.Address.CountryMaxLength);
+            .MaximumLength(Parameters.AddressParameters.CountryMaxLength);
         
         RuleFor(c => c.TaxIdValue)
             .NotEmpty()

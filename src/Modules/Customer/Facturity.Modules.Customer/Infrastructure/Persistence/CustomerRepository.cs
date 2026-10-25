@@ -5,7 +5,7 @@ using Facturity.Modules.SharedKernel.Abstractions;
 
 namespace Facturity.Modules.Customer.Infrastructure;
 
-internal  class CustomerRepository(ClientesDbContext context, ITaxIdFactory taxIdFactory) 
+internal  class CustomerRepository(CustomerDbContext context, ITaxIdFactory taxIdFactory) 
     : ICustomerRepository
 {
 
@@ -13,7 +13,7 @@ internal  class CustomerRepository(ClientesDbContext context, ITaxIdFactory taxI
         string alias, 
         CancellationToken ct = default)
     {
-        return await context.Clientes
+        return await context.Customers
                                             .AnyAsync(c => c.Alias == alias 
                                                            && c.DeletedAtUtc == null, cancellationToken: ct);
     }
@@ -24,7 +24,7 @@ internal  class CustomerRepository(ClientesDbContext context, ITaxIdFactory taxI
         string? countryCode, 
         CancellationToken ct = default)
     {
-        return await context.Clientes
+        return await context.Customers
                                             .AnyAsync(c => c.TaxIdValue == value 
                                                            && c.TaxIdType == type 
                                                            && c.TaxIdCountryCode == countryCode
@@ -36,7 +36,7 @@ internal  class CustomerRepository(ClientesDbContext context, ITaxIdFactory taxI
         CancellationToken ct = default)
     {
         var customerRecord = customer.ToRecord();
-        await context.Clientes.AddAsync(customerRecord, ct);
+        await context.Customers.AddAsync(customerRecord, ct);
         await context.SaveChangesAsync(ct);
     }
     
@@ -45,7 +45,7 @@ internal  class CustomerRepository(ClientesDbContext context, ITaxIdFactory taxI
         CancellationToken ct = default)
     {
         var customerRecord = customer.ToRecord();
-        context.Clientes.Update(customerRecord);
+        context.Customers.Update(customerRecord);
         await context.SaveChangesAsync(ct);
     }
 
@@ -53,7 +53,7 @@ internal  class CustomerRepository(ClientesDbContext context, ITaxIdFactory taxI
         Guid id, 
         CancellationToken ct = default)
     {
-        var customerRecord = await context.Clientes
+        var customerRecord = await context.Customers
             .AsNoTracking()
             .FirstOrDefaultAsync(c => c.Id == id, cancellationToken: ct);
 
@@ -61,7 +61,7 @@ internal  class CustomerRepository(ClientesDbContext context, ITaxIdFactory taxI
             return null; 
 
         var customer = customerRecord.FromRecord(taxIdFactory)
-            ?? throw new InvalidOperationException($"El registro con ID '{id}' tiene un estado corrupto o no válido para el dominio.");
+            ?? throw new InvalidOperationException($"The record with ID '{id}' has a corrupt or invalid state for the domain.");
 
         return customer;
     }
@@ -72,7 +72,7 @@ internal  class CustomerRepository(ClientesDbContext context, ITaxIdFactory taxI
     {
         var deletedAtUtc = DateTimeOffset.UtcNow.UtcDateTime;
         
-        var affectedRow = await context.Clientes
+        var affectedRow = await context.Customers
             .Where(c => c.Id == id 
                         && c.DeletedAtUtc == null)
             .ExecuteUpdateAsync(setter => setter
@@ -81,7 +81,7 @@ internal  class CustomerRepository(ClientesDbContext context, ITaxIdFactory taxI
         if (affectedRow == 1)
             return SoftDeleteResult.Deleted(deletedAtUtc);
 
-        var customer = await context.Clientes
+        var customer = await context.Customers
             .Where(c => c.Id == id)
             .Select(c => new { c.DeletedAtUtc })
             .SingleOrDefaultAsync(cancellationToken: ct);
@@ -98,7 +98,7 @@ internal  class CustomerRepository(ClientesDbContext context, ITaxIdFactory taxI
         DateTimeOffset? newActivatedAtUtc = DateTimeOffset.UtcNow.UtcDateTime;
         DateTimeOffset? nullDeactivatedAtUtc = null;
 
-        await context.Clientes
+        await context.Customers
             .Where(c => c.Id == id 
                         && c.DeactivatedAtUtc != null 
                         && c.ActivatedAtUtc == null)
@@ -114,7 +114,7 @@ internal  class CustomerRepository(ClientesDbContext context, ITaxIdFactory taxI
         DateTimeOffset? nullActivatedAtUtc = null;
         DateTimeOffset? newDeactivatedAtUtc = DateTimeOffset.UtcNow.UtcDateTime;
 
-        await context.Clientes
+        await context.Customers
             .Where(c => c.Id == id && c.DeactivatedAtUtc == null && c.ActivatedAtUtc != null)
             .ExecuteUpdateAsync(setter => setter
                 .SetProperty(c => c.ActivatedAtUtc, nullActivatedAtUtc)
@@ -127,7 +127,7 @@ internal  class CustomerRepository(ClientesDbContext context, ITaxIdFactory taxI
     {
         int initPosition = (query.Page - 1) * query.Size;
 
-        var queryable = context.Clientes.AsNoTracking().AsQueryable();
+        var queryable = context.Customers.AsNoTracking().AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(query.Alias))
             queryable = queryable
@@ -158,13 +158,13 @@ internal  class CustomerRepository(ClientesDbContext context, ITaxIdFactory taxI
             queryable = queryable
                 .Where(c =>  query.Active == true ? c.ActivatedAtUtc != null : c.DeactivatedAtUtc != null);
         
-        var clienteRecords = await queryable              
+        var customerRecords = await queryable              
             .OrderBy(c => c.Id)
             .Skip(initPosition)
             .Take(query.Size)
             .ToListAsync(ct);
         
-        return clienteRecords
+        return customerRecords
             .Select(c => c.FromRecord(taxIdFactory)).ToList()!;
     }
 }

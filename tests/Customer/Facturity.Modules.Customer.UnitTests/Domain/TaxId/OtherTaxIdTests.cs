@@ -1,5 +1,4 @@
 ﻿using Facturity.Modules.Customer.Domain;
-using Xunit;
 
 namespace Facturity.Modules.Customer.UnitTests.Domain;
 
@@ -11,14 +10,12 @@ public class OtherTaxIdTests
     [InlineData("CA12345AB", TaxIdType.CountryOfOriginIdentityDocument, "IT")] 
     [InlineData("CR-2024-000123", TaxIdType.ResidenceCertificate, "FR")] 
     [InlineData("OTR-998877", TaxIdType.OtherSupportingDocument, "CH")] 
-    public void CrearIdOtroExtranjero_IdentificacionValida_Exito(string taxIdValue, 
+    public void Create_WithValidData_ReturnsSuccessfulOtherTaxId(string taxIdValue, 
                                                                 TaxIdType taxIdType,
                                                                 string taxIdCountryCode)
     {
-        // Act
         var result = OtherTaxId.Create(taxIdValue, taxIdType, taxIdCountryCode);
 
-        // Assert
         Assert.True(result.IsSuccess);
         Assert.Empty(result.Errors);
         Assert.Equal(taxIdValue, result.Value.Value);
@@ -33,14 +30,12 @@ public class OtherTaxIdTests
     [InlineData("987654321", TaxIdType.Passport, "ES")]
     [InlineData("12345678Z", TaxIdType.SpanishTaxId, "ES")]
     [InlineData(null, null, "")]
-    public void CrearIdOtroExtranjero_IdentificacionInvalida_Fallo(string taxIdValue,
-                                                            TaxIdType taxIdType,
-                                                            string taxIdCountryCode)
+    public void Create_WithInvalidData_ReturnsFailure(string taxIdValue,
+                                                    TaxIdType taxIdType,
+                                                    string taxIdCountryCode)
     {
-        // Act
         var result = OtherTaxId.Create(taxIdValue, taxIdType, taxIdCountryCode);
 
-        // Assert
         Assert.True(result.IsFailure);
         Assert.NotEmpty(result.Errors);
     }
@@ -50,12 +45,19 @@ public class OtherTaxIdTests
     [InlineData("ee")]
     [InlineData("  BE     ")]
     [InlineData("pL")]
-    public void EsPaisUE_EsCodigoPaisISO2UEValido_Fallo(string codigoPaisUe)
+    public void IsEuCountry_WithValidData_ReturnsTrue(string euCountryCode)
     {
-        // Act
-        var result = TaxIdValidations.IsEuCountry(codigoPaisUe);
-
-        // Assert
+        var result = TaxIdValidations.IsEuCountry(euCountryCode);
         Assert.True(result);
+    }
+    
+    [Theory]
+    [InlineData("XX")]
+    [InlineData("yy")]
+    [InlineData("  Ñd     ")]
+    public void IsEuCountry_WithInvalidData_ReturnsFalse(string euCountryCode)
+    {
+        var result = TaxIdValidations.IsEuCountry(euCountryCode);
+        Assert.False(result);
     }
 }

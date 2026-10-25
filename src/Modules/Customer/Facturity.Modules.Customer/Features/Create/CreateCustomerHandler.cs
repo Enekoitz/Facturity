@@ -13,13 +13,13 @@ internal sealed class CreateCustomerHandler(ICustomerRepository repo, ITaxIdFact
         if (taxIdResult.IsFailure)
             return Result.Fail<Guid>(taxIdResult.Errors);
 
-        var addressResult = Address.Crear(command.Address, command.PostalCode, command.City, 
+        var addressResult = Address.Create(command.Address, command.PostalCode, command.City, 
                                         command.State, command.Region, command.Country);
         if (addressResult.IsFailure)
             return Result.Fail<Guid>(addressResult.Errors);
 
         // TODO: Pendiente de quitar de aquí e implementar tenantId desde claims con seguridad vía JWT access token, etc.
-        var tenantIdResult = TenantId.Crear(Guid.NewGuid());
+        var tenantIdResult = TenantId.Create(Guid.NewGuid());
 
         var id = Guid.NewGuid();
         var customerResult = Domain.Customer.Create(id, tenantIdResult.Value, command.Alias, taxIdResult.Value, command.LegalEntityName,

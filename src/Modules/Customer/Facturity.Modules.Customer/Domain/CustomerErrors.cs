@@ -12,7 +12,7 @@ internal static class CustomerErrors
 
     internal static readonly Error AliasTooLong = 
         Error.Validation("Customer.AliasTooLong",
-        $"Alias must not exceed {Parameters.Customer.AliasMaxLength} characters.");
+        $"Alias must not exceed {Parameters.CustomerParameters.AliasMaxLength} characters.");
 
     internal static readonly Error NameEmpty = 
         Error.Validation("Customer.NameEmpty",
@@ -20,7 +20,7 @@ internal static class CustomerErrors
     
     internal static readonly Error NameTooLong = 
         Error.Validation("Customer.NameTooLong",
-        $"Name must not exceed {Parameters.Customer.NameMaxLength} characters.");
+        $"Name must not exceed {Parameters.CustomerParameters.NameMaxLength} characters.");
 
     internal static readonly Error FirstSurnameEmpty = 
         Error.Validation("Customer.FirstSurnameEmpty", 
@@ -28,11 +28,11 @@ internal static class CustomerErrors
     
     internal static readonly Error FirstSurnameTooLong = 
         Error.Validation("Customer.FirstSurnameTooLong",
-        $"First surname must not exceed {Parameters.Customer.SurnameMaxLength} characters.");
+        $"First surname must not exceed {Parameters.CustomerParameters.SurnameMaxLength} characters.");
     
     internal static readonly Error SecondSurnameTooLong = 
         Error.Validation("Customer.SecondSurnameTooLong",
-        $"Second surname must not exceed {Parameters.Customer.SurnameMaxLength} characters.");
+        $"Second surname must not exceed {Parameters.CustomerParameters.SurnameMaxLength} characters.");
 
     internal static readonly Error LegalNameEmpty = 
         Error.Validation("Customer.LegalNameEmpty",
@@ -40,7 +40,7 @@ internal static class CustomerErrors
 
     internal static readonly Error LegalNameTooLong = 
         Error.Validation("Customer.LegalNameTooLong",
-        $"Legal name must not exceed {Parameters.Customer.LegalNameMaxLength} characters.");
+        $"Legal name must not exceed {Parameters.CustomerParameters.LegalNameMaxLength} characters.");
     
     internal static readonly Error InvalidTaxDesignationType = 
         Error.Validation("Customer.InvalidTaxDesignationType",

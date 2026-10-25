@@ -3,7 +3,7 @@ using Facturity.Modules.SharedKernel.Domain;
 
 namespace Facturity.Modules.Customer.Infrastructure;
 
-public static class ClienteMapper
+public static class CustomerMapper
 {
     public static CustomerRecord ToRecord(this Domain.Customer customer)
     {
@@ -35,7 +35,7 @@ public static class ClienteMapper
         if (taxIdResult.IsFailure)
             return null;
 
-        var tenantIdResult = TenantId.Crear(Guid.NewGuid());
+        var tenantIdResult = TenantId.Create(Guid.NewGuid());
 
         var customerResult = Domain.Customer.Rebuild(
             customerRecord.Id, 

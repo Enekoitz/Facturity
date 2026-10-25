@@ -12,18 +12,18 @@ public class TaxIdFactory : ITaxIdFactory
     {
         if (taxIdType == TaxIdType.SpanishTaxId)
         {
-            var nifEspanol = SpanishTaxId.Crear(taxIdValue);
-            return nifEspanol.IsSuccess
-                ? Result.Ok<ITaxId>(nifEspanol.Value)
-                : Result.Fail<ITaxId>(nifEspanol.Errors);
+            var result = SpanishTaxId.Create(taxIdValue);
+            return result.IsSuccess
+                ? Result.Ok<ITaxId>(result.Value)
+                : Result.Fail<ITaxId>(result.Errors);
         }
         
         if (taxIdCountryCode is not null)
         {
-            var idOtroExtranjero = OtherTaxId.Create(taxIdValue, taxIdType, taxIdCountryCode);
-            return idOtroExtranjero.IsSuccess
-                ? Result.Ok<ITaxId>(idOtroExtranjero.Value)
-                : Result.Fail<ITaxId>(idOtroExtranjero.Errors);
+            var result = OtherTaxId.Create(taxIdValue, taxIdType, taxIdCountryCode);
+            return result.IsSuccess
+                ? Result.Ok<ITaxId>(result.Value)
+                : Result.Fail<ITaxId>(result.Errors);
         }
 
         return Result.Fail<ITaxId>(TaxIdErrors.Invalid);

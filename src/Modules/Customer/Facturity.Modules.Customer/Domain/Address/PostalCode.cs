@@ -18,7 +18,7 @@ public sealed record PostalCode
         if (Validate.IsEmpty(codigoPostal))
             return Result.Fail<PostalCode>(PostalCodeErrors.Empty);
 
-        if (Validate.NotExactLength(codigoPostal, Parameters.Address.PostalCodeExactLength))
+        if (Validate.NotExactLength(codigoPostal, Parameters.AddressParameters.PostalCodeExactLength))
             return Result.Fail<PostalCode>(PostalCodeErrors.TooLong);
 
         if (!codigoPostal.All(char.IsDigit))

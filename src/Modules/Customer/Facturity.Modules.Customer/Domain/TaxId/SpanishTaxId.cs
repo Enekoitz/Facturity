@@ -4,32 +4,31 @@ namespace Facturity.Modules.Customer.Domain;
 
 public sealed record SpanishTaxId : ITaxId
 {
-    public string Valor { get; }
-    public SpanishTaxIdSubtype Tipo { get; }
-    public TaxIdType TipoIdentificacionFiscal { get; }
-    public bool? IsLegalEntity => Tipo == SpanishTaxIdSubtype.Cif;
+    public string Value { get; }
+    public SpanishTaxIdSubtype Subtype { get; }
+    public TaxIdType TaxIdType { get; }
+    public bool? IsLegalEntity => Subtype == SpanishTaxIdSubtype.Cif;
 
     protected SpanishTaxId() { }
 
-    private SpanishTaxId(string valorNif, SpanishTaxIdSubtype tipoNif)
+    private SpanishTaxId(string value, SpanishTaxIdSubtype subtype)
     {
-        Valor = valorNif;
-        Tipo = tipoNif;
-        TipoIdentificacionFiscal = TaxIdType.SpanishTaxId;
+        Value = value;
+        Subtype = subtype;
+        TaxIdType = TaxIdType.SpanishTaxId;
     }
 
-    public static Result<SpanishTaxId> Crear(string valorNif)
+    public static Result<SpanishTaxId> Create(string value)
     {
-        var esNifValido = TaxIdValidations.IsValidSpanishTaxId(valorNif, out string codigoError, out string descripcionError);
-        if (!esNifValido)
-            return Result.Fail<SpanishTaxId>(Error.Validation(codigoError, descripcionError));
+        var isValid = TaxIdValidations.IsValidSpanishTaxId(value, out var errorCode, out var errorDescription);
+        if (!isValid)
+            return Result.Fail<SpanishTaxId>(Error.Validation(errorCode, errorDescription));
 
-        var tipoNifResult = SpanishTaxIdService.GetSubtype(valorNif);
+        var subtypeResult = SpanishTaxIdService.GetSubtype(value);
+        if (subtypeResult.IsFailure)
+            return Result.Fail<SpanishTaxId>(subtypeResult.Errors);
 
-        if (tipoNifResult.IsFailure)
-            return Result.Fail<SpanishTaxId>(tipoNifResult.Errors);
-
-        return Result.Ok(new SpanishTaxId(valorNif, tipoNifResult.Value));
+        return Result.Ok(new SpanishTaxId(value, subtypeResult.Value));
     }
 
 }

@@ -29,7 +29,7 @@ public sealed record Address
         Country = country;
     }
 
-    public static Result<Address> Crear(
+    public static Result<Address> Create(
         string street
         , string? postalCode
         , string? city                       

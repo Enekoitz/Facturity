@@ -14,7 +14,7 @@ public readonly record struct TenantId
 
     public static TenantId From(Guid value) => new(value);
 
-    public static Result<TenantId> Crear(Guid value)
+    public static Result<TenantId> Create(Guid value)
     {
         if (value == Guid.Empty)
             return Result.Fail<TenantId>(Error.Validation("Tenant.InvalidTenantID", "Invalid TenantId."));
