@@ -5,11 +5,11 @@ using Facturity.Modules.SharedKernel.Abstractions;
 
 namespace Facturity.Modules.Customer.Infrastructure;
 
-internal  class ClientesRepository(ClientesDbContext context, ITaxIdFactory taxIdFactory) 
-    : IClientesRepository
+internal  class CustomerRepository(ClientesDbContext context, ITaxIdFactory taxIdFactory) 
+    : ICustomerRepository
 {
 
-    public async Task<bool> AliasEnUsoAsync(
+    public async Task<bool> AliasInUseAsync(
         string alias, 
         CancellationToken ct = default)
     {
@@ -18,55 +18,55 @@ internal  class ClientesRepository(ClientesDbContext context, ITaxIdFactory taxI
                                                            && c.DeletedAtUtc == null, cancellationToken: ct);
     }
 
-    public async Task<bool> IdentificacionFiscalEnUsoAsync(
-        string valor, 
-        TaxIdType tipo, 
-        string? codigoPais, 
+    public async Task<bool> TaxIdInUseAsync(
+        string value, 
+        TaxIdType type, 
+        string? countryCode, 
         CancellationToken ct = default)
     {
         return await context.Clientes
-                                            .AnyAsync(c => c.IdentificacionFiscalValor == valor 
-                                                           && c.IdentificacionFiscalTipo == tipo 
-                                                           && c.IdentificacionFiscalCodigoPais == codigoPais
+                                            .AnyAsync(c => c.TaxIdValue == value 
+                                                           && c.TaxIdType == type 
+                                                           && c.TaxIdCountryCode == countryCode
                                                            && c.DeletedAtUtc == null, cancellationToken: ct);
     }
 
-    public async Task GuardarAsync(
+    public async Task CreateAsync(
         Domain.Customer customer, 
         CancellationToken ct = default)
     {
-        var clienteRecord = customer.ToRecord();
-        await context.Clientes.AddAsync(clienteRecord, ct);
+        var customerRecord = customer.ToRecord();
+        await context.Clientes.AddAsync(customerRecord, ct);
         await context.SaveChangesAsync(ct);
     }
     
-    public async Task ActualizarAsync(
+    public async Task UpdateAsync(
         Domain.Customer customer, 
         CancellationToken ct = default)
     {
-        var clienteRecord = customer.ToRecord();
-        context.Clientes.Update(clienteRecord);
+        var customerRecord = customer.ToRecord();
+        context.Clientes.Update(customerRecord);
         await context.SaveChangesAsync(ct);
     }
 
-    public async Task<Domain.Customer?> ObtenerClientePorIdAsync(
+    public async Task<Domain.Customer?> GetByIdAsync(
         Guid id, 
         CancellationToken ct = default)
     {
-        var clienteRecord = await context.Clientes
+        var customerRecord = await context.Clientes
             .AsNoTracking()
             .FirstOrDefaultAsync(c => c.Id == id, cancellationToken: ct);
 
-        if (clienteRecord == null)
+        if (customerRecord == null)
             return null; 
 
-        var cliente = clienteRecord.FromRecord(taxIdFactory)
+        var customer = customerRecord.FromRecord(taxIdFactory)
             ?? throw new InvalidOperationException($"El registro con ID '{id}' tiene un estado corrupto o no válido para el dominio.");
 
-        return cliente;
+        return customer;
     }
     
-    public async Task<SoftDeleteResult> EliminarClienteSoftDeleteAsync(
+    public async Task<SoftDeleteResult> SoftDeleteAsync(
         Guid id, 
         CancellationToken ct = default)
     {
@@ -81,17 +81,17 @@ internal  class ClientesRepository(ClientesDbContext context, ITaxIdFactory taxI
         if (affectedRow == 1)
             return SoftDeleteResult.Deleted(deletedAtUtc);
 
-        var clienteExistente = await context.Clientes
+        var customer = await context.Clientes
             .Where(c => c.Id == id)
             .Select(c => new { c.DeletedAtUtc })
             .SingleOrDefaultAsync(cancellationToken: ct);
         
-        return clienteExistente?.DeletedAtUtc != null 
-            ? SoftDeleteResult.AlreadyDeleted(clienteExistente.DeletedAtUtc.Value) 
+        return customer?.DeletedAtUtc != null 
+            ? SoftDeleteResult.AlreadyDeleted(customer.DeletedAtUtc.Value) 
             : SoftDeleteResult.NotFound();
     }
 
-    public async Task ActivarClienteAsync(
+    public async Task ActivateAsync(
         Guid id, 
         CancellationToken ct = default)
     {
@@ -107,7 +107,7 @@ internal  class ClientesRepository(ClientesDbContext context, ITaxIdFactory taxI
                 .SetProperty(c => c.DeactivatedAtUtc, nullDeactivatedAtUtc), cancellationToken:ct);
     }
 
-    public async Task DesactivarClienteAsync(
+    public async Task DeactivateAsync(
         Guid id, 
         CancellationToken ct = default)
     {
@@ -121,8 +121,8 @@ internal  class ClientesRepository(ClientesDbContext context, ITaxIdFactory taxI
                 .SetProperty(c => c.DeactivatedAtUtc, newDeactivatedAtUtc), cancellationToken:ct);
     }
     
-    public async Task<IEnumerable<Domain.Customer>> ListarClientesAsync(
-        ListarClientesQuery query, 
+    public async Task<IEnumerable<Domain.Customer>> GetAsync(
+        GetCustomersQuery query, 
         CancellationToken ct = default)
     {
         int initPosition = (query.Page - 1) * query.Size;
@@ -133,30 +133,30 @@ internal  class ClientesRepository(ClientesDbContext context, ITaxIdFactory taxI
             queryable = queryable
                 .Where(c => EF.Functions.Like(c.Alias.ToUpper(), $"%{query.Alias.ToUpper()}%") );
         
-        if(query.IdentificacionFiscalTipo != null)
+        if(query.TaxIdType != null)
             queryable = queryable
-                .Where(c => c.IdentificacionFiscalTipo == query.IdentificacionFiscalTipo);
+                .Where(c => c.TaxIdType == query.TaxIdType);
         
-        if (!string.IsNullOrWhiteSpace(query.IdentificacionFiscalValor))
+        if (!string.IsNullOrWhiteSpace(query.TaxIdValue))
             queryable = queryable
-                .Where(c =>  EF.Functions.Like(c.IdentificacionFiscalValor.ToUpper(), 
-                                                    $"%{query.IdentificacionFiscalValor.ToUpper()}%") );
+                .Where(c =>  EF.Functions.Like(c.TaxIdValue.ToUpper(), 
+                                                    $"%{query.TaxIdValue.ToUpper()}%") );
             
-        if (!string.IsNullOrWhiteSpace(query.IdentificacionFiscalCodigoPais))
+        if (!string.IsNullOrWhiteSpace(query.TaxIdCountryCode))
             queryable = queryable
-                .Where(c => EF.Functions.Like(c.IdentificacionFiscalCodigoPais.ToUpper(), $"%{query.IdentificacionFiscalCodigoPais.ToUpper()}%") );
+                .Where(c => EF.Functions.Like(c.TaxIdCountryCode.ToUpper(), $"%{query.TaxIdCountryCode.ToUpper()}%") );
         
-        if (!string.IsNullOrWhiteSpace(query.DenominacionFiscalBusqueda))
+        if (!string.IsNullOrWhiteSpace(query.TaxNameSearch))
             queryable = queryable
-                .Where(c => EF.Functions.Like(c.DenominacionFiscalBusqueda.ToUpper(), $"%{query.DenominacionFiscalBusqueda.ToUpper()}%")  );
+                .Where(c => EF.Functions.Like(c.TaxNameSearch.ToUpper(), $"%{query.TaxNameSearch.ToUpper()}%")  );
         
-        if (!string.IsNullOrWhiteSpace(query.DireccionBusqueda))
+        if (!string.IsNullOrWhiteSpace(query.AddressSearch))
             queryable = queryable
-                .Where(c => EF.Functions.Like(c.DireccionBusqueda.ToUpper(), $"%{query.DireccionBusqueda.ToUpper()}%")  );
+                .Where(c => EF.Functions.Like(c.AddressSearch.ToUpper(), $"%{query.AddressSearch.ToUpper()}%")  );
 
-        if(query.Activo.HasValue)
+        if(query.Active.HasValue)
             queryable = queryable
-                .Where(c =>  query.Activo == true ? c.ActivatedAtUtc != null : c.DeactivatedAtUtc != null);
+                .Where(c =>  query.Active == true ? c.ActivatedAtUtc != null : c.DeactivatedAtUtc != null);
         
         var clienteRecords = await queryable              
             .OrderBy(c => c.Id)

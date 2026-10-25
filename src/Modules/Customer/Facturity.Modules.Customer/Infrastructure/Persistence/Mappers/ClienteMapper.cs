@@ -5,18 +5,18 @@ namespace Facturity.Modules.Customer.Infrastructure;
 
 public static class ClienteMapper
 {
-    public static ClienteRecord ToRecord(this Domain.Customer customer)
+    public static CustomerRecord ToRecord(this Domain.Customer customer)
     {
 
-        (string valor, TaxIdType tipo, string codigoPais) = customer.TaxId.GetCommonValues();
+        var (value, type, countryCode) = customer.TaxId.GetCommonValues();
 
-        return new ClienteRecord(
+        return new CustomerRecord(
             customer.Id,
             customer.Alias,
-            valor,
-            tipo,
-            codigoPais,
-            customer.LegalName,
+            value,
+            type,
+            countryCode,
+            customer.LegalEntityName,
             customer.Name,
             customer.FirstSurname,
             customer.SecondSurname,
@@ -26,35 +26,35 @@ public static class ClienteMapper
             customer.DeletedAtUtc);
     }
 
-    public static Domain.Customer? FromRecord(this ClienteRecord clienteRecord, ITaxIdFactory taxIdFactory)
+    public static Domain.Customer? FromRecord(this CustomerRecord customerRecord, ITaxIdFactory taxIdFactory)
     {
 
-        var identificacionFiscalResult = taxIdFactory.Create(clienteRecord.IdentificacionFiscalValor, 
-            clienteRecord.IdentificacionFiscalTipo, clienteRecord.IdentificacionFiscalCodigoPais);
+        var taxIdResult = taxIdFactory.Create(customerRecord.TaxIdValue, 
+            customerRecord.TaxIdType, customerRecord.TaxIdCountryCode);
         
-        if (identificacionFiscalResult.IsFailure)
+        if (taxIdResult.IsFailure)
             return null;
 
         var tenantIdResult = TenantId.Crear(Guid.NewGuid());
 
-        var clienteResult = Domain.Customer.Rebuild(
-            clienteRecord.Id, 
+        var customerResult = Domain.Customer.Rebuild(
+            customerRecord.Id, 
             tenantIdResult.Value, 
-            clienteRecord.Alias, 
-            identificacionFiscalResult.Value, 
-            clienteRecord.RazonSocial,
-            clienteRecord.Nombre, 
-            clienteRecord.PrimerApellido, 
-            clienteRecord.SegundoApellido,
-            clienteRecord.Domicilio, 
-            clienteRecord.ActivatedAtUtc,
-            clienteRecord.DeactivatedAtUtc, 
-            clienteRecord.DeletedAtUtc, 
+            customerRecord.Alias, 
+            taxIdResult.Value, 
+            customerRecord.LegalEntityName,
+            customerRecord.Name, 
+            customerRecord.FirstSurname, 
+            customerRecord.SecondSurname,
+            customerRecord.Address, 
+            customerRecord.ActivatedAtUtc,
+            customerRecord.DeactivatedAtUtc, 
+            customerRecord.DeletedAtUtc, 
             TimeProvider.System
         );
 
-        return clienteResult.IsFailure 
+        return customerResult.IsFailure 
             ? null 
-            : clienteResult.Value;
+            : customerResult.Value;
     }
 }

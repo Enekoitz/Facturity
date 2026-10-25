@@ -26,7 +26,7 @@ public static class ModuleInstaller
         private void AddCustomerModuleServices(string connString)
         {
             services.AddScoped<ITaxIdFactory, TaxIdFactory>();
-            services.AddClientesFeatures();
+            services.AddCustomerFeatures();
             services.AddClientesInfrastructure(connString);
 
         }

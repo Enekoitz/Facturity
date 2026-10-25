@@ -11,10 +11,10 @@ public static class DependencyInjection
             
         services.AddDbContext<ClientesDbContext>((sp, options) =>
             options.UseNpgsql(connectionString,
-                o => o.MigrationsHistoryTable("__EFMigrationsHistory", "clientes"))
+                o => o.MigrationsHistoryTable("__EFMigrationsHistory", "customers"))
                 .AddInterceptors(sp.GetRequiredService<AuditSaveChangesInterceptor>()));
 
-        services.AddScoped<IClientesRepository, ClientesRepository>();
+        services.AddScoped<ICustomerRepository, CustomerRepository>();
         return services;
     }
 }

@@ -6,7 +6,7 @@ public sealed class Customer : AggregateRoot<Guid>
 {
     public string Alias { get; private set; }
     public ITaxId TaxId { get; private set; }
-    public string? LegalName { get; private set; }
+    public string? LegalEntityName { get; private set; }
     public string? Name { get; private set; }
     public string? FirstSurname { get; private set; }
     public string? SecondSurname { get; private set; }
@@ -23,7 +23,7 @@ public sealed class Customer : AggregateRoot<Guid>
         TenantId tenantId,
         string alias,
         ITaxId taxId,
-        string? legalName,
+        string? legalEntityName,
         string? name,
         string? firstSurname,
         string? secondSurname,
@@ -32,7 +32,7 @@ public sealed class Customer : AggregateRoot<Guid>
     {
         Alias = alias;
         TaxId = taxId;
-        LegalName = legalName;
+        LegalEntityName = legalEntityName;
         Name = name;
         FirstSurname = firstSurname;
         SecondSurname = secondSurname;
@@ -45,7 +45,7 @@ public sealed class Customer : AggregateRoot<Guid>
         TenantId tenantId,
         string alias,
         ITaxId taxId,
-        string? legalName,
+        string? legalEntityName,
         string? name,
         string? firstSurname,
         string? secondSurname,
@@ -61,10 +61,10 @@ public sealed class Customer : AggregateRoot<Guid>
 
         var tipoDenominacionFiscal = ObtenerTipoDenominacionFiscal(
             taxId.IsLegalEntity, 
-            legalName,
+            legalEntityName,
             name);
 
-        ValidateLegalNameOrFullName(tipoDenominacionFiscal, legalName, 
+        ValidateLegalNameOrFullName(tipoDenominacionFiscal, legalEntityName, 
             name, firstSurname, secondSurname, errors);
 
         if (errors.Count > 0)
@@ -76,7 +76,7 @@ public sealed class Customer : AggregateRoot<Guid>
                                     tenantId,
                                     alias,
                                     taxId,
-                                    legalName,
+                                    legalEntityName,
                                     name,
                                     firstSurname,
                                     secondSurname,
@@ -89,7 +89,7 @@ public sealed class Customer : AggregateRoot<Guid>
         TenantId tenantId,
         string alias,
         ITaxId taxId,
-        string? legalName,
+        string? legalEntityName,
         string? name,
         string? firstSurname,
         string? secondSurname,
@@ -99,7 +99,7 @@ public sealed class Customer : AggregateRoot<Guid>
         DateTimeOffset? deletedAtUtc,
         TimeProvider timeProvider) 
     {
-        var customerResult = Create(id, tenantId, alias, taxId, legalName, name, firstSurname, secondSurname, address);
+        var customerResult = Create(id, tenantId, alias, taxId, legalEntityName, name, firstSurname, secondSurname, address);
 
         if (customerResult.IsFailure)
             return customerResult;
@@ -125,7 +125,7 @@ public sealed class Customer : AggregateRoot<Guid>
 
     public Result Update(
         ITaxId? taxId,
-        string? legalName,
+        string? legalEntityName,
         string? name,
         string? firstSurname,
         string? secondSurname,
@@ -135,18 +135,18 @@ public sealed class Customer : AggregateRoot<Guid>
         
         var tipoDenominacionFiscal = ObtenerTipoDenominacionFiscal(
             taxId?.IsLegalEntity, 
-            legalName,
+            legalEntityName,
             name);
 
-        ValidateLegalNameOrFullName(tipoDenominacionFiscal, legalName, 
+        ValidateLegalNameOrFullName(tipoDenominacionFiscal, legalEntityName, 
             name, firstSurname, secondSurname, errores);
 
         if (errores.Count > 0)
             Result.Fail(errores);
 
-        (LegalName, Name, FirstSurname, SecondSurname) = tipoDenominacionFiscal switch
+        (LegalEntityName, Name, FirstSurname, SecondSurname) = tipoDenominacionFiscal switch
         {
-            TaxDesignationType.LegalName => (legalName, (string?)null, (string?)null, (string?)null),
+            TaxDesignationType.LegalEntityName => (legalEntityName, (string?)null, (string?)null, (string?)null),
             TaxDesignationType.FullName => ((string?)null, name, firstSurname, secondSurname),
             _ => (null, null, null, null)
         };
@@ -159,15 +159,15 @@ public sealed class Customer : AggregateRoot<Guid>
 
     internal static TaxDesignationType? ObtenerTipoDenominacionFiscal(
         bool? isLegalEntity,
-        string? legalName,
+        string? legalEntityName,
         string? name)
     {
-        return (esPersonaJuridica: isLegalEntity, razonSocial: legalName, nombre: name) switch
+        return (esPersonaJuridica: isLegalEntity, razonSocial: legalEntityName, nombre: name) switch
         {
             (false, _, _) => TaxDesignationType.FullName,
-            (true, _, _)  => TaxDesignationType.LegalName,
+            (true, _, _)  => TaxDesignationType.LegalEntityName,
     
-            var (_, r, _) when !string.IsNullOrWhiteSpace(r) => TaxDesignationType.LegalName,
+            var (_, r, _) when !string.IsNullOrWhiteSpace(r) => TaxDesignationType.LegalEntityName,
             var (_, _, n) when !string.IsNullOrWhiteSpace(n) => TaxDesignationType.FullName,
     
             _ => null
@@ -187,17 +187,17 @@ public sealed class Customer : AggregateRoot<Guid>
 
     private static void ValidateLegalNameOrFullName(
         TaxDesignationType? taxDesignationType,
-        string? legalName,
+        string? legalEntityName,
         string? name,
         string? firstSurname,
         string? secondSurname,
         List<Error> errors
         )
     {
-        switch (taxDesignationType, legalName, name)
+        switch (taxDesignationType, legalEntityName, name)
         {
-            case (TaxDesignationType.LegalName, _, _):
-                ValidateLegalName(legalName, errors);
+            case (TaxDesignationType.LegalEntityName, _, _):
+                ValidateLegalName(legalEntityName, errors);
                 break;
 
             case (TaxDesignationType.FullName, _, _):
@@ -235,13 +235,13 @@ public sealed class Customer : AggregateRoot<Guid>
     }
 
     private static void ValidateLegalName(
-        string? legalName,
+        string? legalEntityName,
         List<Error> errors)
     {
-        if (Validate.IsEmpty(legalName))
+        if (Validate.IsEmpty(legalEntityName))
             errors.Add(CustomerErrors.LegalNameEmpty);
 
-        if (Validate.ExceedsMaximumLength(legalName, Parameters.Customer.LegalNameMaxLength))
+        if (Validate.ExceedsMaximumLength(legalEntityName, Parameters.Customer.LegalNameMaxLength))
             errors.Add(CustomerErrors.LegalNameTooLong);
     }
 

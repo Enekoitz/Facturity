@@ -9,7 +9,7 @@ internal sealed record UpdateCustomerCommand(
     string? TaxIdValue,
     TaxIdType? TaxIdType,
     string? TaxIdCountryCode,
-    string? LegalName,
+    string? LegalEntityName,
     string? Name,
     string? FirstSurname,
     string? SecondSurname,

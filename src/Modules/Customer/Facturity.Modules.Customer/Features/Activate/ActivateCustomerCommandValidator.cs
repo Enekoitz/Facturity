@@ -2,12 +2,12 @@
 
 namespace Facturity.Modules.Customer.Features;
 
-internal class ActivateCustomerCommandValidator : AbstractValidator<ActivateCustomerCommand>
+internal sealed class ActivateCustomerCommandValidator : AbstractValidator<ActivateCustomerCommand>
 {
-    public ActivateCustomerCommandValidator()
+    internal ActivateCustomerCommandValidator()
     {
         RuleFor(c => c.Id)
             .Must(id => id != Guid.Empty)
-            .WithMessage("The identifier is required.");
+            .WithMessage("Customer identifier is required.");
     }
 }

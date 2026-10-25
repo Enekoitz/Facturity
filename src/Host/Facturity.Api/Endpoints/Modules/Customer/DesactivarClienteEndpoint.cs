@@ -9,8 +9,8 @@ public class DesactivarClienteEndpoint : IClientesEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("/{id}/desactivar", async ([AsParameters] DesactivarClienteCommand command,
-                                            ICommandHandler<DesactivarClienteCommand, Result> handler,
+        app.MapPost("/{id}/desactivar", async ([AsParameters] DeactivateCustomerCommand command,
+                                            ICommandHandler<DeactivateCustomerCommand, Result> handler,
                                             HttpContext httpContext,
                                             CancellationToken ct) =>
             {
@@ -22,8 +22,8 @@ public class DesactivarClienteEndpoint : IClientesEndpoint
             })
             .RequireAuthorization()
             .WithName("DesactivarCliente")
-            .WithSummary("Desactivar cliente")
-            .WithDescription("Cambia el estado del cliente a inactivo y registra la fecha de desactivación.")
-            .WithValidation<DesactivarClienteCommand>();
+            .WithSummary("Desactivar customer")
+            .WithDescription("Cambia el estado del customer a inactivo y registra la fecha de desactivación.")
+            .WithValidation<DeactivateCustomerCommand>();
     }
 }

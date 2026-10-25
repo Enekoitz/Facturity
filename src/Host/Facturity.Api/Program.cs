@@ -39,7 +39,7 @@ try
             new JsonStringEnumConverter());
         });
     
-    builder.Services.AddValidatorsFromAssemblyContaining<CrearClienteCommand>();
+    builder.Services.AddValidatorsFromAssemblyContaining<CreateCustomerCommand>();
     builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
     builder.Services.AddProblemDetails();
     builder.Services.AddHttpContextAccessor();
@@ -50,7 +50,7 @@ try
 
     builder.Services.AddValidatorsFromAssemblies(
         [
-            typeof(CrearClienteCommand).Assembly
+            typeof(CreateCustomerCommand).Assembly
         ], 
         includeInternalTypes: true);
     

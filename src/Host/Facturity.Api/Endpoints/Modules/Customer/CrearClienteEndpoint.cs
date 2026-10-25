@@ -9,21 +9,21 @@ public class CrearClienteEndpoint : IClientesEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("/", async (CrearClienteCommand command,
-                                        ICommandHandler<CrearClienteCommand, Result<Guid>> handler,
+        app.MapPost("/", async (CreateCustomerCommand command,
+                                        ICommandHandler<CreateCustomerCommand, Result<Guid>> handler,
                                         HttpContext httpContext,
                                         CancellationToken ct) =>
             {
                 var result = await handler.HandleAsync(command, ct);
                 
                 return result.IsSuccess
-                    ? Results.Created($"/api/clientes/{result.Value}", new { Id = result.Value })
+                    ? Results.Created($"/api/customers/{result.Value}", new { Id = result.Value })
                     : result.ToProblemDetails(httpContext);
             })
             .RequireAuthorization()
             .WithName("CrearCliente")
-            .WithSummary("Crear nuevo cliente")
-            .WithDescription("Crea y guarda un nuevo cliente.")
-            .WithValidation<CrearClienteCommand>();
+            .WithSummary("Crear nuevo customer")
+            .WithDescription("Crea y guarda un nuevo customer.")
+            .WithValidation<CreateCustomerCommand>();
     }
 }

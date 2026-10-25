@@ -26,10 +26,10 @@ public abstract class CustomerTests
             Assert.Equal(alias, result.Value.Alias);
             Assert.Equal(datosCrearClienteRecord.TaxId, result.Value.TaxId);
             Assert.Equal(datosCrearClienteRecord.Domicilio, result.Value.Address);
-            Assert.Equal(datosCrearClienteRecord.RazonSocial, result.Value.LegalName);
-            Assert.Equal(datosCrearClienteRecord.Nombre, result.Value.Name);
-            Assert.Equal(datosCrearClienteRecord.PrimerApellido, result.Value.FirstSurname);
-            Assert.Equal(datosCrearClienteRecord.SegundoApellido, result.Value.SecondSurname);
+            Assert.Equal(datosCrearClienteRecord.LegalEntityName, result.Value.LegalEntityName);
+            Assert.Equal(datosCrearClienteRecord.Name, result.Value.Name);
+            Assert.Equal(datosCrearClienteRecord.FirstSurname, result.Value.FirstSurname);
+            Assert.Equal(datosCrearClienteRecord.SecondSurname, result.Value.SecondSurname);
         }
 
         [Theory]
@@ -41,7 +41,7 @@ public abstract class CustomerTests
         {
             var datosCliente = CrearClienteTestsObjetos.ClienteNifPersonaJuridica1 with
             {
-                RazonSocial = razonSocialNuloVacio
+                LegalEntityName = razonSocialNuloVacio
             };
 
             var result =  CrearClienteTestsHelper.CrearCliente(datosCliente);
@@ -63,11 +63,11 @@ public abstract class CustomerTests
         [InlineData("", "")]
         [InlineData("     ", "       ")]
         [InlineData(null, null)]
-        [InlineData("Nombre que excede el límite de caracteres. Nombre que excede el límite de caracteres. Nombre que excede el límite de caracteres. Nombre que excede el límite de caracteres. Nombre que excede el límite de caracteres. Nombre que excede el límite de caracteres. Nombre que excede el límite de caracteres. Nombre que excede el límite de caracteres. Nombre que excede el límite de caracteres. Nombre que excede el límite de caracteres. ",
+        [InlineData("Name que excede el límite de caracteres. Name que excede el límite de caracteres. Name que excede el límite de caracteres. Name que excede el límite de caracteres. Name que excede el límite de caracteres. Name que excede el límite de caracteres. Name que excede el límite de caracteres. Name que excede el límite de caracteres. Name que excede el límite de caracteres. Name que excede el límite de caracteres. ",
             "Primer apellido que excede el límite de caracteres. Primer apellido que excede el límite de caracteres. Primer apellido que excede el límite de caracteres. Primer apellido que excede el límite de caracteres. Primer apellido que excede el límite de caracteres. Primer apellido que excede el límite de caracteres. Primer apellido que excede el límite de caracteres. Primer apellido que excede el límite de caracteres. Primer apellido que excede el límite de caracteres. ")]
         public void CrearCliente_NifEspañol_NoEsPersonaJuridica_SoloValidaNombreYApellido(string? nombre, string? primerApellido)
         {
-            var datosCliente = CrearClienteTestsObjetos.ClienteNifNoPersonaJuridica1 with { Nombre = nombre, PrimerApellido = primerApellido };
+            var datosCliente = CrearClienteTestsObjetos.ClienteNifNoPersonaJuridica1 with { Name = nombre, FirstSurname = primerApellido };
 
             var result = CrearClienteTestsHelper.CrearCliente(datosCliente);
             
@@ -93,7 +93,7 @@ public abstract class CustomerTests
         {
             var datosCliente =  CrearClienteTestsObjetos.ClienteIdOtroCertificadoResidencia1 with
             { 
-                RazonSocial = vacio, Nombre = vacio, PrimerApellido = vacio 
+                LegalEntityName = vacio, Name = vacio, FirstSurname = vacio 
             };
             var result = CrearClienteTestsHelper.CrearCliente(datosCliente);
 
@@ -112,9 +112,9 @@ public abstract class CustomerTests
         {
             var datosCliente = CrearClienteTestsObjetos.ClienteNifPersonaJuridica1 with 
             { 
-                RazonSocial = Utilities.GetRandomLength(Parameters.Customer.LegalNameMaxLength + 1), 
-                Nombre = null, 
-                PrimerApellido = null 
+                LegalEntityName = Utilities.GetRandomLength(Parameters.Customer.LegalNameMaxLength + 1), 
+                Name = null, 
+                FirstSurname = null 
             };
             var result = CrearClienteTestsHelper.CrearCliente(datosCliente);
 
@@ -130,9 +130,9 @@ public abstract class CustomerTests
         {
             var datosCliente = CrearClienteTestsObjetos.ClienteNifNoPersonaJuridica1 with 
             { 
-                RazonSocial = null,
-                Nombre = Utilities.GetRandomLength(Parameters.Customer.NameMaxLength + 1),
-                PrimerApellido = Utilities.GetRandomLength(Parameters.Customer.SurnameMaxLength + 1)
+                LegalEntityName = null,
+                Name = Utilities.GetRandomLength(Parameters.Customer.NameMaxLength + 1),
+                FirstSurname = Utilities.GetRandomLength(Parameters.Customer.SurnameMaxLength + 1)
             };
             var result = CrearClienteTestsHelper.CrearCliente(datosCliente);
 
@@ -149,10 +149,10 @@ public abstract class CustomerTests
         {
             var datosCliente = CrearClienteTestsObjetos.ClienteNifNoPersonaJuridica1 with 
             { 
-                RazonSocial = null,
-                Nombre = "Marcos",
-                PrimerApellido = "García",
-                SegundoApellido = Utilities.GetRandomLength(Parameters.Customer.SurnameMaxLength + 1)
+                LegalEntityName = null,
+                Name = "Marcos",
+                FirstSurname = "García",
+                SecondSurname = Utilities.GetRandomLength(Parameters.Customer.SurnameMaxLength + 1)
             };
             var result = CrearClienteTestsHelper.CrearCliente(datosCliente);
 
@@ -179,55 +179,55 @@ public abstract class CustomerTests
     //         var id = Guid.NewGuid();
     //         var tenantId = TenantId.Crear(999).Value;
     //
-    //         var cliente = Cliente.Crear(
+    //         var customer = Cliente.Crear(
     //             id,
     //             tenantId,
     //             clienteOriginalDto.Alias,
     //             clienteOriginalDto.IdentificacionFiscal,
-    //             clienteOriginalDto.RazonSocial,
-    //             clienteOriginalDto.Nombre,
-    //             clienteOriginalDto.PrimerApellido,
-    //             clienteOriginalDto.SegundoApellido,
+    //             clienteOriginalDto.LegalEntityName,
+    //             clienteOriginalDto.Name,
+    //             clienteOriginalDto.FirstSurname,
+    //             clienteOriginalDto.SecondSurname,
     //             clienteOriginalDto.Domicilio
     //         ).Value;
     //
     //         var nuevoTipoDenominacionFiscal = Cliente.ObtenerTipoDenominacionFiscal(
     //             clienteActualizarDto.IdentificacionFiscal.EsPersonaJuridica,
-    //             clienteActualizarDto.RazonSocial,
-    //             clienteActualizarDto.Nombre
+    //             clienteActualizarDto.LegalEntityName,
+    //             clienteActualizarDto.Name
     //         );
     //
     //         // Act
-    //         var result = cliente.Actualizar(
+    //         var result = customer.Actualizar(
     //             clienteActualizarDto.IdentificacionFiscal,
-    //             clienteActualizarDto.RazonSocial,
-    //             clienteActualizarDto.Nombre,
-    //             clienteActualizarDto.PrimerApellido,
-    //             clienteActualizarDto.SegundoApellido,
+    //             clienteActualizarDto.LegalEntityName,
+    //             clienteActualizarDto.Name,
+    //             clienteActualizarDto.FirstSurname,
+    //             clienteActualizarDto.SecondSurname,
     //             clienteActualizarDto.Domicilio
     //         );
     //
     //         // Assert
     //         Assert.True(result.IsSuccess);
-    //         Assert.Equal(clienteOriginalDto.Alias, cliente.Alias);
-    //         Assert.Equal(id, cliente.Id);
-    //         Assert.Equal(tenantId, cliente.TenantId);
-    //         Assert.Equal(clienteActualizarDto.IdentificacionFiscal, cliente.IdentificacionFiscal);
-    //         Assert.Equal(clienteActualizarDto.Domicilio, cliente.Domicilio);
+    //         Assert.Equal(clienteOriginalDto.Alias, customer.Alias);
+    //         Assert.Equal(id, customer.Id);
+    //         Assert.Equal(tenantId, customer.TenantId);
+    //         Assert.Equal(clienteActualizarDto.IdentificacionFiscal, customer.IdentificacionFiscal);
+    //         Assert.Equal(clienteActualizarDto.Domicilio, customer.Domicilio);
     //
     //         switch (nuevoTipoDenominacionFiscal)
     //         {
-    //             case TipoDenominacionFiscal.RazonSocial:
-    //                 Assert.Equal(clienteActualizarDto.RazonSocial, cliente.RazonSocial);
-    //                 Assert.Null(cliente.Nombre);
-    //                 Assert.Null(cliente.PrimerApellido);
-    //                 Assert.Null(cliente.SegundoApellido);
+    //             case TipoDenominacionFiscal.LegalEntityName:
+    //                 Assert.Equal(clienteActualizarDto.LegalEntityName, customer.LegalEntityName);
+    //                 Assert.Null(customer.Name);
+    //                 Assert.Null(customer.FirstSurname);
+    //                 Assert.Null(customer.SecondSurname);
     //                 break;
     //             case TipoDenominacionFiscal.NombreApellidos:
-    //                 Assert.Null(cliente.RazonSocial);
-    //                 Assert.Equal(clienteActualizarDto.Nombre, cliente.Nombre);
-    //                 Assert.Equal(clienteActualizarDto.PrimerApellido, cliente.PrimerApellido);
-    //                 Assert.Equal(clienteActualizarDto.SegundoApellido, cliente.SegundoApellido);
+    //                 Assert.Null(customer.LegalEntityName);
+    //                 Assert.Equal(clienteActualizarDto.Name, customer.Name);
+    //                 Assert.Equal(clienteActualizarDto.FirstSurname, customer.FirstSurname);
+    //                 Assert.Equal(clienteActualizarDto.SecondSurname, customer.SecondSurname);
     //                 break;
     //         }
     //     }
@@ -246,55 +246,55 @@ public abstract class CustomerTests
     //     //         var id = Guid.NewGuid();
     //     //         var tenantId = TenantId.Crear(999).Value;
     //     //
-    //     //         var cliente = Cliente.Crear(
+    //     //         var customer = Cliente.Crear(
     //     //             id,
     //     //             tenantId,
     //     //             clienteOriginalDto.Alias,
     //     //             clienteOriginalDto.IdentificacionFiscal,
-    //     //             clienteOriginalDto.RazonSocial,
-    //     //             clienteOriginalDto.Nombre,
-    //     //             clienteOriginalDto.PrimerApellido,
-    //     //             clienteOriginalDto.SegundoApellido,
+    //     //             clienteOriginalDto.LegalEntityName,
+    //     //             clienteOriginalDto.Name,
+    //     //             clienteOriginalDto.FirstSurname,
+    //     //             clienteOriginalDto.SecondSurname,
     //     //             clienteOriginalDto.Domicilio
     //     //         ).Value;
     //     //         
     //     //         var nuevoTipoDenominacionFiscal = Cliente.ObtenerTipoDenominacionFiscal(
     //     //             clienteActualizarDto.IdentificacionFiscal.EsPersonaJuridica,
-    //     //             clienteActualizarDto.RazonSocial,
-    //     //             clienteActualizarDto.Nombre
+    //     //             clienteActualizarDto.LegalEntityName,
+    //     //             clienteActualizarDto.Name
     //     //         );
     //     //         
     //     //         // Act
-    //     //         var result = cliente.Actualizar(
+    //     //         var result = customer.Actualizar(
     //     //             clienteActualizarDto.IdentificacionFiscal,
-    //     //             clienteActualizarDto.RazonSocial,
-    //     //             clienteActualizarDto.Nombre,
-    //     //             clienteActualizarDto.PrimerApellido,
-    //     //             clienteActualizarDto.SegundoApellido,
+    //     //             clienteActualizarDto.LegalEntityName,
+    //     //             clienteActualizarDto.Name,
+    //     //             clienteActualizarDto.FirstSurname,
+    //     //             clienteActualizarDto.SecondSurname,
     //     //             clienteActualizarDto.Domicilio
     //     //         );
     //     //
     //     //         // Assert
     //     //         Assert.True(result.IsSuccess);
-    //     //         Assert.Equal(clienteOriginalDto.Alias, cliente.Alias);
-    //     //         Assert.Equal(id, cliente.Id);
-    //     //         Assert.Equal(tenantId, cliente.TenantId);
-    //     //         Assert.Equal(clienteActualizarDto.IdentificacionFiscal, cliente.IdentificacionFiscal);
-    //     //         Assert.Equal(clienteActualizarDto.Domicilio, cliente.Domicilio);
+    //     //         Assert.Equal(clienteOriginalDto.Alias, customer.Alias);
+    //     //         Assert.Equal(id, customer.Id);
+    //     //         Assert.Equal(tenantId, customer.TenantId);
+    //     //         Assert.Equal(clienteActualizarDto.IdentificacionFiscal, customer.IdentificacionFiscal);
+    //     //         Assert.Equal(clienteActualizarDto.Domicilio, customer.Domicilio);
     //     //
     //     //         switch (nuevoTipoDenominacionFiscal)
     //     //         {
-    //     //             case TipoDenominacionFiscal.RazonSocial:
-    //     //                 Assert.Equal(clienteActualizarDto.RazonSocial, cliente.RazonSocial);
-    //     //                 Assert.Null(cliente.Nombre);
-    //     //                 Assert.Null(cliente.PrimerApellido);
-    //     //                 Assert.Null(cliente.SegundoApellido);
+    //     //             case TipoDenominacionFiscal.LegalEntityName:
+    //     //                 Assert.Equal(clienteActualizarDto.LegalEntityName, customer.LegalEntityName);
+    //     //                 Assert.Null(customer.Name);
+    //     //                 Assert.Null(customer.FirstSurname);
+    //     //                 Assert.Null(customer.SecondSurname);
     //     //                 break;
     //     //             case TipoDenominacionFiscal.NombreApellidos:
-    //     //                 Assert.Null(cliente.RazonSocial);
-    //     //                 Assert.Equal(clienteActualizarDto.Nombre, cliente.Nombre);
-    //     //                 Assert.Equal(clienteActualizarDto.PrimerApellido, cliente.PrimerApellido);
-    //     //                 Assert.Equal(clienteActualizarDto.SegundoApellido, cliente.SegundoApellido);
+    //     //                 Assert.Null(customer.LegalEntityName);
+    //     //                 Assert.Equal(clienteActualizarDto.Name, customer.Name);
+    //     //                 Assert.Equal(clienteActualizarDto.FirstSurname, customer.FirstSurname);
+    //     //                 Assert.Equal(clienteActualizarDto.SecondSurname, customer.SecondSurname);
     //     //                 break;
     //     //         }
     //     //     }
@@ -317,8 +317,8 @@ public abstract class CustomerTests
         var fakeTimeProvider = new FakeTimeProvider(fakeCurrentTime);
         
         var result = Customer.Domain.Customer.Rebuild(
-            id, tenantId, alias, datosCliente.TaxId, datosCliente.RazonSocial, 
-            datosCliente.Nombre, datosCliente.PrimerApellido, datosCliente.SegundoApellido, 
+            id, tenantId, alias, datosCliente.TaxId, datosCliente.LegalEntityName, 
+            datosCliente.Name, datosCliente.FirstSurname, datosCliente.SecondSurname, 
             datosCliente.Domicilio, datosCliente.ActivatedAtUtc, datosCliente.DeactivatedAtUtc, 
             datosCliente.DeletedAtUtc, fakeTimeProvider);
         
@@ -338,8 +338,8 @@ public abstract class CustomerTests
         var fakeCurrentTime = new DateTimeOffset(2026, 06, 12, 08, 43, 11, TimeSpan.Zero); 
         var fakeTimeProvider = new FakeTimeProvider(fakeCurrentTime);
         
-        var result = Customer.Domain.Customer.Rebuild(id, tenantId, alias, datosCliente.TaxId, datosCliente.RazonSocial, 
-            datosCliente.Nombre, datosCliente.PrimerApellido, datosCliente.SegundoApellido, 
+        var result = Customer.Domain.Customer.Rebuild(id, tenantId, alias, datosCliente.TaxId, datosCliente.LegalEntityName, 
+            datosCliente.Name, datosCliente.FirstSurname, datosCliente.SecondSurname, 
             datosCliente.Domicilio, datosCliente.ActivatedAtUtc, datosCliente.DeactivatedAtUtc, 
             datosCliente.DeletedAtUtc, fakeTimeProvider);
         
@@ -367,8 +367,8 @@ public abstract class CustomerTests
         var fakeCurrentTime = new DateTimeOffset(2026, 06, 12, 08, 43, 11, TimeSpan.Zero); 
         var fakeTimeProvider = new FakeTimeProvider(fakeCurrentTime);
         
-        var result = Customer.Domain.Customer.Rebuild(id, tenantId, alias, datosCliente.TaxId, datosCliente.RazonSocial, 
-            datosCliente.Nombre, datosCliente.PrimerApellido, datosCliente.SegundoApellido, 
+        var result = Customer.Domain.Customer.Rebuild(id, tenantId, alias, datosCliente.TaxId, datosCliente.LegalEntityName, 
+            datosCliente.Name, datosCliente.FirstSurname, datosCliente.SecondSurname, 
             datosCliente.Domicilio, datosCliente.ActivatedAtUtc, datosCliente.DeactivatedAtUtc, 
             datosCliente.DeletedAtUtc, fakeTimeProvider);
         

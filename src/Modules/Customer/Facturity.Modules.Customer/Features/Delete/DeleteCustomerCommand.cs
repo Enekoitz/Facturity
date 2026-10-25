@@ -3,4 +3,4 @@ using Facturity.Modules.SharedKernel.Domain;
 
 namespace Facturity.Modules.Customer.Features;
 
-internal sealed record EliminarClienteCommand(Guid Id) : ICommand<Result>;
+internal sealed record DeleteCustomerCommand(Guid Id) : ICommand<Result>;

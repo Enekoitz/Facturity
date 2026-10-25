@@ -9,8 +9,8 @@ public class EliminarClienteEndpoint : IClientesEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapDelete("/{id}", async ([AsParameters] EliminarClienteCommand command,
-                                            ICommandHandler<EliminarClienteCommand, Result> handler,
+        app.MapDelete("/{id}", async ([AsParameters] DeleteCustomerCommand command,
+                                            ICommandHandler<DeleteCustomerCommand, Result> handler,
                                             HttpContext httpContext,
                                             CancellationToken ct) =>
             {
@@ -22,8 +22,8 @@ public class EliminarClienteEndpoint : IClientesEndpoint
             })
             .RequireAuthorization()
             .WithName("EliminarCliente")
-            .WithSummary("Eliminar cliente existente")
-            .WithDescription("Elimina un cliente existente.")
-            .WithValidation<EliminarClienteCommandValidator>();
+            .WithSummary("Eliminar customer existente")
+            .WithDescription("Elimina un customer existente.")
+            .WithValidation<DeleteCustomerCommandValidator>();
     }
 }

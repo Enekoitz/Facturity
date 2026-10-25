@@ -21,7 +21,7 @@ public class ClientesDbContextFactory : IDesignTimeDbContextFactory<ClientesDbCo
         var optionsBuilder = new DbContextOptionsBuilder<ClientesDbContext>();
         optionsBuilder.UseNpgsql(
             config.GetConnectionString(NombreConnectionString),
-            o => o.MigrationsHistoryTable("__EFMigrationsHistory", "clientes"));
+            o => o.MigrationsHistoryTable("__EFMigrationsHistory", "customers"));
 
         return new ClientesDbContext(optionsBuilder.Options);
     }

@@ -3,4 +3,4 @@ using Facturity.Modules.SharedKernel.Domain;
 
 namespace Facturity.Modules.Customer.Features;
 
-internal sealed record ObtenerClientePorIdQuery(Guid Id) : IQuery<Result<ClienteDto>>;
+internal sealed record DeactivateCustomerCommand(Guid Id) : ICommand<Result>;

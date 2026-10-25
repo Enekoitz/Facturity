@@ -7,6 +7,10 @@ internal sealed class UpdateCustomerValidator: AbstractValidator<UpdateCustomerC
 {
     internal UpdateCustomerValidator()
     {
+        RuleFor(c => c.Id)
+            .Must(id => id != Guid.Empty)
+            .WithMessage("Customer identifier is required.");
+        
         RuleFor(c => c.Name)
             .MaximumLength(Parameters.Customer.NameMaxLength);
         

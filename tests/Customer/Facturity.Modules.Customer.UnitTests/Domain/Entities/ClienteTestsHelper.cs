@@ -10,10 +10,10 @@ public static class ActualizarClienteTestsHelper
     public sealed record DatosRecord(
         string Alias,
         ITaxId  TaxId,
-        string? RazonSocial,
-        string? Nombre,
-        string? PrimerApellido,
-        string? SegundoApellido,
+        string? LegalEntityName,
+        string? Name,
+        string? FirstSurname,
+        string? SecondSurname,
         Address? Domicilio
     ){}
 }
@@ -69,10 +69,10 @@ public static class ReconstruirClienteTestsHelper
     public sealed record DatosRecord(
         ITaxId  TaxId,
         Address? Domicilio,
-        string? RazonSocial,
-        string? Nombre,
-        string? PrimerApellido,
-        string? SegundoApellido,
+        string? LegalEntityName,
+        string? Name,
+        string? FirstSurname,
+        string? SecondSurname,
         DateTimeOffset? ActivatedAtUtc,
         DateTimeOffset? DeactivatedAtUtc,
         DateTimeOffset? DeletedAtUtc
@@ -145,15 +145,15 @@ public static class CrearClienteTestsHelper
     public sealed record DatosCrearClienteRecord(
         ITaxId  TaxId,
         Address? Domicilio,
-        string? RazonSocial,
-        string? Nombre,
-        string? PrimerApellido,
-        string? SegundoApellido){}
+        string? LegalEntityName,
+        string? Name,
+        string? FirstSurname,
+        string? SecondSurname){}
     
     public static Result<Customer.Domain.Customer> CrearCliente(DatosCrearClienteRecord datosCliente, in Guid id , in TenantId tenantId, in string alias)
     {
-        var result = Customer.Domain.Customer.Create(id, tenantId, alias, datosCliente.TaxId, datosCliente.RazonSocial, 
-            datosCliente.Nombre, datosCliente.PrimerApellido, datosCliente.SegundoApellido, datosCliente.Domicilio);
+        var result = Customer.Domain.Customer.Create(id, tenantId, alias, datosCliente.TaxId, datosCliente.LegalEntityName, 
+            datosCliente.Name, datosCliente.FirstSurname, datosCliente.SecondSurname, datosCliente.Domicilio);
 
         return result;
     }
@@ -163,8 +163,8 @@ public static class CrearClienteTestsHelper
         var id = Guid.NewGuid();
         var tenantId = TenantId.Crear(Guid.NewGuid()).Value;
         
-        var result = Customer.Domain.Customer.Create(id, tenantId, alias, datosCliente.TaxId, datosCliente.RazonSocial, 
-            datosCliente.Nombre, datosCliente.PrimerApellido, datosCliente.SegundoApellido, datosCliente.Domicilio);
+        var result = Customer.Domain.Customer.Create(id, tenantId, alias, datosCliente.TaxId, datosCliente.LegalEntityName, 
+            datosCliente.Name, datosCliente.FirstSurname, datosCliente.SecondSurname, datosCliente.Domicilio);
 
         return result;
     }

@@ -4,13 +4,13 @@ using Facturity.Modules.SharedKernel.Domain;
 
 namespace Facturity.Modules.Customer.Features;
 
-internal sealed record ListarClientesQuery(
+internal sealed record GetCustomersQuery(
     string? Alias, 
-    TaxIdType? IdentificacionFiscalTipo, 
-    string? IdentificacionFiscalValor, 
-    string? IdentificacionFiscalCodigoPais,
-    string? DenominacionFiscalBusqueda,
-    string? DireccionBusqueda,
-    bool? Activo,
+    TaxIdType? TaxIdType, 
+    string? TaxIdValue, 
+    string? TaxIdCountryCode,
+    string? TaxNameSearch,
+    string? AddressSearch,
+    bool? Active,
     int Page,
     int Size) : IQuery<Result<IEnumerable<Domain.Customer>>>;

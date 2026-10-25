@@ -4,12 +4,12 @@ using Facturity.Modules.SharedKernel.Domain;
 
 namespace Facturity.Modules.Customer.Features;
 
-internal sealed class EliminarClienteHandler(IClientesRepository repo) 
-    : ICommandHandler<EliminarClienteCommand, Result>
+internal sealed class DeleteCustomerHandler(ICustomerRepository repo) 
+    : ICommandHandler<DeleteCustomerCommand, Result>
 {
-    public async Task<Result> HandleAsync(EliminarClienteCommand command, CancellationToken ct)
+    public async Task<Result> HandleAsync(DeleteCustomerCommand command, CancellationToken ct)
     {
-        var softDeleteResult = await repo.EliminarClienteSoftDeleteAsync(command.Id, ct);
+        var softDeleteResult = await repo.SoftDeleteAsync(command.Id, ct);
 
         return softDeleteResult.Result switch
         {

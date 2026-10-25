@@ -10,12 +10,12 @@ public class ObtenerClientePorIdEndpoint : IClientesEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapGet("/{id}", async (
-                [AsParameters] ObtenerClientePorIdQuery query,
-                IQueryHandler<ObtenerClientePorIdQuery, Result<ClienteDto>> handler,
+                [AsParameters] GetByIdCustomerQuery customerQuery,
+                IQueryHandler<GetByIdCustomerQuery, Result<GetByIdCustomerDto>> handler,
                 HttpContext httpContext,
                 CancellationToken ct) =>
             {
-                var result = await handler.HandleAsync(query, ct);
+                var result = await handler.HandleAsync(customerQuery, ct);
                 
                 return result.IsSuccess
                     ? Results.Ok(result.Value)
@@ -23,8 +23,8 @@ public class ObtenerClientePorIdEndpoint : IClientesEndpoint
             })
             .RequireAuthorization()
             .WithName("ObtenerClientePorId")
-            .WithSummary("Obtener cliente por Id")
-            .WithDescription("Devuelve los datos de un cliente existente.")
-            .WithValidation<ObtenerClientePorIdQuery>();
+            .WithSummary("Obtener customer por Id")
+            .WithDescription("Devuelve los datos de un customer existente.")
+            .WithValidation<GetByIdCustomerQuery>();
     }
 }

@@ -20,7 +20,7 @@ namespace Facturity.Modules.Customer.Infrastructure.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasDefaultSchema("clientes")
+                .HasDefaultSchema("customers")
                 .HasAnnotation("ProductVersion", "10.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
@@ -58,7 +58,7 @@ namespace Facturity.Modules.Customer.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("catalogo_tipos_identificacion_fiscal", "clientes");
+                    b.ToTable("catalogo_tipos_identificacion_fiscal", "customers");
 
                     b.HasData(
                         new
@@ -135,30 +135,30 @@ namespace Facturity.Modules.Customer.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamptz")
                         .HasColumnName("deleted_at_utc");
 
-                    b.Property<string>("DenominacionFiscalBusqueda")
+                    b.Property<string>("TaxNameSearch")
                         .IsRequired()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("text")
                         .HasColumnName("denominacion_fiscal_busqueda")
                         .HasComputedColumnSql("CASE WHEN razon_social IS NOT NULL THEN razon_social ELSE TRIM(COALESCE(nombre, '') || ' ' || COALESCE(primer_apellido, '') || ' ' || COALESCE(segundo_apellido, '')) END", true);
 
-                    b.Property<string>("DireccionBusqueda")
+                    b.Property<string>("AddressSearch")
                         .IsRequired()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("text")
                         .HasColumnName("direccion_busqueda")
                         .HasComputedColumnSql("COALESCE(domicilio_direccion, '') || ', ' || COALESCE(domicilio_municipio, '') || ', ' || COALESCE(domicilio_codigo_postal, '') || ', ' || COALESCE(domicilio_provincia, '') || ', ' || COALESCE(domicilio_region, '') || ', ' || COALESCE(domicilio_pais, '')", true);
 
-                    b.Property<string>("IdentificacionFiscalCodigoPais")
+                    b.Property<string>("TaxIdCountryCode")
                         .HasMaxLength(2)
                         .HasColumnType("character varying(2)")
                         .HasColumnName("identificacion_fiscal_codigo_pais");
 
-                    b.Property<short>("IdentificacionFiscalTipo")
+                    b.Property<short>("TaxIdType")
                         .HasColumnType("smallint")
                         .HasColumnName("identificacion_fiscal_tipo");
 
-                    b.Property<string>("IdentificacionFiscalValor")
+                    b.Property<string>("TaxIdValue")
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("character varying(30)")
@@ -198,16 +198,16 @@ namespace Facturity.Modules.Customer.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdentificacionFiscalTipo");
+                    b.HasIndex("TaxIdType");
 
-                    b.ToTable("clientes", "clientes");
+                    b.ToTable("customers", "customers");
                 });
 
             modelBuilder.Entity("Facturity.Modules.Customer.Infrastructure.ClienteRecord", b =>
                 {
                     b.HasOne("Facturity.Modules.Customer.Domain.TipoIdentificacionFiscal", null)
                         .WithMany()
-                        .HasForeignKey("IdentificacionFiscalTipo")
+                        .HasForeignKey("TaxIdType")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -244,7 +244,7 @@ namespace Facturity.Modules.Customer.Infrastructure.Persistence.Migrations
 
                             b1.HasKey("ClienteRecordId");
 
-                            b1.ToTable("clientes", "clientes");
+                            b1.ToTable("customers", "customers");
 
                             b1.WithOwner()
                                 .HasForeignKey("ClienteRecordId");
@@ -262,7 +262,7 @@ namespace Facturity.Modules.Customer.Infrastructure.Persistence.Migrations
 
                                     b2.HasKey("DomicilioClienteRecordId");
 
-                                    b2.ToTable("clientes", "clientes");
+                                    b2.ToTable("customers", "customers");
 
                                     b2.WithOwner()
                                         .HasForeignKey("DomicilioClienteRecordId");

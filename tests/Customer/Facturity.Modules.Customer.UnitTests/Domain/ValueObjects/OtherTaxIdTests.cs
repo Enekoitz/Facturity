@@ -11,19 +11,19 @@ public class OtherTaxIdTests
     [InlineData("CA12345AB", TaxIdType.CountryOfOriginIdentityDocument, "IT")] 
     [InlineData("CR-2024-000123", TaxIdType.ResidenceCertificate, "FR")] 
     [InlineData("OTR-998877", TaxIdType.OtherSupportingDocument, "CH")] 
-    public void CrearIdOtroExtranjero_IdentificacionValida_Exito(string identificacionFiscalValor, 
-                                                                TaxIdType identificacionFiscalTipo,
-                                                                string identificacionFiscalCodigoPais)
+    public void CrearIdOtroExtranjero_IdentificacionValida_Exito(string taxIdValue, 
+                                                                TaxIdType taxIdType,
+                                                                string taxIdCountryCode)
     {
         // Act
-        var result = OtherTaxId.Create(identificacionFiscalValor, identificacionFiscalTipo, identificacionFiscalCodigoPais);
+        var result = OtherTaxId.Create(taxIdValue, taxIdType, taxIdCountryCode);
 
         // Assert
         Assert.True(result.IsSuccess);
         Assert.Empty(result.Errors);
-        Assert.Equal(identificacionFiscalValor, result.Value.Value);
-        Assert.Equal(identificacionFiscalTipo, result.Value.Type);
-        Assert.Equal(identificacionFiscalCodigoPais, result.Value.CountryCode);
+        Assert.Equal(taxIdValue, result.Value.Value);
+        Assert.Equal(taxIdType, result.Value.Type);
+        Assert.Equal(taxIdCountryCode, result.Value.CountryCode);
         Assert.Null(result.Value.IsLegalEntity);
     }
 
@@ -33,12 +33,12 @@ public class OtherTaxIdTests
     [InlineData("987654321", TaxIdType.Passport, "ES")]
     [InlineData("12345678Z", TaxIdType.SpanishTaxId, "ES")]
     [InlineData(null, null, "")]
-    public void CrearIdOtroExtranjero_IdentificacionInvalida_Fallo(string identificacionFiscalValor,
-                                                            TaxIdType identificacionFiscalTipo,
-                                                            string identificacionFiscalCodigoPais)
+    public void CrearIdOtroExtranjero_IdentificacionInvalida_Fallo(string taxIdValue,
+                                                            TaxIdType taxIdType,
+                                                            string taxIdCountryCode)
     {
         // Act
-        var result = OtherTaxId.Create(identificacionFiscalValor, identificacionFiscalTipo, identificacionFiscalCodigoPais);
+        var result = OtherTaxId.Create(taxIdValue, taxIdType, taxIdCountryCode);
 
         // Assert
         Assert.True(result.IsFailure);

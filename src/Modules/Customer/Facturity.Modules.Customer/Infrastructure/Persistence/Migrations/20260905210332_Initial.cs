@@ -14,11 +14,11 @@ namespace Facturity.Modules.Customer.Infrastructure.Persistence.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.EnsureSchema(
-                name: "clientes");
+                name: "customers");
 
             migrationBuilder.CreateTable(
                 name: "catalogo_tipos_identificacion_fiscal",
-                schema: "clientes",
+                schema: "customers",
                 columns: table => new
                 {
                     id = table.Column<short>(type: "smallint", nullable: false),
@@ -33,8 +33,8 @@ namespace Facturity.Modules.Customer.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "clientes",
-                schema: "clientes",
+                name: "customers",
+                schema: "customers",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -64,14 +64,14 @@ namespace Facturity.Modules.Customer.Infrastructure.Persistence.Migrations
                     table.ForeignKey(
                         name: "FK_clientes_catalogo_tipos_identificacion_fiscal_identificacio~",
                         column: x => x.identificacion_fiscal_tipo,
-                        principalSchema: "clientes",
+                        principalSchema: "customers",
                         principalTable: "catalogo_tipos_identificacion_fiscal",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.InsertData(
-                schema: "clientes",
+                schema: "customers",
                 table: "catalogo_tipos_identificacion_fiscal",
                 columns: new[] { "id", "codigo", "codigo_ticketbai_bizkaia", "nombre", "nombre_completo" },
                 values: new object[,]
@@ -86,8 +86,8 @@ namespace Facturity.Modules.Customer.Infrastructure.Persistence.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_clientes_identificacion_fiscal_tipo",
-                schema: "clientes",
-                table: "clientes",
+                schema: "customers",
+                table: "customers",
                 column: "identificacion_fiscal_tipo");
         }
 
@@ -95,12 +95,12 @@ namespace Facturity.Modules.Customer.Infrastructure.Persistence.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "clientes",
-                schema: "clientes");
+                name: "customers",
+                schema: "customers");
 
             migrationBuilder.DropTable(
                 name: "catalogo_tipos_identificacion_fiscal",
-                schema: "clientes");
+                schema: "customers");
         }
     }
 }

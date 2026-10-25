@@ -2,6 +2,6 @@
 
 internal enum TaxDesignationType
 {
-    LegalName = 1,
+    LegalEntityName = 1,
     FullName = 2
 }
