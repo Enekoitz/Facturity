@@ -30,7 +30,7 @@ internal static class ClienteDtoExtensions
             customer.Alias,
             identificacionFiscalValor,
             identificacionFiscalTipo,
-            identificacionFiscalTipo == TaxIdType.TaxId 
+            identificacionFiscalTipo == TaxIdType.SpanishTaxId 
                 ? null 
                 : identificacionFiscalCodigoPais,
             customer.LegalName,

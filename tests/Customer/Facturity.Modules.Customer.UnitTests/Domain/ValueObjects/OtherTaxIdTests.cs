@@ -31,7 +31,7 @@ public class OtherTaxIdTests
     [InlineData("DE123456789000000000000000000000000000000000000000000000", TaxIdType.IntraCommunityVatId, "D")]
     [InlineData("DE123456789", TaxIdType.IntraCommunityVatId, "D")]
     [InlineData("987654321", TaxIdType.Passport, "ES")]
-    [InlineData("12345678Z", TaxIdType.TaxId, "ES")]
+    [InlineData("12345678Z", TaxIdType.SpanishTaxId, "ES")]
     [InlineData(null, null, "")]
     public void CrearIdOtroExtranjero_IdentificacionInvalida_Fallo(string identificacionFiscalValor,
                                                             TaxIdType identificacionFiscalTipo,

@@ -2,7 +2,7 @@
 
 public enum TaxIdType
 {
-    TaxId = 1,
+    SpanishTaxId = 1,
     IntraCommunityVatId = 2,
     Passport = 3,
     CountryOfOriginIdentityDocument = 4,

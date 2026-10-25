@@ -10,7 +10,7 @@ public class TaxIdFactory : ITaxIdFactory
         TaxIdType identificacionFiscalTipo,
         string? identificacionFiscalCodigoPais)
     {
-        if (identificacionFiscalTipo == TaxIdType.TaxId)
+        if (identificacionFiscalTipo == TaxIdType.SpanishTaxId)
         {
             var nifEspanol = SpanishTaxId.Crear(identificacionFiscalValor);
             return nifEspanol.IsSuccess

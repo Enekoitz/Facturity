@@ -282,7 +282,7 @@ public static partial class TaxIdValidations
             errorCode = "Customer.TaxId.OtherTaxIdEmpty";
             errorDescription = "Tax ID is required.";
         }
-        else if (type == TaxIdType.TaxId)
+        else if (type == TaxIdType.SpanishTaxId)
         {
             errorCode = "Customer.TaxId.OtherTaxIdTypeInvalid";
             errorDescription = "Other tax ID type cannot be spanish tax ID.";

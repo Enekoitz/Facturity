@@ -2,13 +2,12 @@
 
 public sealed record TaxIdTypesCatalog
 {
-    //TODO
-    public static readonly TaxIdTypesCatalog Nif = new(TaxIdType.TaxId, "TAX_ID".ToUpper(), "NIF", "Número de identificación fiscal", "01");
-    public static readonly TaxIdTypesCatalog NifIvaComunitario = new(TaxIdType.IntraCommunityVatId, "INTRA_COMMUNITY_VAT_ID".ToUpper(), "NIF-IVA", "NIF-IVA Comunitario", "02");
-    public static readonly TaxIdTypesCatalog Pasaporte = new(TaxIdType.Passport, "PAS".ToUpper(), "Pasaporte", "Pasaporte", "03");
-    public static readonly TaxIdTypesCatalog DocumentoIdentidadPaisOrigen = new(TaxIdType.CountryOfOriginIdentityDocument, "DOC_PAI".ToUpper(), "Documento oficial de identificación expedido por el país o territorio de residencia", "Documento oficial de identificación expedido por el país o territorio de residencia", "04");
-    public static readonly TaxIdTypesCatalog CertificadoResidencia = new(TaxIdType.ResidenceCertificate, "CER_RES".ToUpper(), "Certificado de residencia", "Certificado de residencia", "05");
-    public static readonly TaxIdTypesCatalog OtroDocumentoProbatorio = new(TaxIdType.OtherSupportingDocument, "OTR_DOC_PRO".ToUpper(), "Otro documento probatorio", "Otro documento probatorio", "06");
+    public static readonly TaxIdTypesCatalog Nif = new(TaxIdType.SpanishTaxId, "SP_TAX_ID".ToUpper(), "Spanish Tax ID", "Spanish Tax ID", "01");
+    public static readonly TaxIdTypesCatalog NifIvaComunitario = new(TaxIdType.IntraCommunityVatId, "INT_COM_VAT_ID".ToUpper(), "Intra-community VAT ID", "Intra-community VAT ID", "02");
+    public static readonly TaxIdTypesCatalog Pasaporte = new(TaxIdType.Passport, "PAS".ToUpper(), "Passport", "Passport", "03");
+    public static readonly TaxIdTypesCatalog DocumentoIdentidadPaisOrigen = new(TaxIdType.CountryOfOriginIdentityDocument, "ORIGIN_ID_DOC".ToUpper(), "Official identification document issued by the country or territory of residence", "Official identification document issued by the country or territory of residence", "04");
+    public static readonly TaxIdTypesCatalog CertificadoResidencia = new(TaxIdType.ResidenceCertificate, "RES_CERT".ToUpper(), "Residence Certificate", "Residence Certificate", "05");
+    public static readonly TaxIdTypesCatalog OtroDocumentoProbatorio = new(TaxIdType.OtherSupportingDocument, "OTH_SUPP_DOC".ToUpper(), "Other supporting document", "Other supporting document", "06");
 
     public TaxIdType Id { get; }
     public string Code { get; }

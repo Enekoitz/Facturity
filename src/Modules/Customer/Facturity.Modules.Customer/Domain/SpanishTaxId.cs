@@ -15,7 +15,7 @@ public sealed record SpanishTaxId : ITaxId
     {
         Valor = valorNif;
         Tipo = tipoNif;
-        TipoIdentificacionFiscal = TaxIdType.TaxId;
+        TipoIdentificacionFiscal = TaxIdType.SpanishTaxId;
     }
 
     public static Result<SpanishTaxId> Crear(string valorNif)

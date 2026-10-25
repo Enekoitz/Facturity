@@ -6,7 +6,7 @@ internal static class TaxIdMapper
     {
         var (value, tipo, countryCode) = taxId switch
         {
-            SpanishTaxId id => (id.Valor, TaxIdType.TaxId, "ES"),
+            SpanishTaxId id => (id.Valor, TaxId: TaxIdType.SpanishTaxId, "ES"),
             OtherTaxId id => (id.Value, id.Type, id.CountryCode),
             _ => throw new InvalidOperationException($"Tax ID is not supported: {taxId?.GetType().Name}")
         };
