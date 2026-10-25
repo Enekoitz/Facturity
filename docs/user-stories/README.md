@@ -1,20 +1,20 @@
-# Historias de usuario
+# User Stories
 
-> **Propósito:** funcionalidades desde la perspectiva del usuario. Aquí solo viven las épicas y las historias **estables**; el backlog detallado está en el gestor de tareas.
+> **Purpose:** Functionalities from the user's perspective. Only epics and **stable** stories belong here; the detailed backlog is maintained in the task management tool.
 >
-> **Preguntas guía:** ¿Quién quiere hacer qué y para qué? ¿Cómo sabremos que está bien hecho?
+> **Guiding questions:** Who wants to do what, and why? How will we know it has been done correctly?
 
-## Índice de épicas
+## Index of Epics
 
-| Épica                        | Descripción | Estado |
+| Epic                         | Description | Status |
 | ---------------------------- | ----------- | ------ |
-| [EP-01](_plantilla-epica.md) |             | 🟡     |
-## Formato de historia
+| [EP-01](_plantilla-epica.md) | | 🟡     |
+## Story Format
 
-> **Como** [rol] **quiero** [acción] **para** [beneficio].
+> **As a** [role], **I want to** [action] **so that** [benefit].
 
-Criterios de aceptación (2-4 por historia):
+Acceptance criteria (2–4 per story):
 
-> **Dado** [contexto] **cuando** [acción] **entonces** [resultado observable].
+> **Given** [context], **when** [action], **then** [observable result].
 
-Crea un archivo por épica copiando [`_plantilla-epica.md`](_plantilla-epica.md).
+Create a separate file for each epic by copying [`_plantilla-epica.md`](_plantilla-epica.md).

@@ -2,52 +2,50 @@
 status: accepted
 date: 2026-01-26
 ---
-# ADR 001: Adopción de Arquitectura Monolítica Modular
+# ADR 001: Adoption of a Modular Monolithic Architecture
 
-## Contexto
+## Context
 
-Durante la fase de diseño de la aplicación, tras haber definido los requerimientos del sistema, nos surge la necesidad de decidir la arquitectura de sistema o despliegue que se va a emplear. 
+During the application design phase, following the definition of system requirements, we must decide on the system or deployment architecture to be implemented.
 
-Al ser una aplicación de facturación con módulos adicionales de gestión empresarial multi-tenant, la cantidad de tráfico y consumo concurrente no es demasiado grande, por lo que la carga en un principio no debería de ser muy alta. 
+As this is an invoicing application with additional multi-tenant business management modules, the volume of traffic and concurrent usage is not expected to be very high; therefore, the initial load should remain manageable.
 
-Es fundamental tener en cuenta que hasta que no salga a producción una primera versión y no lleve un tiempo en uso, no podremos estimar con exactitud la carga, tráfico y problemáticas concretas que tendremos.
+It is crucial to note that we cannot accurately estimate the actual load, traffic, or specific challenges we might face until the first version is released to production and has been in use for some time.
 
-¿Qué arquitectura es la más adecuada para el contexto actual de diseño inicial de la aplicación?
+Which architecture is best suited for the current initial design phase of the application?
 
-## Decisión
+## Decision
 
-**Arquitectura monolítica modular**. Elegimos esta opción porque minimiza la complejidad operativa inicial y el costo de infraestructura, garantizando al mismo tiempo un camino de migración limpio hacia microservicios.
+**Modular monolithic architecture**. We have chosen this approach because it minimizes initial operational complexity and infrastructure costs, while simultaneously ensuring a clear migration path toward microservices.
 
-## Alternativas consideradas
+## Alternatives Considered
 
-- **Microservicios**. La aplicación estaría compuesta por microservicios independientes comunicados entre sí por distintos mecanismos de infraestructura y red. Un sistema altamente distribuido.
+- **Microservices**. The application would consist of independent microservices that communicate via various infrastructure and network mechanisms—a highly distributed system.
 
-## Consecuencias
+## Consequences
 
-- (+) Reduce la complejidad de infraestructura, mantenimiento, latencia de red, etc. de los microservicios.
-	
-- (+) Refactorización más simple y ágil.
-	
-- (+) El despliegue es sencillo porque solo se despliega un único compilado.
-	
-- (+) Aislamiento y encapsulación disciplinada de los módulos; evitando referencias circulares y acoplamiento fuerte entre módulos y Big Ball of Mud.
-	
-- (+) Transacciones de BD más sólidas y consistentes entre módulos.
-	
-- (+) Posibilita y facilita enormemente la extracción de módulos con necesidad de escalado (o por otros motivos) a microservicios. Permitiendo la convivencia del monolito con microservicios concretos.
-	
-- (-) De ser necesario, solo es posible escalar el monolito al completo, aunque sea un módulo concreto el que está recibiendo la mayor parte de dicha carga. (Se podría solucionar extrayendo el módulo a microservicio).
-	
-- (-) Cada módulo debería idealmente poseer sus propios datos (tablas separadas, esquemas separados o al menos una separación lógica estricta a nivel de repositorio).
-	
-- (-) Es fácil que los desarrolladores se salten los límites, convenciones, reglas definidas para mantener ese aislamiento entre módulos. (Como solución habría que definir e implementar herramientas y mecanismos concretos, a parte de una buena disciplina y comunicación de equipo: NetArchTest, validaciones de estructura de carpetas en el pipeline de CI/CD, etc.).
-	
-- (-) Todos los módulos quedan acoplados a la misma tecnología.
-	
-- (-) Si un módulo tiene un bug crítico que tira la aplicación, se cae toda la plataforma, afectando a los demás módulos que funcionaban perfectamente.
+- (+) Reduces the complexity associated with microservices, such as infrastructure management, maintenance, and network latency.
 
-### Notas adicionales
-- Bajo el contexto de haber decidido la arquitectura monolítica modular hay que decidir también en los próximos pasos qué tipo de arquitectura de software (Clean, Hexagonal, Vertical Slice, híbrido, etc.) se va a implementar.
+- (+) Simplifies and streamlines refactoring.
 
-## Referencias
-(Ninguna)
+- (+) Simplifies deployment, as only a single compiled artifact needs to be deployed.
+
+- (+) Promotes disciplined isolation and encapsulation of modules, preventing circular dependencies, tight coupling, and the emergence of a "Big Ball of Mud."
+
+- (+) Ensures more robust and consistent database transactions across modules.
+
+- (+) Facilitates the extraction of specific modules into microservices—should the need for scaling (or other reasons) arise—while allowing the monolith to coexist with individual microservices. - (-) If necessary, the only option is to scale the entire monolith, even if only one specific module is bearing the brunt of the load. (This could be resolved by extracting that module into a microservice.)
+
+- (-) Ideally, each module should own its own data (separate tables, separate schemas, or at least a strict logical separation at the repository level).
+
+- (-) It is easy for developers to bypass the boundaries, conventions, and rules established to maintain isolation between modules. (Potential solutions include defining and implementing specific tools and mechanisms—alongside strong team discipline and communication—such as NetArchTest, folder structure validation within the CI/CD pipeline, etc.)
+
+- (-) All modules are coupled to the same technology stack.
+
+- (-) If a module contains a critical bug that crashes the application, the entire platform goes down, affecting other modules that were otherwise functioning perfectly.
+
+## Additional Notes
+- Having opted for a modular monolithic architecture, the next step is to determine which specific software architecture (e.g., Clean, Hexagonal, Vertical Slice, or a hybrid approach) will be implemented.
+
+## References
+(None)

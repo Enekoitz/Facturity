@@ -1,13 +1,13 @@
-# Investigación
+# Research
 
-> **Propósito:** notas en bruto, entrevistas, capturas, benchmarks. **Sin garantía de estar actualizado.**
+> **Purpose:** raw notes, interviews, screenshots, benchmarks. **No guarantee that this information is up to date.**
 >
-> Lo que se asiente aquí debe acabar destilado en glosario, requisitos o ADRs; esto es solo la materia prima.
+> Anything recorded here should eventually be distilled into a glossary, requirements, or ADRs (Architecture Decision Records); this is merely the raw material.
 
-## Sugerencias
+## Suggestions
 
-- Un archivo por entrevista o fuente: `AAAA-MM-DD-nombre-tema.md`.
-	
-- Preguntas base para entrevistas: ¿Qué haces primero? ¿Qué te frustra? ¿Qué pasa cuando falla? ¿Qué harías si tuvieras una varita mágica?
-	
-- Los borradores personales van en `_borradores/` (ignorada por Git).
+- One file per interview or source: `YYYY-MM-DD-name-topic.md`.
+
+- Basic interview questions: What do you do first? What frustrates you? What happens when something fails? What would you do if you had a magic wand?
+
+- Personal drafts should go in `_borradores/` (ignored by Git).

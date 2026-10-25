@@ -2,47 +2,45 @@
 status: accepted
 date: 2026-10-03
 ---
-# ADR 004: Estrategia de rotación de refresh token
+# ADR 004: Refresh Token Rotation Strategy
 
-## Contexto
+## Context
 
-El acceso a la API se autentica mediante JWT (ver ADR 003). Los access tokens tienen una vida corta (15 min) para limitar el impacto de una posible fuga. Esto exige un mecanismo para que el cliente obtenga un access token nuevo sin forzar al usuario a volver a introducir sus credenciales cada 15 minutos.
+API access is authenticated via JWT (see ADR 003). Access tokens have a short lifespan (15 minutes) to limit the impact of a potential leak. This necessitates a mechanism for the client to obtain a new access token without forcing the user to re-enter their credentials every 15 minutes.
 
-Ese mecanismo es el refresh token: una credencial de vida más larga (21 días) que el cliente intercambia por un access token nuevo cuando el actual expira.
+This mechanism is the "refresh token"—a longer-lived credential (21 days) that the client exchanges for a new access token when the current one expires.
 
-Un refresh token de larga duración introduce su propio riesgo: si se filtra, da acceso indefinido (hasta su expiración) sin necesidad de conocer la contraseña del usuario. Había que decidir cómo mitigar ese riesgo sin renunciar a la comodidad de no re-loguear constantemente.
+A long-lived refresh token introduces its own risk: if leaked, it grants indefinite access (until it expires) without requiring the user's password. We needed to determine how to mitigate this risk while maintaining the convenience of not having to constantly re-authenticate.
 
-## Decisión
+## Decision
 
-Se implementa la opción 3: rotación en cada uso, con los tokens de una misma sesión agrupados bajo un FamilyId, y revocación de toda la familia si se detecta el reuso de un token ya gastado.
+We are implementing Option 3: rotation upon every use, with tokens from the same session grouped under a `FamilyId`. If the reuse of an already-spent token is detected, the entire family of tokens is revoked.
 
-## Alternativas consideradas
+## Alternatives Considered
 
-- Refresh token único y estático durante toda su vida (21 días), validado contra un hash en BD, sin rotación.
-	
-- Refresh token con rotación simple: cada uso invalida el token y emite uno nuevo, pero sin mecanismo de detección de reutilización.
-	
-- Refresh token con rotación + detección de reutilización (reuse detection) agrupado por familia de sesión — opción elegida.
-	
-- Sin refresh token: access tokens de vida larga directamente.
+- A single, static refresh token for its entire lifespan (21 days), validated against a hash in the database, with no rotation.
 
-## Consecuencias
+- Refresh token with simple rotation: each use invalidates the token and issues a new one, but without a mechanism to detect reuse.
 
-- (+) Un escenario de robo de token se autocontiene: en el peor caso, el atacante obtiene acceso durante, como mucho, una rotación, y el usuario legítimo es forzado a volver a loguearse — un coste aceptable frente a una sesión comprometida indefinidamente.
-	
-- (+) Introduce una ventana de inconsistencia aceptada: si el proceso falla entre revocar el token viejo y emitir el nuevo, el usuario pierde la sesión y debe volver a loguearse. Se considera preferible fallar cerrando la sesión a fallar dejándola abierta.
-	
-- (-) Aumento de operaciones I/O y consumo de recursos.
-	
-- (=) Requiere una tabla RefreshTokens con limpieza periódica pendiente (tokens expirados/revocados acumulan filas indefinidamente si no se purgan — tarea futura, no bloqueante).
-	
-- (+) Cada dispositivo/sesión tiene su propia familia; comprometer una sesión no afecta a las demás sesiones activas del mismo usuario.
+- Refresh token with rotation and reuse detection, grouped by session family — the chosen option.
 
-### Notas adicionales
-(Ninguna actualmente)
+- No refresh token: using long-lived access tokens directly.
 
-## Referencias
+## Consequences
 
-- [ADR 03](adr-003-identity-jwt-strategy.md): Estrategia de gestión de identidades, autenticación y autorización
-	
+- (+) A token theft scenario is self-contained: in the worst case, an attacker gains access for, at most, the duration of a single rotation cycle, and the legitimate user is forced to log in again—an acceptable trade-off compared to having a session compromised indefinitely. - (+) Introduces a window of acceptable inconsistency: if the process fails between revoking the old token and issuing the new one, the user loses their session and must log in again. It is considered preferable for a failure to result in a closed session rather than an open one.
+
+- (-) Increased I/O operations and resource consumption.
+
+- (=) Requires a `RefreshTokens` table that necessitates periodic cleanup (expired/revoked tokens will accumulate rows indefinitely if not purged — a non-blocking, future task).
+
+- (+) Each device/session has its own family; compromising one session does not affect other active sessions belonging to the same user.
+
+## Additional Notes
+(None at present)
+
+## References
+
+- [ADR 03](adr-003-identity-jwt-strategy.md): Identity management, authentication, and authorization strategy
+
 - OWASP: [Refresh Token Rotation](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics)

@@ -1,17 +1,17 @@
 # Runbooks
 
-> **Propósito:** qué hacer cuando algo falla o hay que operar el sistema. Opcional hasta que haya algo en producción.
+> **Purpose:** What to do when something goes wrong or when the system requires operational intervention. Optional until something is in production.
 >
-> **Preguntas guía:** ¿Cómo detecto el problema? ¿Cómo lo diagnostico? ¿Cómo lo soluciono? ¿A quién aviso?
+> **Guiding questions:** How do I detect the issue? How do I diagnose it? How do I resolve it? Who should I notify?
 
-Un archivo por escenario, con esta estructura:
+One file per scenario, following this structure:
 
-1. **Síntoma:** qué se observa.
-	
-2. **Impacto:** a quién afecta y cuánto.
-	
-3. **Diagnóstico:** comandos o comprobaciones.
-	
-4. **Solución:** pasos concretos.
-	
-5. **Escalado:** a quién avisar si no funciona.
+1. **Symptom:** What is being observed.
+
+2. **Impact:** Who is affected, and to what extent.
+
+3. **Diagnosis:** Commands or checks to perform.
+
+4. **Resolution:** Specific steps to take.
+
+5. **Escalation:** Who to notify if the solution does not work.

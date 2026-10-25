@@ -1,20 +1,20 @@
-# ADR-XXX: Título corto de la decisión
+# ADR-XXX: Short title of the decision
 
-- **Estado:** Propuesto | Aceptado | Rechazado | Sustituido por ADR-XXXX
-- **Fecha:** AAAA-MM-DD
+- **Status:** Proposed | Accepted | Rejected | Superseded by ADR-XXXX
+- **Date:** YYYY-MM-DD
 
-## Contexto
-_¿Qué situación o problema obliga a decidir? Fuerzas en juego._
+## Context
+_What situation or problem necessitates a decision? Forces at play._
 
-## Decisión
-_Qué se decide, en una o dos frases claras._
+## Decision
+_What is being decided, stated in one or two clear sentences._
 
-## Alternativas consideradas
-| Alternativa | Pros | Contras |
+## Alternatives considered
+| Alternative | Pros | Cons |
 |---|---|---|
 | | | |
 
-## Consecuencias
-- **Positivas (+):**
-- **Negativas / deuda aceptada (-):**
-- **A revisar si:** _condición que haría reabrir la decisión._
+## Consequences
+- **Positive (+):**
+- **Negative / accepted debt (-):**
+- **Revisit if:** _condition that would trigger a re-evaluation of the decision._

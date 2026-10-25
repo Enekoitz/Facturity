@@ -5,31 +5,30 @@
 > **Guiding questions:** Are there terms that different people use to mean different things? Which term does the business use, and which one is used in the code?
 
 
-## Tenant 
+##Tenant
 
-| Term   | Definition                                         | Avoid (ambiguous synonyms in the system) | Codename | TicketBai |
+| Term | Definition | Avoid (ambiguous synonyms in the system) | Codename | TicketBai |
 | ------ | -------------------------------------------------- | ---------------------------------------- | -------- | --------- |
-| Tenant | Subject who is issuing the invoice to the customer | emisor, organizacion, issuer             | `Tenant` | Emisor    |
+| Tenant | Subject who is issuing the invoice to the customer | issuer, organization, issuer | `Tenant` | Issuer |
 
-## Customer 
+## Customer
 
-| Term     | Definition                                                         | Avoid (ambiguous synonyms in the system) | Codename  | TicketBai    |
+| Term | Definition | Avoid (ambiguous synonyms in the system) | Codename | TicketBai |
 | -------- | ------------------------------------------------------------------ | ---------------------------------------- | --------- | ------------ |
-| Customer | Persona que compra bienes o servicios luego plasmado en la factura | usuario, cuenta, destinatario            | `Cliente` | Destinatario |
+| Customer | Person who purchases goods or services then reflected on the invoice | user, account, recipient | `Client` | Recipient |
 
+## Invoicing
 
-## Invoicing 
-
-| Término          | Definición                             | Evitar (sinónimos ambiguos en el sistema) | Nombre en código                     | TicketBai (Diputación Foral de Bizkaia)   |
+| Term | Definition | Avoid (ambiguous synonyms in the system) | Code name | TicketBai (Bizkaia Provincial Council) |
 | ---------------- | -------------------------------------- | ----------------------------------------- | ------------------------------------ | ----------------------------------------- |
-| Invoice          | Invoice entity                         |                                           | `Invoice`<br>*Pdt. cambia a Customer | 'Factura'                                 |
-| InvoiceHeader    | The header of the invoice              | Cabecera                                  | `InvoiceHeader`                      | 'CabeceraFactura'                         |
-| InvoiceData      | The data of the invoice                | Cabecera                                  | `InvoiceHeader`                      | 'DatosFactura'                            |
-| BreakDownline    | The tax breakdown lines of the invoice |                                           |                                      | 'TipoDesglose'                            |
-| TransactionAtUtc | The transaction datetime               |                                           | `TransactionAtUtc`                   | 'FechaOperacion'                          |
-| IssuedAtUtc      | The issue datetime                     |                                           | `IssuedAtUtc`                        | 'FechaExpedicion' and<br>'HoraExpedicion' |
-| Series           |                                        |                                           |                                      |                                           |
+| Invoice | Invoice entity | | `Invoice`<br>*Pdt. change to Customer | 'Invoice' |
+| InvoiceHeader | The header of the invoice | Header | `InvoiceHeader` | 'InvoiceHeader' |
+| InvoiceData | The data of the invoice | Header | `InvoiceHeader` | 'InvoiceData' |
+| BreakDownline | The tax breakdown lines of the invoice | | | 'BreakdownType' |
+| TransactionAtUtc | The transaction datetime | | `TransactionAtUtc` | 'OperationDate' |
+| IssuedAtUtc | The issue datetime | | `IssuedAtUtc`                        | 'FechaExpedicion' and<br>'HoraExpedicion' |
+| Series           | | | | |
 
-- En TicketBai, `Factura` hace referencia a una de las partes del 'Fichero de alta de operación'.
+- In TicketBai, `Factura` refers to one of the components of the 'operation registration file' (*Fichero de alta de operación*).
 ---
-_Última revisión: 2026-10-17_
+_Last reviewed: 2026-10-17_

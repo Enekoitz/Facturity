@@ -1,22 +1,22 @@
-# EP-XX: Nombre de la épica
+# EP-XX: Epic Name
 
-**Objetivo:** _qué valor aporta esta épica._
-**Requisitos relacionados:** RF-001, RF-002
+**Objective:** _what value this epic provides._
+**Related requirements:** RF-001, RF-002
 
-## HU-XX.1: Título
+## US-XX.1: Title
 
-**Como** _rol_ **quiero** _acción_ **para** _beneficio_.
+**As a** _role_, **I want to** _action_ **so that** _benefit_.
 
-**Criterios de aceptación**
+**Acceptance criteria**
 
-- **Dado** _contexto_ **cuando** _acción_ **entonces** _resultado_.
-	
-- **Dado** _contexto_ **cuando** _acción_ **entonces** _resultado_.
+- **Given** _context_, **when** _action_, **then** _result_.
 
-**Notas:** _dudas, dependencias, fuera de alcance._
+- **Given** _context_, **when** _action_, **then** _result_.
 
-## HU-XX.2: Título
+**Notes:** _questions, dependencies, out of scope._
+
+## US-XX.2: Title
 ...
 
 ---
-_Última revisión: AAAA-MM-DD_
+_Last review: YYYY-MM-DD_

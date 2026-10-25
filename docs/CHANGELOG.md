@@ -1,14 +1,14 @@
 # Changelog
 
-Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
+Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [Sin publicar]
+## [Unreleased]
 
-### Añadido
+### Added
 -
 
-### Cambiado
+### Changed
 -
 
-### Corregido
+### Fixed
 -

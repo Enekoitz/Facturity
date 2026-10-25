@@ -1,24 +1,21 @@
-# Persistencia y acceso a datos
+# Data Persistence and Access
 
-## Motor
-PostgreSQL 16. Elegido por ser open source, robusto para datos relacionales
-y con buen soporte en el ecosistema .NET con Npgsql.
+## Engine
+PostgreSQL 16. Chosen for being open source, robust for relational data, and having strong support within the .NET ecosystem via Npgsql.
 
 ## ORM
-Entity Framework Core con el provider de Npgsql.
+Entity Framework Core with the Npgsql provider.
 
-## Convenciones
+## Conventions
 
-- Nomenclatura snake_case definida explícitamente en cada IEntityConfiguration
-	
-- No se usa el paquete EFCore.NamingConventions para mantener control total
-  sobre cada columna → [ADR-00X Naming explícito](../../decisiones/ADR-00X...)
+- `snake_case` naming is explicitly defined within each `IEntityConfiguration`.
 
-## Migraciones
-Gestionadas con EF Core Migrations. Se aplican manualmente en desarrollo
-y como parte del pipeline en producción.
+- The `EFCore.NamingConventions` package is not used, in order to maintain full control over each column → [ADR-00X Explicit Naming](../../decisiones/ADR-00X...)
 
-## Decisiones relevantes
+## Migrations
+Managed using EF Core Migrations. These are applied manually during development and as part of the pipeline in production.
 
-- Se emplea EF Core de manera multi contexto, un contexto por módulo con su esquema.
-- Repositorio pattern para el desacoplamiento entre capa de infraestructura y aplicación (no aplica a módulos como el de autenticación donde sería sobreingeniería).
+## Key Decisions
+
+- A multi-context approach is used for EF Core, with one context per module, each mapped to its own schema.
+- The Repository pattern is employed to decouple the infrastructure layer from the application layer (this does not apply to modules such as authentication, where it would constitute over-engineering).

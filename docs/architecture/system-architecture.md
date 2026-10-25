@@ -1,33 +1,33 @@
-# Arquitectura de sistema: **Monolito Modular evolutivo**.
+# System Architecture: **Evolvable Modular Monolith**.
 
-El monolito modular evolutivo se sitúa en el punto medio entre la complejidad de los microservicios y el desorden del monolito tradicional, permitiendo crear un sistema de relativo fácil mantenimiento y posibilitando la extracción futura de ciertos módulos a microservicios.
+The evolvable modular monolith sits at the midpoint between the complexity of microservices and the disarray of a traditional monolith. It enables the creation of a system that is relatively easy to maintain, while also allowing for the future extraction of specific modules into microservices.
 
-## ¿Por qué?
+## Why?
 
-El monolito modular permite dividir a nivel lógico el sistema en distintos módulos (`bounded contexts`) aislándolos en ensamblados y utilizando distintas técnicas y tecnologías para que se puedan comunicar entre ellos, dotando al sistema de una alta cohesión, imponiendo un encapsulamiento al detalle y minimizando el acoplamiento entre módulos. 
+A modular monolith allows for the logical division of a system into distinct modules ("bounded contexts"). These are isolated into separate assemblies, with various techniques and technologies employed to facilitate communication between them. This ensures high system cohesion, enforces strict encapsulation, and minimizes coupling between modules.
 
-La comunicación inter-modular es asíncrona por defecto para mantener el desacoplamiento temporal.
+Inter-modular communication is asynchronous by default to maintain temporal decoupling.
 
-A nivel físico sigue siendo una única unidad de despliegue, ejecutándose como un único proceso. Lo que facilita enormemente los procesos de despliegue y reduce la carga de red e infraestructura propia de los microservicios.
+At the physical level, it remains a single deployment unit, running as a single process. This greatly simplifies deployment procedures and reduces the network and infrastructure overhead typically associated with microservices.
 
-Además, nos permite que cada uno de los módulos implemente su tipo de arquitectura de software, sin estar obligados a que toda la aplicación implemente una única arquitectura. 
+Furthermore, it allows each module to implement its own specific software architecture, rather than requiring the entire application to adhere to a single, uniform architectural pattern.
 
->NOTA: Se define la arquitectura de software de cada módulo en la siguiente página: [[Arquitectura de software]]
+>NOTE: The software architecture for each module is defined on the following page: [[Software Architecture]]
 
-Si en un futuro se decide refactorizar el proyecto a una arquitectura de microservicios, la transición desde un monolito modular es más natural y menos compleja. 
+Should the decision be made in the future to refactor the project into a microservices-based architecture, the transition from a modular monolith is more natural and significantly less complex.
 
-### Diagramas de arquitectura
+### Architectural Diagrams
 
-==PDTE.==
+==TBD==
 
-### Componentes principales
+### Main Components
 
-| Módulo        | Descripción                         | Tecnología         | Responsabilidad                                               |
+| Module        | Description                         | Technology         | Responsibility                                               |
 | ------------- | ----------------------------------- | ------------------ | ------------------------------------------------------------- |
-==PDTE.==
+==TBD==
 
-## Notas
-Ninguna actualmente
+## Notes
+None at present
 
 ---
-_Última revisión: 2026-10-04
+_Last reviewed: 2026-10-04_

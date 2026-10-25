@@ -1,48 +1,46 @@
-# Visión
+# Vision
 
-> **Propósito:** el porqué del proyecto en una página. Es la brújula: si una decisión no encaja aquí, se cuestiona.
+> **Purpose:** The "why" behind the project, summarized on a single page. It serves as a compass: if a decision doesn’t align with this, it should be questioned.
 >
-> **Preguntas guía:** ¿Quién tiene el problema? ¿Cuál es? ¿Qué pasa hoy sin solución? ¿Cómo sabremos que está resuelto?
+> **Guiding questions:** Who has the problem? What is the problem? What happens currently in the absence of a solution? How will we know when it has been solved?
 
-## Problema
+## Problem
 
-La obligatoriedad de facturar digitalmente y enviar a la hacienda correspondiente dichas facturas hace que los negocios tengan que adaptarse rápidamente y cambiar sus procesos y formas de trabajar. Muchos de estos negocios, sobre todo autónomos o pequeñas y medianas empresas, tienen dificultades para integrar en sus procesos dicha nueva tarea recurrente: 
+The mandate to issue digital invoices and submit them to the relevant tax authority requires businesses to adapt quickly, changing their processes and ways of working. Many of these businesses—particularly self-employed individuals and small to medium-sized enterprises (SMEs)—struggle to integrate this new, recurring task into their operations:
 
-- Falta de medios para contratar profesionales o herramientas de alto coste.
-	
-- Dificultad para digitalizar facturas manuscritas o transformar facturas digitales de medios previos al formato aceptado y requerido por la hacienda.
-	
-- Fricción en el uso de herramientas con complejidad innecesaria.
+- Lack of resources to hire professionals or invest in expensive software tools.
 
-## Usuarios objetivo
+- Difficulty in digitizing handwritten invoices or converting existing digital invoices into the format required by the tax authority.
 
-- Autónomos.
-	
-- Pequeñas y medianas empresas.
-	
-- Negocios donde la facturación manuscrita o física siga siendo el día a día.
+- Friction caused by the use of overly complex tools.
 
-## Solución propuesta
+## Target Users
 
-`Facturity` simplifica la emisión de comprobantes fiscales adaptándose a distintos flujos de trabajo. Entre sus opciones principales destacan:
+- Self-employed individuals (freelancers/sole proprietors).
 
-- **Emisión web directa:** Generación rápida de facturas individuales a través de un portal intuitivo o mediante procesamiento IA para manuscritos físicos.
-    
-- **Carga masiva:** Procesamiento de múltiples facturas simultáneamente mediante archivos estructurados (como CSV o Excel).
-    
-- **Cumplimiento normativo:** Validación y timbrado automático de comprobantes conforme a los requerimientos del SAT / autoridad tributaria aplicable.
+- Small and medium-sized enterprises (SMEs).
 
-## Criterios de éxito
+- Businesses that still rely on handwritten or physical invoicing for their day-to-day operations.
 
-- [ ] **Tiempo medio de emisión:** Reducción del tiempo requerido para generar y enviar una factura individual
-- [ ] **Disponibilidad del servicio:** Tiempo de actividad (_uptime_) de la plataforma para garantizar facturación continua (target deseado: >99.9%).
-- [ ] **Tasa de error en timbrado:** Reducción a menos del 1% de facturas rechazadas o rechazables por errores de datos, RFC o conceptos.
-- [ ] **Cumplimiento normativo al 100%:** Emisión de comprobantes ajustados a la versión vigente de las regulaciones de la autoridad tributaria (SAT / norma local).
-- [ ] **Trazabilidad y respaldo:** Almacenamiento seguro, descarga y disponibilidad de archivos XML y PDF durante el periodo legal requerido.
+## Proposed Solution
 
-## Qué NO es este proyecto
+`Facturity` simplifies the issuance of tax-compliant invoices by adapting to various workflows. Key features include:
 
-- **Integración por API:** Automatización total conectando el sistema con ERPs, CRMs o tiendas en línea.
+- **Direct web-based issuance:** Rapid generation of individual invoices via an intuitive portal, or through AI-powered processing of physical, handwritten documents.
+
+- **Bulk upload:** Simultaneous processing of multiple invoices using structured files (such as CSV or Excel).
+
+- **Regulatory compliance:** Automatic validation and digital stamping of invoices in accordance with the requirements of the SAT (or the applicable tax authority). ## Success Criteria
+
+- [ ] **Average issuance time:** Reduction in the time required to generate and send an individual invoice.
+- [ ] **Service availability:** Platform uptime to ensure continuous invoicing (target: >99.9%).
+- [ ] **Invoice validation error rate:** Reduction to less than 1% for invoices rejected—or subject to rejection—due to errors in data, tax ID (RFC), or line items.
+- [ ] **100% Regulatory compliance:** Issuance of documents in full alignment with the current version of tax authority regulations (SAT / local standards).
+- [ ] **Traceability and backup:** Secure storage, download capability, and availability of XML and PDF files for the legally required retention period.
+
+## What this project is NOT
+
+- **API integration:** Full automation via connections between the system and ERPs, CRMs, or online stores.
 
 ---
-_Última revisión: 2026-10-04
+_Last reviewed: 2026-10-04

@@ -2,48 +2,46 @@
 status: accepted
 date: 2026-10-03
 ---
-# ADR 003: Estrategia de gestión de identidades, autenticación y autorización
+# ADR 003: Identity Management, Authentication, and Authorization Strategy
 
-## Contexto
-Facturity trabaja como API de consumo propio (consumida por SPA o cliente propio) que requiere de un sistema de autenticación stateless y gestión de identidades (usuarios).
+## Context
+Facturity functions as an API for internal use (consumed by an SPA or a proprietary client), requiring a stateless authentication system and identity (user) management.
 
-¿Qué estrategia es más adecuada, robusta y suficiente para nuestro contexto específico?
+Which strategy is the most suitable, robust, and sufficient for our specific context?
 
-## Decisión
+## Decision
 
-**Adopción de ASP.NET Core Identity como gestor de identidad y JWT para la autenticación y autorización mediante Bearer Tokens (implementación propia).**
+**Adoption of ASP.NET Core Identity for identity management, and JWT for authentication and authorization via Bearer Tokens (custom implementation).**
 
-**¿Por qué?**
+**Why?**
 
-  - **Gestión de Identidad (ASP.NET Core Identity)**:
-    
-    Proporciona un modelo de datos robusto y probado, integrable de forma nativa con Entity Framework Core y PostgreSQL mediante IdentityDbContext. 
-    La abstracción de IdentityUser e IdentityRole permite extender el modelo según los requisitos del dominio sin romper la compatibilidad con el ecosistema de seguridad de .NET.
-    
-  - **Autenticación y Autorización (JWT - Bearer Tokens)**:
+- **Identity Management (ASP.NET Core Identity)**:
 
-    Responde a la necesidad de un esquema stateless para la comunicación entre cliente y servidor. 
-    La implementación propia de los componentes de generación, validación y revocación (siguiente ADR) nos otorga control total sobre los claims, el ciclo de vida del token y las políticas de revocación sin depender de proveedores terceros.
+It provides a robust, battle-tested data model that integrates natively with Entity Framework Core and PostgreSQL via `IdentityDbContext`. 
+The `IdentityUser` and `IdentityRole` abstractions allow for extending the model based on domain requirements without breaking compatibility with the .NET security ecosystem. 
 
-## Alternativas consideradas
+- **Authentication and Authorization (JWT - Bearer Tokens)**:
 
-- Servidor OIDC dedicado (Duende IdentityServer / Auth0 / Keycloak). Sobre-ingeniería para consumo propio sin terceros; valorable si el sistema necesitara interoperar con otros clientes/IdPs.
-	
-- MapIdentityApi (endpoints out-of-the-box de Identity). Token opaco, no permite claims custom (tenant_id) sin reescribir el login de todas formas (no ahorra trabajo real).
+This addresses the need for a stateless scheme for client-server communication. 
+Implementing our own components for token generation, validation, and revocation (see the next ADR) gives us full control over claims, the token lifecycle, and revocation policies, without relying on third-party providers.
 
-## Consecuencias
+## Alternatives Considered
 
-- (+) Control total sobre claims y ciclo de vida del token.
-	
-- (+) Responsabilidad propia de revocación (resuelto con refresh tokens rotados + detección de reuso, ver siguiente ADR).
-	
-- (=) Si en el futuro se necesita SSO/login social, hay que evaluar migrar a un servidor OIDC.
-	
-- (-) Incremento en el tiempo de desarrollo, mantenibilidad a futuro y necesidad de tests de integración que garanticen robustez y funcionamiento de la implementación.
+- Dedicated OIDC Server (Duende IdentityServer / Auth0 / Keycloak): This would be over-engineering for an internal-use system with no third-party consumers; it would only be worth considering if the system needed to interoperate with other clients or Identity Providers (IdPs).
 
-### Notas adicionales
-(Ninguna actualmente)
+- `MapIdentityApi` (out-of-the-box Identity endpoints): Uses opaque tokens and does not support custom claims (e.g., `tenant_id`) without requiring a rewrite of the login logic anyway (offering no real time savings).
 
-## Referencias
+## Consequences
+
+- (+) Full control over claims and the token lifecycle.
+
+- (+) Responsibility for token revocation lies with us (addressed via rotated refresh tokens and reuse detection—see the next ADR). - (=) If SSO/social login is required in the future, migrating to an OIDC server should be evaluated.
+
+- (-) Increased development time, long-term maintainability considerations, and the need for integration tests to ensure the robustness and proper functioning of the implementation.
+
+## Additional notes
+(None at this time)
+
+## References
 
 - RFC Editor: [RFC 7519](https://www.rfc-editor.org/info/rfc7519/)

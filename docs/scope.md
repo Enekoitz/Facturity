@@ -1,61 +1,61 @@
-# Alcance
+# Scope
 
-> **Propósito:** los límites del proyecto. La visión dice *adónde vas*; el alcance dice *hasta dónde llegas*.
+> **Purpose:** The boundaries of the project. The vision defines *where you are going*; the scope defines *how far you will go*.
 >
-> **Preguntas guía:** ¿Qué entra? ¿Qué NO entra? ¿Qué damos por supuesto? ¿Qué nos limita? ¿Qué puede salir mal?
+> **Guiding questions:** What is included? What is NOT included? What are our assumptions? What are our constraints? What could go wrong?
 
-## Dentro del alcance
+## In Scope
 
-- Gestión completa de clientes con validación exacta de identificación fiscal.
-	
-- Gestión simple pero completa de series.
-	
-- Gestión de identidades: registro, login, logout.
-	
-- Vinculación de usuario a tenant y modificación de datos fiscales propios.
-	
-- Alta, eliminación (o anulación) de factura y flujo de estados completo y robusto.
-	
-- Envío de factura a hacienda y creación del QR correspondiente.
-	
-- Envío email automático de notificación al enviar a hacienda.
-	
-- Preferencias de opciones de factura: tipos de IVA según clientes, etc.
+- Comprehensive customer management with precise tax ID validation.
 
-## Fuera del alcance
+- Simple yet complete management of invoice series.
 
-- Envío en masa de facturas.
-	
-- Estadísticas, métricas, diagramas y gráficos del negocio y facturación.
-	
-- Integración en sistemas externos (CRMs, ERPs, etc.).
+- Identity management: registration, login, and logout.
 
-## Supuestos
-(Ninguno actualmente)
+- Linking users to a tenant and allowing them to modify their own tax information.
 
-## Restricciones
-(No aplica actualmente)
+- Invoice creation, deletion (or voiding), and a robust, end-to-end status workflow.
 
-| Tipo                   | Detalle |
+- Submission of invoices to the tax authority and generation of the corresponding QR code.
+
+- Automated email notifications upon submission to the tax authority.
+
+- Invoice configuration preferences (e.g., VAT types based on the customer).
+
+## Out of Scope
+
+- Bulk invoice processing.
+
+- Business and invoicing statistics, metrics, charts, and graphs.
+
+- Integration with external systems (CRMs, ERPs, etc.).
+
+## Assumptions
+(None at present)
+
+## Constraints
+(None at present)
+
+| Type                   | Details |
 | ---------------------- | ------- |
-| Plazo                  | ---     |
-| Presupuesto / recursos | ---     |
-| Tecnología             | ---     |
-| Legal / normativa      | ---     |
+| Timeline               | ---     |
+| Budget / Resources     | ---     |
+| Technology             | ---     |
+| Legal / Regulatory     | ---     |
 
-## Riesgos principales
-(No aplica actualmente)
+## Key Risks
+(None at present)
 
-| Riesgo | Probabilidad | Impacto | Mitigación |
-| ------ | ------------ | ------- | ---------- |
-|        |              |         |            |
+| Risk | Probability | Impact | Mitigation |
+| ---- | ----------- | ------ | ---------- |
+| | | | |
 
-## Historial de cambios de alcance
-_Cada cambio relevante enlaza a su ADR._
+## Scope Change History
+_Each significant change links to its corresponding ADR._
 
-| Fecha | Cambio | ADR |
-| ----- | ------ | --- |
-|       |        |     |
+| Date | Change | ADR |
+| ---- | ------ | --- |
+| | | |
 
 ---
-_Última revisión: 2026-10-04
+_Last reviewed: 2026-10-04_
