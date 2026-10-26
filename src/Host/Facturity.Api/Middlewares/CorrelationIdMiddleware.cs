@@ -3,7 +3,7 @@
 namespace Facturity.Api.Middlewares;
 
 /// <summary>
-/// Middleware that manage correlation ID in incoming requests.
+/// Middleware that manages the correlation ID in incoming requests.
 /// </summary>
 public class CorrelationIdMiddleware(RequestDelegate next)
 {
@@ -35,7 +35,7 @@ public class CorrelationIdMiddleware(RequestDelegate next)
 public static class CorrelationIdMiddlewareExtensions
 {
     /// <summary>
-    /// Adds a middleware to the pipeline that will manage correlation ID in incoming requests.
+    /// Add a middleware to the pipeline that will handle the correlation ID in incoming requests.
     /// </summary>
     /// <param name="builder"></param>
     /// <returns></returns>

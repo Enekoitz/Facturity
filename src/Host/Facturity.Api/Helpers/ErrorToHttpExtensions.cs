@@ -5,7 +5,7 @@ namespace Facturity.Api.Helpers;
 public static class ErrorToHttpExtensions
 {
     /// <summary>
-    /// Mapear elementos del enumerador ErrorType a códigos HTTP adecuados.
+    /// Associate the elements of the ErrorType enumerator with the corresponding HTTP codes.
     /// </summary>
     public static int ToHttpStatusCode(this ErrorType errorType) => errorType switch
     {
@@ -20,13 +20,12 @@ public static class ErrorToHttpExtensions
     };
     
     /// <summary>
-    /// Obtener el código de error prioritario (por severidad) de una lista de errores.
+    /// Obtain the error code with the highest priority (based on severity) from a list of errors.
     /// </summary>
     public static int GetPrimaryHttpStatusCode(this IEnumerable<Error> errors)
     {      
         var errorList = errors as List<Error> ?? errors.ToList();
 
-        // Evaluamos en orden de precedencia estricto
         if (errorList.Any(e => e.Type == ErrorType.Unexpected))
             return 500;
 
@@ -45,6 +44,6 @@ public static class ErrorToHttpExtensions
         if (errorList.Any(e => e.Type == ErrorType.Validation))
             return 400;
 
-        return 400; // Por defecto ante errores no mapeados
+        return 400;
     }
 }

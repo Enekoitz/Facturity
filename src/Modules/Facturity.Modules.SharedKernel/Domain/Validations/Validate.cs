@@ -4,23 +4,23 @@ namespace Facturity.Modules.SharedKernel.Domain;
 
 public static class Validate
 {
-    public static bool EsVacio([NotNullWhen(false)] string? valor)
+    public static bool IsEmpty([NotNullWhen(false)] string? value)
     {
-        return string.IsNullOrWhiteSpace(valor);
+        return string.IsNullOrWhiteSpace(value);
     }
 
-    public static bool SuperaLongitudMaxima(string? valor, int longitudMaxima)
+    public static bool ExceedsMaximumLength(string? value, int maximumLength)
     {
-        return !string.IsNullOrWhiteSpace(valor) && valor.Length > longitudMaxima;
+        return !string.IsNullOrWhiteSpace(value) && value.Length > maximumLength;
     }
 
-    public static bool NoAlcanzaLongitudMinima(string? valor, int longitudMinima)
+    public static bool DoesNotMeetMinimumLength(string? value, int minimumLength)
     {
-        return !string.IsNullOrWhiteSpace(valor) && valor.Length < longitudMinima;
+        return !string.IsNullOrWhiteSpace(value) && value.Length < minimumLength;
     }
 
-    public static bool NoEsLongitudExacta(string? valor, int longitudMinima)
+    public static bool NotExactLength(string? value, int exactLength)
     {
-        return !string.IsNullOrWhiteSpace(valor) && valor.Length != longitudMinima;
+        return !string.IsNullOrWhiteSpace(value) && value.Length != exactLength;
     }
 }

@@ -6,23 +6,20 @@ namespace Facturity.Api.Helpers;
 internal static class ResultToHttpExtensions
 {
     /// <summary>
-    /// Mapear objeto Result a ProblemDetails para la HTTP response adecuada
+    /// Map the Result object to ProblemDetails for the appropriate HTTP response
     /// </summary>
     internal static IResult ToProblemDetails(
         this IResultBase result,
         HttpContext httpContext)
     {
-        // 1. Si el resultado es exitoso o no hay errores guardados se lanza excepción
         if (result.IsSuccess || result.Errors is null || !result.Errors.Any())
         {
             throw new InvalidOperationException("No se puede generar un ProblemDetail de un Result exitoso.");
         }
           
-        // 2. Obtener el error y su código de estado HTTP correspondiente con mayor prioridad de severidad
         var mostSeverePriorityError = GetMostSeverePriorityError(result.Errors);
         int primaryStatusCode = GetStatusCode(mostSeverePriorityError.Type);
                   
-        // 3. Obtener el texto para el 'detail' en base al tipo de error más prioritario
         string detailText = mostSeverePriorityError.Type switch
         {
             ErrorType.Validation => result.Errors.Count == 1 
@@ -38,7 +35,6 @@ internal static class ResultToHttpExtensions
             _ => "Ocurrió un error interno al procesar la solicitud. Inténtelo más tarde."
         };
                   
-        // 4. Devolver la respuesta HTTP
         return TypedResults.Problem(
             statusCode: primaryStatusCode,
             title: primaryStatusCode.GetTitle(),
@@ -53,7 +49,7 @@ internal static class ResultToHttpExtensions
     }
 
     /// <summary>
-    /// Obtener el error con mayor prioridad de severidad ordenando los errores en base a las reglas de prioridad y devolviendo el primer error
+    /// Get the error with the highest severity priority by sorting the errors according to priority rules and returning the first error.
     /// </summary>
     private static Error GetMostSeverePriorityError(IReadOnlyCollection<Error> errors)
     {
@@ -61,7 +57,7 @@ internal static class ResultToHttpExtensions
     }
 
     /// <summary>
-    /// Orden de prioridad de severidad de los errores de un Result
+    /// Order of priority of severity of errors in a Result
     /// </summary>
     private static int GetPriorityWeight(ErrorType errorType) => errorType switch
     {
@@ -76,7 +72,7 @@ internal static class ResultToHttpExtensions
     };
 
     /// <summary>
-    /// Obtener el HTTP status code del tipo de error proporcionado
+    /// Obtain the HTTP status code for the provided error type
     /// </summary>
     private static int GetStatusCode(ErrorType errorType) => errorType switch
     {

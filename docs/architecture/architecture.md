@@ -1,47 +1,47 @@
-# Arquitectura
+# Architecture
 
-> **Propósito:** estructura técnica de alto nivel. Guía: modelo C4 (contexto → contenedores → componentes si hace falta).
+> **Purpose:** High-level technical structure. Guideline: C4 model (context → containers → components, if necessary).
 >
-> **Preguntas guía:** ¿Con qué sistemas se relaciona? ¿Qué piezas desplegables hay? ¿Qué tecnologías y por qué? ¿Qué decisiones están registradas?
+> **Guiding questions:** Which systems does it interact with? What are the deployable units? What technologies are used, and why? What decisions have been documented?
 
 # Core
 
-- [Arquitectura de sistema](architecture/system-architecture)
-- [Arquitectura de software](architecture/software-architecture)
-- [Patrones de diseño](architecture/design-patterns)
+- [System architecture](architecture/system-architecture)
+- [Software architecture](architecture/software-architecture)
+- [Design patterns](architecture/design-patterns)
 - [Testing](decisions/testing)
 
-## 1. Contexto
-==PDTE.==
-_El sistema, sus usuarios y los sistemas externos con los que interactúa._
+## 1. Context
+==TBD==
+_The system, its users, and the external systems with which it interacts._
 
 ```mermaid
 flowchart LR
-    U[Usuario] --> S[Sistema]
-    S --> E[Sistema externo]
+U[User] --> S[System]
+S --> E[External system]
 ```
 
-## 2. Contenedores / módulos principales
-==PDTE.==
+## 2. Containers / Main Modules
+==TBD==
 
-| Contenedor | Responsabilidad | Tecnología |
+| Container | Responsibility | Technology |
 | ---------- | --------------- | ---------- |
-| Customer   |                 |            |
-| Auth       |                 |            |
-| Invoicing  |                 |            |
+| Customer   | | |
+| Auth       | | |
+| Invoicing  | | |
 
 
-## 3. Componentes (solo si aporta)
-_Detalle interno de un contenedor complejo._
+## 3. Components (only if useful)
+_Internal details of a complex container._
 
-## Integraciones externas
-| Sistema | Propósito | Protocolo / contrato | Nota dedicada |
+## External Integrations
+| System | Purpose | Protocol / Contract | Dedicated Note |
 | ------- | --------- | -------------------- | ------------- |
-|         |           |                      |               |
+| | | | |
 
-## Decisiones relevantes
+## Relevant Decisions
 
 - [ADR-01](adr-001-modular-monolith-as-system-architecture.md)
 - [ADR-02](adr-002-clean-and-vertical-slice-as-software-hybrid-architecture.md)
 ---
-_Última revisión: 2026-10-04_
+_Last reviewed: 2026-10-04_

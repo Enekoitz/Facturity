@@ -9,8 +9,8 @@ public class ActualizarClienteEndpoint : IClientesEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPut("/", async (ActualizarClienteCommand command,
-                                        ICommandHandler<ActualizarClienteCommand, Result> handler,
+        app.MapPut("/", async (UpdateCustomerCommand command,
+                                        ICommandHandler<UpdateCustomerCommand, Result> handler,
                                         HttpContext httpContext,
                                         CancellationToken ct) =>
             {
@@ -21,9 +21,9 @@ public class ActualizarClienteEndpoint : IClientesEndpoint
                     : result.ToProblemDetails(httpContext);
             })
             .RequireAuthorization()
-            .WithName("ActualizarCliente")
-            .WithSummary("Actualizar nuevo cliente")
-            .WithDescription("Actualiza los datos existentes de un cliente.")
-            .WithValidation<ActualizarClienteCommand>();
+            .WithName("UpdateCustomer")
+            .WithSummary("Update a customer")
+            .WithDescription("Update a customer's existing data.")
+            .WithValidation<UpdateCustomerCommand>();
     }
 }

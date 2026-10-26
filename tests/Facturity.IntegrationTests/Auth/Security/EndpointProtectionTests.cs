@@ -10,19 +10,19 @@ namespace Facturity.IntegrationTests.Auth.Security;
 public class EndpointProtectionTests(AuthApiFactory factory) : IClassFixture<AuthApiFactory>
 {
     [Fact]
-    public async Task Endpoints_protegidos_rechazan_peticiones_anonimas()
+    public async Task Protected_endpoints_reject_anonymous_requests()
     {
         var client = factory.CreateClient(
             new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
 
-        var protegidos = factory.Services.GetRequiredService<EndpointDataSource>()
+        var protectedEndpoints = factory.Services.GetRequiredService<EndpointDataSource>()
             .Endpoints.OfType<RouteEndpoint>()
             .Where(e => e.Metadata.GetOrderedMetadata<IAuthorizeData>().Any()
                         && e.Metadata.GetMetadata<IAllowAnonymous>() is null);
 
-        var fallos = new List<string>();
+        var errors = new List<string>();
 
-        foreach (var endpoint in protegidos)
+        foreach (var endpoint in protectedEndpoints)
         {
             var method = endpoint.Metadata.GetMetadata<IHttpMethodMetadata>()
                 ?.HttpMethods.FirstOrDefault() ?? "GET";
@@ -32,9 +32,9 @@ public class EndpointProtectionTests(AuthApiFactory factory) : IClassFixture<Aut
             var response = await client.SendAsync(new HttpRequestMessage(new HttpMethod(method), url));
 
             if (response.StatusCode != HttpStatusCode.Unauthorized)
-                fallos.Add($"{method} {endpoint.RoutePattern.RawText} -> {(int)response.StatusCode}");
+                errors.Add($"{method} {endpoint.RoutePattern.RawText} -> {(int)response.StatusCode}");
         }
 
-        Assert.True(fallos.Count == 0, string.Join(Environment.NewLine, fallos));
+        Assert.True(errors.Count == 0, string.Join(Environment.NewLine, errors));
     }
 }

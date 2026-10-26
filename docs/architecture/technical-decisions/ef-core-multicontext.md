@@ -1,116 +1,115 @@
 # EFCore_Multicontext
 
-Se implementa EF Core como ORM para gestionar el acceso a datos.
+EF Core is implemented as an ORM to manage data access.
 
-Cada módulo tiene su propio contexto asociado a un esquema en base de datos, lo que garantiza o proporciona cierto nivel de encapsulamiento sin llegar a separar en base de datos individuales por módulo, lo que proporcionaría exceso de complejidad y consumo de recursos sin motivo, pues no estamos construyendo microservicios.
+Each module has its own context associated with a specific database schema. This provides a level of encapsulation without requiring separate databases for each module—an approach that would introduce unnecessary complexity and resource consumption, given that we are not building microservices.
 
-### Nombres de los archivos `DbContext` según módulo
+### `DbContext` filenames by module
 
-| Módulo                                        | DbContext               | Esquema BD  |
+| Module                                        | DbContext               | DB Schema   |
 | --------------------------------------------- | ----------------------- | ----------- |
 | UgeFactura.Modules.Clientes.Infrastructure    | ClientesDbContext.cs    | clientes    |
 | UgeFactura.Modules.Facturacion.Infrastructure | FacturacionDbContext.cs | facturacion |
 | ....                                          | ....                    | ....        |
 
-### Herramienta global EF Core para CLI
+### EF Core Global CLI Tool
 
-Para utilizar EF Core por CLI hace falta tener lo siguiente instalado `dotnet-ef`:
+To use EF Core via the CLI, you must have `dotnet-ef` installed:
 
-```poweshell
+```powershell
 dotnet tool install --global dotnet-ef
 ```
 
-### Las migraciones se realizan desde el Host
+### Migrations are performed from the Host
 
-Todas las migraciones se realizan desde el proyecto Host `UgeFactura.API`. Por lo que el proyecto tiene que tener instalado y referenciado el paquete `Microsoft.EntityFrameworkCore.Design`. 
-Dicho paquete permite ejecutar migraciones, lo único que necesitamos de EF Core en ese punto del sistema.
+All migrations are executed from the host project, `UgeFactura.API`. Consequently, this project must have the `Microsoft.EntityFrameworkCore.Design` package installed and referenced. This package enables the execution of migrations—the only EF Core functionality required at this level of the system.
 
-### Tablas de historial
+### History Tables
 
-Cada esquema de BD también tiene su propia tabla histórica de migraciones EF Core `__EFMigrationsHistory`. 
+Each database schema maintains its own EF Core migration history table, named `__EFMigrationsHistory`.
 
-De lo contrario, todos los módulos compartirían la misma tabla histórica, lo generaría problemas varios.
+Without this, all modules would share the same history table, which would lead to various issues.
 
-Con la siguiente instrucción de código en el archivo de configuración de EF Core se define dicha condición:
+This configuration is defined in the EF Core setup as follows:
 
 ```c#
-// En el módulo de Clientes
-options.UseSqlServer(connectionString, x => 
-    x.MigrationsHistoryTable("__EFMigrationsHistory", "clientes")); // <--- Tabla propia en su esquema
+// In the Clientes module
+options.UseSqlServer(connectionString, x =>
+x.MigrationsHistoryTable("__EFMigrationsHistory", "clientes"));
+``` // <--- Dedicated table within its own schema
 
-// En el módulo de Facturas
-options.UseSqlServer(connectionString, x => 
-    x.MigrationsHistoryTable("__EFMigrationsHistory", "facturas"));  // <--- Tabla propia en su otro esquema
-```
+// In the Invoices (Facturas) module
+options.UseSqlServer(connectionString, x =>
+x.MigrationsHistoryTable("__EFMigrationsHistory", "facturas")); // <--- Dedicated table within its own separate schema
 
-##### Ventajas
+##### Advantages
 
-- **Aislamiento total**: Las migraciones de un módulo/esquema se guardan en su tabla histórica específica.
+- **Total isolation**: Migrations for a specific module/schema are stored in their own dedicated history table.
 
-- **Limpieza**: En caso de querer abstraer un módulo completo y asignarle una BD independiente (como haríamos si pasásemos a microservicios), solo se tendría que pasar el esquema completo correspondientes. 
+- **Cleanliness**: If you ever need to extract an entire module and assign it to an independent database (as you might when transitioning to microservices), you would simply need to move the corresponding schema.
 
-- **Sin conflictos**: Se aplican los cambios de BD de un módulo sin interferir en la aplicación que realice otro módulo del sistema.
+- **No conflicts**: Database changes for one module can be applied without interfering with the operations of other modules within the system.
 
 
-# Plantilla claves EF Core
+# Key EF Core Flags
 
-- **`-p` (Project):** Dónde están tus clases y el `DbContext` (Infrastructure).
-    
-- **`-s` (Startup):** Dónde está la configuración y el `ConnectionSring` (API).
-    
-- **`-c` (Context):** Cuál de los módulos estás tocando en ese momento.
+- **`-p` (Project):** Where your classes and the `DbContext` are located (Infrastructure).
 
-### 1. Crear la migración
+- **`-s` (Startup):** Where the configuration and the `ConnectionString` are located (API).
 
-```bash
-dotnet ef migrations add Inicial -p Ruta/Al/Proyecto.Infrastructure -s Ruta/Al/Proyecto.API --context ClientesDbContext
-```
+- **`-c` (Context):** Specifies which module you are currently working on.
 
-### 2. Aplicar la migración a la base de datos
+### 1. Create the migration
 
 ```bash
-dotnet ef database update -p Ruta/Al/Proyecto.Infrastructure -s Ruta/Al/Proyecto.API --context ClientesDbContext
+dotnet ef migrations add Initial -p Path/To/Project.Infrastructure -s Path/To/Project.API --context ClientesDbContext
 ```
 
-### 3. Automatización en el inicio (opcional)
+### 2. Apply the migration to the database
 
-Mecanismo para aplicar migraciones pendientes automáticamente al iniciar la ejecución de la aplicación. 
+```bash
+dotnet ef database update -p Path/To/Project.Infrastructure -s Path/To/Project.API --context ClientesDbContext
+```
 
-Añadir en el archivo `Program.cs`:
+### 3. Automation at startup (optional)
+
+A mechanism to automatically apply pending migrations when the application starts.
+
+Add this to the `Program.cs` file:
 
 ```c#
 using (var scope = app.Services.CreateScope())
 {
-    var services = scope.ServiceProvider;
-    try
-    {
-        var context = services.GetRequiredService<ClientesDbContext>();
-        // Esto aplica las migraciones pendientes y crea el esquema si no existe
-        if (context.Database.GetPendingMigrations().Any())
-        {
-            context.Database.Migrate();
-        }
-    }
-    catch (Exception ex)
-    {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "Ocurrió un error al aplicar las migraciones.");
-    }
+var services = scope.ServiceProvider; 
+try
+{
+var context = services.GetRequiredService<ClientesDbContext>(); 
+// This applies pending migrations and creates the schema if it does not exist
+if (context.Database.GetPendingMigrations().Any())
+{
+context.Database.Migrate(); 
+}
+}
+catch (Exception ex)
+{
+var logger = services.GetRequiredService<ILogger<Program>>(); 
+logger.LogError(ex, "An error occurred while applying migrations."); 
+}
 }
 ```
 
 
 
-# Comandos EF Core
-## Módulo "Clientes"
+# EF Core Commands
+## "Clients" Module
 
-- Crear la migración:
+- Create the migration:
 
 ```bash
 dotnet ef migrations add MigracionInicial -p .\Modules\Clientes\UgeFactura.Modules.Clientes.Infrastructure --output-dir Persistence\Migrations -s .\Host\UgeFactura.Api\ --context ClientesDbContext
 ```
 
-- Aplicar la migración:
+- Apply the migration:
 
 ```c#
 dotnet ef database update -p .\Modules\Clientes\UgeFactura.Modules.Clientes.Infrastructure\ -s .\Host\UgeFactura.API\ -c ClientesDbContext

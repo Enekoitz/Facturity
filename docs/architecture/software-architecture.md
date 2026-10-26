@@ -1,23 +1,23 @@
-# Arquitectura de software: **Clean Architecture pragmático y organización de features con Vertical Slice
+# Software Architecture: **Pragmatic Clean Architecture and feature organization using Vertical Slices**
 
-==PDTE.==
+==TBD==
 
-## ¿Por qué?
+## Why?
 
-==PDTE.==
+==TBD==
 
-### Diagramas de arquitectura
+### Architecture diagrams
 
-==PDTE.==
+==TBD==
 
-### Componentes principales
+### Main components
 
-| Módulo        | Descripción                         | Tecnología         | Responsabilidad                                               |
+| Module        | Description                         | Technology         | Responsibility                                               |
 | ------------- | ----------------------------------- | ------------------ | ------------------------------------------------------------- |
-==PDTE.==
+==TBD==
 
-## Notas
-Ninguna actualmente
+## Notes
+None at the moment
 
 ---
-_Última revisión: 2026-10-04
+_Last reviewed: 2026-10-04_

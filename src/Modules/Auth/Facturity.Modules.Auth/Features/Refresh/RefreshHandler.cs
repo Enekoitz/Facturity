@@ -27,14 +27,12 @@ internal class RefreshHandler(
 
         var hash = RefreshTokenIssuer.ToHashSha256(command.RefreshToken);
         
-        // Debe existir el refresh token en el sistema, de lo contrario la operación es inválida
         var stored = await dbContext.RefreshTokens.SingleOrDefaultAsync(t => t.TokenHash == hash, ct);
         if (stored is null)
             return IsInvalid;
 
         var utcNow = timeProvider.GetUtcNow();
 
-        // Token ya usado/revocado que reaparece: posible robo, así que se invalida toda la sesión
         if (stored.RevokedAt is not null)
         {
             await dbContext.RefreshTokens
@@ -50,7 +48,6 @@ internal class RefreshHandler(
         if (user is null || await userManager.IsLockedOutAsync(user))
             return IsInvalid;
 
-        // Revocación atómica: si llegan dos peticiones a la vez con el mismo token, solo una gana
         var revoked = await dbContext.RefreshTokens
             .Where(t => t.Id == stored.Id && t.RevokedAt == null)
             .ExecuteUpdateAsync(s => s.SetProperty(t => t.RevokedAt, utcNow), ct);

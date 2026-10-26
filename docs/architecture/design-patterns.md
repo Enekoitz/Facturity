@@ -1,9 +1,9 @@
 
-# Patrones de diseño
+# Design patterns
 
 
 ==PDTE.==
 
 
 ---
-_Última revisión: 2026-10-04
+Last reviewed: 2026-10-04

@@ -11,8 +11,8 @@ public class ListarClientesEndpoint : IClientesEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapGet("/", async (
-                [AsParameters] ListarClientesRequest request,
-                IQueryHandler<ListarClientesQuery, Result<IEnumerable<Cliente>>> handler,
+                [AsParameters] GetCustomersRequest request,
+                IQueryHandler<GetCustomersQuery, Result<IEnumerable<Facturity.Modules.Customer.Domain.Customer>>> handler,
                 HttpContext httpContext,
                 CancellationToken ct) =>
         {
@@ -27,7 +27,7 @@ public class ListarClientesEndpoint : IClientesEndpoint
         })
         .RequireAuthorization()
         .WithName("ListarClientes")
-        .WithSummary("Listar clientes")
-        .WithDescription("Devuelve un listado de clientes con datos básicos según los filtros proporcionados.");
+        .WithSummary("Listar customers")
+        .WithDescription("Devuelve un listado de customers con datos básicos según los filtros proporcionados.");
     }
 }

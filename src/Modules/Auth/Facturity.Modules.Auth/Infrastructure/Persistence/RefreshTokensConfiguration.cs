@@ -39,10 +39,10 @@ internal class RefreshTokensConfiguration : IEntityTypeConfiguration<RefreshToke
         builder.Property(r => r.RevokedAt)
             .HasColumnName("revoked_at");
 
-        // TODO: versiones posteriores. 
-        // Cuando montemos el BackgroundService de borrado o limpieza de tokens viejos/revocados/expirados
-        // tiene sentido crear un índice por los campos de filtrado: expires_at y revoked_at
-        
+        // TODO: future versions. 
+        // When we set up the BackgroundService for deleting or cleaning up old/revoked/expired tokens,
+        // it makes sense to create an index on the filtering fields: expires_at and revoked_at.
+
         // builder.HasIndex(r => new { r.ExpiresAt, r.RevokedAt });
 
         builder.Property(r => r.UserId)

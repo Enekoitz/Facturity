@@ -39,18 +39,18 @@ try
             new JsonStringEnumConverter());
         });
     
-    builder.Services.AddValidatorsFromAssemblyContaining<CrearClienteCommand>();
+    builder.Services.AddValidatorsFromAssemblyContaining<CreateCustomerCommand>(includeInternalTypes: true);
     builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
     builder.Services.AddProblemDetails();
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddOpenApi($"{nombreAppNameApi}-v1");
 
     var connectionString = builder.Configuration.GetConnectionString(nombreConnectionString)
-        ?? throw new InvalidOperationException($"CRITICAL: La cadena de conexión '{nombreConnectionString}' es nula.");
+        ?? throw new InvalidOperationException($"CRITICAL: The connection string '{nombreConnectionString}' is nula.");
 
     builder.Services.AddValidatorsFromAssemblies(
         [
-            typeof(CrearClienteCommand).Assembly
+            typeof(CreateCustomerCommand).Assembly
         ], 
         includeInternalTypes: true);
     
@@ -87,13 +87,11 @@ try
 }
 catch (Exception ex) when (ex is not HostAbortedException)
 {
-    Log.Fatal(ex, "La aplicación falló durante el arranque.");
+    Log.Fatal(ex, "The application failed during startup.");
 }
 finally
 {
     Log.CloseAndFlush();
 }
 
-// Used to be contemplated by integration testing WebApplicationFactory(Program) implementation when Program.cs is top-level
-// statement. It lives in the global namespace so we have to do this.
 public partial class Program { }

@@ -1,43 +1,43 @@
 # Testing
 
-Dada la importancia de mantener una arquitectura monolítica modular bien definida y con intenciones de extraer los módulos más demandantes a microservicios, se crea un proyecto de testing en .NET 10 por cada módulo desarrollado.
+Given the importance of maintaining a well-defined modular monolithic architecture—with the long-term goal of extracting high-demand modules into microservices—a dedicated .NET 10 testing project is created for each developed module.
 
-Permite la fácil migración de los módulos correspondientes, tanto el módulo operativo como el conjunto de pruebas adyacente, a microservicios.
+This facilitates the migration of individual modules—along with their corresponding test suites—into microservices.
 
-Además, se utilizarán como parte del pipeline CI/CD en los despliegues, garantizando que, en caso de aplicar modificaciones en el código, el sistema pasará el filtro de pruebas automáticas minimizando el riesgo de fallas en producción.
+Furthermore, these tests are integrated into the CI/CD deployment pipeline, ensuring that any code modifications pass an automated testing gate, thereby minimizing the risk of failures in the production environment.
 
-## Características
+## Features
 
 - Framework: **.NET 10**
-	
-- Biblioteca empleadas: 
-	- **xUnit**
-	- **FakeTimeProvider**
-	- **NetArchTest**
-	- **FluentAssertions**
 
-## Estructura
+- Libraries used:
+- **xUnit**
+- **FakeTimeProvider**
+- **NetArchTest**
+- **FluentAssertions**
 
-| Testing      | Nivel acoplamiento                                              |
+## Structure
+
+| Test Type    | Scope/Coupling Level                                            |
 | ------------ | --------------------------------------------------------------- |
-| Unitario     | Módulo: `Facturity.<módulo>.UnitTests`                          |
-| Integración  | Sistema completo (API + módulos): `Facturity.IntegrationTests`  |
-| Arquitectura | Sistema completo (API + módulos): `Facturity.ArchitectureTests` |
+| Unit         | Module-level: `Facturity.<module>.UnitTests`                    |
+| Integration  | Full system (API + modules): `Facturity.IntegrationTests`       |
+| Architecture | Full system (API + modules): `Facturity.ArchitectureTests`      |
 
-## Convenciones
+## Conventions
 
-- Nomenclatura: _MethodName_StateUnderTest_ExpectedBehavior_
+- Naming convention: _MethodName_StateUnderTest_ExpectedBehavior_
 
-## Proyecto adicional de arquitectura
+## Additional Architecture Testing Project
 
-Se desarrolla también un  proyecto con tests de arquitectura. Es fundamental para que en cada build se verifiquen reglas y convenciones definidas por el equipo desarrollador que deben ser garantizadas sin excepción:
+A dedicated project for architecture tests has also been developed. This is essential for verifying—during every build—that the rules and conventions established by the development team are strictly upheld:
 
-- **Referencias correctas** respetando la arquitectura definida, donde el Dominio es completamente independiente.
-- **Módulos aislados** entre ellos, sin referencias cruzadas.
-- **Módulos comunicados por contratos públicos** (eventos de integración, interfaces expuestas), nunca por tipos internos.
+- **Correct references:** Adherence to the defined architecture, ensuring the Domain layer remains entirely independent.
+- **Module isolation:** Modules must remain isolated from one another, with no cross-references.
+- **Communication via public contracts:** Modules must interact solely through public contracts (e.g., integration events, exposed interfaces) rather than internal types.
 
-## Notas
-Ninguna actualmente
+## Notes
+None at this time.
 
 ---
-_Última revisión: 2026-10-10
+_Last reviewed: 2026-10-10_

@@ -10,105 +10,105 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Facturity.Modules.Customer.Infrastructure.Persistence.Migrations
 {
-    [DbContext(typeof(ClientesDbContext))]
+    [DbContext(typeof(CustomerDbContext))]
     partial class ClientesDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasDefaultSchema("clientes")
+                .HasDefaultSchema("customer")
                 .HasAnnotation("ProductVersion", "10.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Facturity.Modules.Customer.Domain.TipoIdentificacionFiscal", b =>
+            modelBuilder.Entity("Facturity.Modules.Customer.Domain.TaxIdTypesCatalog", b =>
                 {
                     b.Property<short>("Id")
                         .HasColumnType("smallint")
                         .HasColumnName("id");
 
-                    b.Property<string>("Codigo")
+                    b.Property<string>("Code")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)")
-                        .HasColumnName("codigo");
+                        .HasColumnName("code");
 
-                    b.Property<string>("CodigoTicketBai")
-                        .IsRequired()
-                        .HasMaxLength(3)
-                        .HasColumnType("character varying(3)")
-                        .HasColumnName("codigo_ticketbai_bizkaia");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("nombre");
-
-                    b.Property<string>("NombreCompleto")
+                    b.Property<string>("FullName")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)")
-                        .HasColumnName("nombre_completo");
+                        .HasColumnName("full_name");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("TicketBaiCode")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)")
+                        .HasColumnName("code_ticket_bai_bizkaia");
 
                     b.HasKey("Id");
 
-                    b.ToTable("catalogo_tipos_identificacion_fiscal", "clientes");
+                    b.ToTable("tax_id_types_catalog", "customer");
 
                     b.HasData(
                         new
                         {
                             Id = (short)1,
-                            Codigo = "NIF",
-                            CodigoTicketBai = "01",
-                            Nombre = "NIF",
-                            NombreCompleto = "Número de identificación fiscal"
+                            Code = "SP_TAX_ID",
+                            FullName = "Spanish Tax ID",
+                            Name = "Spanish Tax ID",
+                            TicketBaiCode = "01"
                         },
                         new
                         {
                             Id = (short)2,
-                            Codigo = "NIF_IVA",
-                            CodigoTicketBai = "02",
-                            Nombre = "NIF-IVA",
-                            NombreCompleto = "NIF-IVA Comunitario"
+                            Code = "INT_COM_VAT_ID",
+                            FullName = "Intra-community VAT ID",
+                            Name = "Intra-community VAT ID",
+                            TicketBaiCode = "02"
                         },
                         new
                         {
                             Id = (short)3,
-                            Codigo = "PAS",
-                            CodigoTicketBai = "03",
-                            Nombre = "Pasaporte",
-                            NombreCompleto = "Pasaporte"
+                            Code = "PAS",
+                            FullName = "Passport",
+                            Name = "Passport",
+                            TicketBaiCode = "03"
                         },
                         new
                         {
                             Id = (short)4,
-                            Codigo = "DOC_PAI",
-                            CodigoTicketBai = "04",
-                            Nombre = "Documento oficial de identificación expedido por el país o territorio de residencia",
-                            NombreCompleto = "Documento oficial de identificación expedido por el país o territorio de residencia"
+                            Code = "ORIGIN_ID_DOC",
+                            FullName = "Official identification document issued by the country or territory of residence",
+                            Name = "Official identification document issued by the country or territory of residence",
+                            TicketBaiCode = "04"
                         },
                         new
                         {
                             Id = (short)5,
-                            Codigo = "CER_RES",
-                            CodigoTicketBai = "05",
-                            Nombre = "Certificado de residencia",
-                            NombreCompleto = "Certificado de residencia"
+                            Code = "RES_CERT",
+                            FullName = "Residence Certificate",
+                            Name = "Residence Certificate",
+                            TicketBaiCode = "05"
                         },
                         new
                         {
                             Id = (short)6,
-                            Codigo = "OTR_DOC_PRO",
-                            CodigoTicketBai = "06",
-                            Nombre = "Otro documento probatorio",
-                            NombreCompleto = "Otro documento probatorio"
+                            Code = "OTH_SUPP_DOC",
+                            FullName = "Other supporting document",
+                            Name = "Other supporting document",
+                            TicketBaiCode = "06"
                         });
                 });
 
-            modelBuilder.Entity("Facturity.Modules.Customer.Infrastructure.ClienteRecord", b =>
+            modelBuilder.Entity("Facturity.Modules.Customer.Infrastructure.CustomerRecord", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
@@ -117,6 +117,13 @@ namespace Facturity.Modules.Customer.Infrastructure.Persistence.Migrations
                     b.Property<DateTimeOffset?>("ActivatedAtUtc")
                         .HasColumnType("timestamptz")
                         .HasColumnName("activated_at_utc");
+
+                    b.Property<string>("AddressSearch")
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("text")
+                        .HasColumnName("address_search")
+                        .HasComputedColumnSql("COALESCE(address_street, '') || ', ' || COALESCE(address_city, '') || ', ' || COALESCE(address_postal_code, '') || ', ' || COALESCE(address_state, '') || ', ' || COALESCE(address_region, '') || ', ' || COALESCE(address_country, '')", true);
 
                     b.Property<string>("Alias")
                         .IsRequired()
@@ -132,143 +139,139 @@ namespace Facturity.Modules.Customer.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamptz")
                         .HasColumnName("deleted_at_utc");
 
-                    b.Property<string>("DenominacionFiscalBusqueda")
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("text")
-                        .HasColumnName("denominacion_fiscal_busqueda")
-                        .HasComputedColumnSql("CASE WHEN razon_social IS NOT NULL THEN razon_social ELSE TRIM(COALESCE(nombre, '') || ' ' || COALESCE(primer_apellido, '') || ' ' || COALESCE(segundo_apellido, '')) END", true);
+                    b.Property<string>("FirstSurname")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("first_surname");
 
-                    b.Property<string>("DireccionBusqueda")
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("text")
-                        .HasColumnName("direccion_busqueda")
-                        .HasComputedColumnSql("COALESCE(domicilio_direccion, '') || ', ' || COALESCE(domicilio_municipio, '') || ', ' || COALESCE(domicilio_codigo_postal, '') || ', ' || COALESCE(domicilio_provincia, '') || ', ' || COALESCE(domicilio_region, '') || ', ' || COALESCE(domicilio_pais, '')", true);
+                    b.Property<string>("LegalEntityName")
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)")
+                        .HasColumnName("legal_entity_name");
 
-                    b.Property<string>("IdentificacionFiscalCodigoPais")
+                    b.Property<string>("Name")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("first_name");
+
+                    b.Property<string>("SecondSurname")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("second_surname");
+
+                    b.Property<string>("TaxIdCountryCode")
                         .HasMaxLength(2)
                         .HasColumnType("character varying(2)")
-                        .HasColumnName("identificacion_fiscal_codigo_pais");
+                        .HasColumnName("tax_id_country_code");
 
-                    b.Property<short>("IdentificacionFiscalTipo")
+                    b.Property<short>("TaxIdType")
                         .HasColumnType("smallint")
-                        .HasColumnName("identificacion_fiscal_tipo");
+                        .HasColumnName("tax_id_type");
 
-                    b.Property<string>("IdentificacionFiscalValor")
+                    b.Property<string>("TaxIdValue")
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("character varying(30)")
-                        .HasColumnName("identificacion_fiscal_valor");
+                        .HasColumnName("tax_id_value");
 
-                    b.Property<string>("Nombre")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("nombre");
-
-                    b.Property<string>("PrimerApellido")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("primer_apellido");
-
-                    b.Property<string>("RazonSocial")
-                        .HasMaxLength(150)
-                        .HasColumnType("character varying(150)")
-                        .HasColumnName("razon_social");
-
-                    b.Property<string>("SegundoApellido")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("segundo_apellido");
+                    b.Property<string>("TaxNameSearch")
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("text")
+                        .HasColumnName("tax_name_search")
+                        .HasComputedColumnSql("CASE WHEN legal_entity_name IS NOT NULL THEN legal_entity_name ELSE TRIM(COALESCE(first_name, '') || ' ' || COALESCE(first_surname, '') || ' ' || COALESCE(second_surname, '')) END", true);
 
                     b.Property<DateTimeOffset>("created_at_utc")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamptz");
 
                     b.Property<string>("created_by")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
 
                     b.Property<DateTimeOffset?>("updated_at_utc")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamptz");
 
                     b.Property<string>("updated_by")
-                        .HasColumnType("text");
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdentificacionFiscalTipo");
+                    b.HasIndex("TaxIdType");
 
-                    b.ToTable("clientes", "clientes");
+                    b.ToTable("customers", "customer");
                 });
 
-            modelBuilder.Entity("Facturity.Modules.Customer.Infrastructure.ClienteRecord", b =>
+            modelBuilder.Entity("Facturity.Modules.Customer.Infrastructure.CustomerRecord", b =>
                 {
-                    b.HasOne("Facturity.Modules.Customer.Domain.TipoIdentificacionFiscal", null)
+                    b.HasOne("Facturity.Modules.Customer.Domain.TaxIdTypesCatalog", null)
                         .WithMany()
-                        .HasForeignKey("IdentificacionFiscalTipo")
+                        .HasForeignKey("TaxIdType")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.OwnsOne("Facturity.Modules.Customer.Domain.Domicilio", "Domicilio", b1 =>
+                    b.OwnsOne("Facturity.Modules.Customer.Domain.Address", "Address", b1 =>
                         {
-                            b1.Property<Guid>("ClienteRecordId")
+                            b1.Property<Guid>("CustomerRecordId")
                                 .HasColumnType("uuid");
 
-                            b1.Property<string>("Direccion")
-                                .IsRequired()
-                                .HasMaxLength(200)
-                                .HasColumnType("character varying(200)")
-                                .HasColumnName("domicilio_direccion");
-
-                            b1.Property<string>("Municipio")
+                            b1.Property<string>("City")
                                 .HasMaxLength(100)
                                 .HasColumnType("character varying(100)")
-                                .HasColumnName("domicilio_municipio");
+                                .HasColumnName("address_city");
 
-                            b1.Property<string>("Pais")
+                            b1.Property<string>("Country")
                                 .HasMaxLength(60)
                                 .HasColumnType("character varying(60)")
-                                .HasColumnName("domicilio_pais");
-
-                            b1.Property<string>("Provincia")
-                                .HasMaxLength(50)
-                                .HasColumnType("character varying(50)")
-                                .HasColumnName("domicilio_provincia");
+                                .HasColumnName("address_country");
 
                             b1.Property<string>("Region")
                                 .HasMaxLength(50)
                                 .HasColumnType("character varying(50)")
-                                .HasColumnName("domicilio_region");
+                                .HasColumnName("address_region");
 
-                            b1.HasKey("ClienteRecordId");
+                            b1.Property<string>("State")
+                                .HasMaxLength(50)
+                                .HasColumnType("character varying(50)")
+                                .HasColumnName("address_state");
 
-                            b1.ToTable("clientes", "clientes");
+                            b1.Property<string>("Street")
+                                .IsRequired()
+                                .HasMaxLength(200)
+                                .HasColumnType("character varying(200)")
+                                .HasColumnName("address_street");
+
+                            b1.HasKey("CustomerRecordId");
+
+                            b1.ToTable("customers", "customer");
 
                             b1.WithOwner()
-                                .HasForeignKey("ClienteRecordId");
+                                .HasForeignKey("CustomerRecordId");
 
-                            b1.OwnsOne("Facturity.Modules.Customer.Domain.CodigoPostal", "CodigoPostal", b2 =>
+                            b1.OwnsOne("Facturity.Modules.Customer.Domain.PostalCode", "PostalCode", b2 =>
                                 {
-                                    b2.Property<Guid>("DomicilioClienteRecordId")
+                                    b2.Property<Guid>("AddressCustomerRecordId")
                                         .HasColumnType("uuid");
 
                                     b2.Property<string>("Valor")
                                         .IsRequired()
                                         .HasMaxLength(5)
                                         .HasColumnType("character varying(5)")
-                                        .HasColumnName("domicilio_codigo_postal");
+                                        .HasColumnName("address_postal_code");
 
-                                    b2.HasKey("DomicilioClienteRecordId");
+                                    b2.HasKey("AddressCustomerRecordId");
 
-                                    b2.ToTable("clientes", "clientes");
+                                    b2.ToTable("customers", "customer");
 
                                     b2.WithOwner()
-                                        .HasForeignKey("DomicilioClienteRecordId");
+                                        .HasForeignKey("AddressCustomerRecordId");
                                 });
 
-                            b1.Navigation("CodigoPostal");
+                            b1.Navigation("PostalCode");
                         });
 
-                    b.Navigation("Domicilio");
+                    b.Navigation("Address");
                 });
 #pragma warning restore 612, 618
         }

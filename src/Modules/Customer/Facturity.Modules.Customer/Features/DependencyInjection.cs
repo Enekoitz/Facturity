@@ -7,15 +7,15 @@ namespace Facturity.Modules.Customer.Features;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddClientesFeatures(this IServiceCollection services)
+    public static IServiceCollection AddCustomerFeatures(this IServiceCollection services)
     {
-        services.AddScoped<ICommandHandler<CrearClienteCommand, Result<Guid>>, CrearClienteHandler>();
-        services.AddScoped<ICommandHandler<ActualizarClienteCommand, Result>, ActualizarClienteHandler>();
-        services.AddScoped<IQueryHandler<ListarClientesQuery, Result<IEnumerable<Cliente>>>, ListarClientesHandler>();
-        services.AddScoped<ICommandHandler<EliminarClienteCommand, Result>, EliminarClienteHandler>();
-        services.AddScoped<IQueryHandler<ObtenerClientePorIdQuery, Result<ClienteDto>>, ObtenerClientePorIdHandler>();
-        services.AddScoped<ICommandHandler<DesactivarClienteCommand, Result>, DesactivarClienteHandler>();
-        services.AddScoped<ICommandHandler<ActivarClienteCommand, Result>, ActivarClienteHandler>();
+        services.AddScoped<ICommandHandler<CreateCustomerCommand, Result<Guid>>, CreateCustomerHandler>();
+        services.AddScoped<ICommandHandler<UpdateCustomerCommand, Result>, UpdateCustomerHandler>();
+        services.AddScoped<IQueryHandler<GetCustomersQuery, Result<IEnumerable<Domain.Customer>>>, GetCustomersHandler>();
+        services.AddScoped<ICommandHandler<DeleteCustomerCommand, Result>, DeleteCustomerHandler>();
+        services.AddScoped<IQueryHandler<GetByIdCustomerQuery, Result<GetByIdCustomerDto>>, GetByIdCustomerHandler>();
+        services.AddScoped<ICommandHandler<DeactivateCustomerCommand, Result>, DeactivateCustomerHandler>();
+        services.AddScoped<ICommandHandler<ActivateCustomerCommand, Result>, ActivateCustomerHandler>();
         return services;
     }
 }

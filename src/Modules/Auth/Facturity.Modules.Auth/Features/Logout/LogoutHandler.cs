@@ -21,7 +21,6 @@ internal sealed class LogoutHandler(
 
         var hash = RefreshTokenIssuer.ToHashSha256(command.RefreshToken);
         
-        // Debe existir el refresh token en el sistema
         var stored = await dbContext.RefreshTokens.SingleOrDefaultAsync(t => t.TokenHash == hash, ct);
         if (stored is null)
             return Result.Ok();

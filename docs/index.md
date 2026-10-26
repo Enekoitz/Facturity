@@ -1,22 +1,22 @@
-# Documentación de Facturity
+# Facturity Documentation
 
-Este es el mapa de la documentación. Cada documento responde a una pregunta.
+This is the documentation map. Each document addresses a specific question.
 
-| Documento                                      | Responde a                       | Estado         |
+| Document                                       | Addresses                        | Status         |
 | ---------------------------------------------- | -------------------------------- | -------------- |
-| [Visión](vision.md)                            | ¿Por qué existe el proyecto?     | 🟢 Revisado    |
-| [Alcance](scope.md)                            | ¿Hasta dónde llegamos?           | 🟢 Revisado    |
-| [Stakeholders](stakeholders.md)                | ¿Quién tiene interés?            | 🟢 Revisado    |
-| [Glosario](glossary.md)                        | ¿Qué significa cada término?     | 🟡 Borrador    |
-| [Requisitos](requirements.md)                  | ¿Qué debe cumplir el sistema?    | 🟢 Revisado    |
-| [Historias de usuario](user-stories/README.md) | ¿Qué necesita el usuario?        | 🔴 Sin empezar |
-| [Modelo de dominio](domain-model/README.md)    | ¿Sobre qué conceptos trabajamos? | 🟡 Borrador    |
-| [Arquitectura](architecture.md)                | ¿Cómo está construido?           | 🟢 Revisado    |
-| [Decisiones (ADRs)](decisions/README.md)       | ¿Por qué es así?                 | 🟢 Revisado    |
+| [Vision](vision.md)                            | Why does this project exist? | 🟢 Reviewed    |
+| [Scope](scope.md)                              | What is the project's extent? | 🟢 Reviewed    |
+| [Stakeholders](stakeholders.md)                | Who has an interest? | 🟢 Reviewed    |
+| [Glossary](glossary.md)                        | What does each term mean? | 🟡 Draft       |
+| [Requirements](requirements.md)                | What must the system fulfill? | 🟢 Reviewed    |
+| [User Stories](user-stories/README.md)         | What does the user need? | 🔴 Not started |
+| [Domain Model](domain-model/README.md)         | What concepts are we working with? | 🟡 Draft       |
+| [Architecture](architecture.md)                | How is it built? | 🟢 Reviewed    |
+| [Decisions (ADRs)](decisions/README.md)        | Why is it designed this way? | 🟢 Reviewed    |
 
-Leyenda: 🔴 Sin empezar · 🟡 Borrador · 🟢 Revisado
+Legend: 🔴 Not started · 🟡 Draft · 🟢 Reviewed
 
-## Dónde NO está la información
+## Where information is NOT located
 
-- **Backlog, tareas y sprints:** en el gestor de tareas (enlace: _pendiente_).
-- **Notas en bruto:** en [research](research/README.md), sin garantía de actualización.
+- **Backlog, tasks, and sprints:** in the task management tool (link: _pending_).
+- **Raw notes:** in [research](research/README.md) — these are not guaranteed to be up to date.

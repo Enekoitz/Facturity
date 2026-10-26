@@ -1,28 +1,28 @@
-# Decisiones de arquitectura (ADRs)
+# Architecture Decision Records (ADRs)
 
-> **Propósito:** registrar el *porqué* de las decisiones importantes. Un ADR por decisión, numerado.
+> **Purpose:** To document the *rationale* behind significant decisions. One ADR per decision, numbered.
 >
-> **Regla:** los ADRs son **inmutables**. Si una decisión cambia, se crea un ADR nuevo que sustituye al anterior (y el viejo pasa a "Sustituido").
+> **Rule:** ADRs are **immutable**. If a decision changes, a new ADR is created to replace the previous one (and the old one is marked as "Superseded").
 
-## Cuándo crear uno
+## When to create one
 
-- Cambios de alcance.
-	
-- Elección de tecnología, base de datos, patrón o proveedor.
-	
-- Cualquier decisión difícil de revertir o que alguien cuestionará en seis meses.
+- Changes in scope.
 
-## Cómo
+- Selection of technology, database, pattern, or provider.
 
-1. Copia [`adr-000-template-adr.md`](adr-000-template-adr.md).
-2. Numera y nombra: `adr-014-implementacion-algoritmo-firma-factura.md`.
-3. Añádelo al índice de abajo.
+- Any decision that is difficult to reverse or likely to be questioned in six months' time.
 
-## Índice
+## How to proceed
 
-| Nº                                                                                | Título                                                                             | Estado   | Fecha      |
+1. Copy [`adr-000-template-adr.md`](adr-000-template-adr.md).
+2. Assign a number and a name: `adr-014-implementation-of-invoice-signature-algorithm.md`.
+3. Add it to the index below.
+
+## Index
+
+| No.                                                                               | Title                                                                              | Status   | Date       |
 | --------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | -------- | ---------- |
-| [001](decisions/adr-001-modular-monolith-as-system-architecture)                  | Adopción de Arquitectura Monolítica Modular                                        | Aceptado | 2026-01-26 |
-| [002](decisions/adr-002-clean-and-vertical-slice-as-software-hybrid-architecture) | Adopción de Arquitectura de Software Híbrida (Clean Architecture + Vertical Slice) | Aceptado | 2026-02-14 |
-| [003](decisions/adr-003-identity-jwt-strategy)                                    | Estrategia de gestión de identidades, autenticación y autorización                 | Aceptado | 2026-10-03 |
-| [004](decisions/adr-004-refresh-token-rotation)                                   | Estrategia de rotación de refresh token                                            | Aceptado | 2026-10-03 |
+| [001](decisions/adr-001-modular-monolith-as-system-architecture)                  | Adoption of a Modular Monolithic Architecture                                      | Accepted | 2026-01-26 |
+| [002](decisions/adr-002-clean-and-vertical-slice-as-software-hybrid-architecture) | Adoption of a Hybrid Software Architecture (Clean Architecture + Vertical Slice) | Accepted | 2026-02-14 |
+| [003](decisions/adr-003-identity-jwt-strategy)                                    | Identity, Authentication, and Authorization Strategy                               | Accepted | 2026-10-03 |
+| [004](decisions/adr-004-refresh-token-rotation)                                   | Refresh token rotation strategy                                            | Accepted | 2026-10-03 |
