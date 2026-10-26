@@ -11,12 +11,7 @@ public class CustomerDbContext(DbContextOptions<CustomerDbContext> options) : Db
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema("customer");
-        
-        modelBuilder.ApplyConfiguration(new TaxIdTypeConfiguration());
-        modelBuilder.ApplyConfiguration(new CustomerConfiguration());
-        
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(CustomerDbContext).Assembly);
-        
         base.OnModelCreating(modelBuilder);
     }
 }
