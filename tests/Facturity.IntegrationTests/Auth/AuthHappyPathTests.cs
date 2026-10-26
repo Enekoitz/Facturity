@@ -30,7 +30,7 @@ public class AuthHappyPathTests(AuthApiFactory factory) : IClassFixture<AuthApiF
     {
         var email = $"{Guid.NewGuid():N}@test.eus";
         const string password = "P@assW0rd_2000_factu_riTY-134(%)";
-        const string userName = "fake_user_23&__";
+        const string userName = "fakeUser1234";
 
         // Registration: The user is successfully registered in the system.
         var credRegister = new RegisterCommand(userName, email, password);
