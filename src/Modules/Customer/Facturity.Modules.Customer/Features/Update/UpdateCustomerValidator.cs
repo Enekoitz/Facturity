@@ -5,7 +5,7 @@ namespace Facturity.Modules.Customer.Features;
 
 internal sealed class UpdateCustomerValidator: AbstractValidator<UpdateCustomerCommand>
 {
-    internal UpdateCustomerValidator()
+    public UpdateCustomerValidator()
     {
         RuleFor(c => c.Id)
             .Must(id => id != Guid.Empty)

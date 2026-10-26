@@ -5,7 +5,7 @@ namespace Facturity.Modules.Customer.Features;
 
 internal sealed class CreateCustomerValidator: AbstractValidator<CreateCustomerCommand>
 {
-    internal CreateCustomerValidator()
+    public CreateCustomerValidator()
     {
         RuleFor(c => c.Alias)
             .NotEmpty()
