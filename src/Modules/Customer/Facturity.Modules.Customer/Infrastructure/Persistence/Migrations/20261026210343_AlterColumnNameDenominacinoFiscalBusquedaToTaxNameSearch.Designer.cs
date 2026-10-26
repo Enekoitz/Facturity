@@ -3,6 +3,7 @@ using System;
 using Facturity.Modules.Customer.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Facturity.Modules.Customer.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(CustomerDbContext))]
-    partial class ClientesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261026210343_AlterColumnNameDenominacinoFiscalBusquedaToTaxNameSearch")]
+    partial class AlterColumnNameDenominacinoFiscalBusquedaToTaxNameSearch
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -178,7 +181,7 @@ namespace Facturity.Modules.Customer.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("text")
-                        .HasColumnName("denominacion_fiscal_busqueda")
+                        .HasColumnName("tax_name_search")
                         .HasComputedColumnSql("CASE WHEN legal_entity_name IS NOT NULL THEN legal_entity_name ELSE TRIM(COALESCE(first_name, '') || ' ' || COALESCE(first_surname, '') || ' ' || COALESCE(second_surname, '')) END", true);
 
                     b.Property<DateTimeOffset>("created_at_utc")

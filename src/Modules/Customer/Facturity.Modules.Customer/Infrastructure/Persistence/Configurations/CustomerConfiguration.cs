@@ -99,7 +99,7 @@ public class CustomerConfiguration : IEntityTypeConfiguration<CustomerRecord>
             .ValueGeneratedOnAddOrUpdate();
         
         builder.Property(c => c.TaxNameSearch)
-            .HasColumnName("denominacion_fiscal_busqueda")
+            .HasColumnName("tax_name_search")
             .HasComputedColumnSql(
                 $"CASE WHEN {colNameRazonSocial} IS NOT NULL THEN {colNameRazonSocial} "
                 + $"ELSE TRIM({DbUtilities.BuildPostgresConcatExpression(" ", 
