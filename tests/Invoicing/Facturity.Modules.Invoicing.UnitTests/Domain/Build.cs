@@ -28,13 +28,26 @@ internal static class Build
     
     internal static Result<InvoiceSeries> CreateSeries(
         string name = "DFB_MLC",
-        string? description = null) =>
-        InvoiceSeries.Create(name, description);
+        string? description = null)
+    { 
+        var tenantId = Tenant();
+        var id = Guid.CreateVersion7();
+        return InvoiceSeries.Create(id, tenantId, name, description);
+    }
+    
+    internal static Result<InvoiceSeries> CreateSeries(
+        TenantId tenantId,
+        string name = "DFB_MLC",
+        string? description = null)
+    { 
+        var id = Guid.CreateVersion7();
+        return InvoiceSeries.Create(id, tenantId, name, description);
+    }
     
     internal static Result<InvoiceHeader> Header(
-        Guid seriesId,
+        InvoiceSeries series,
         bool isSimplified) =>
-        InvoiceHeader.Create(seriesId, isSimplified);
+        InvoiceHeader.Create(series, isSimplified);
     
     internal static readonly DateTimeOffset Now = new(2026, 10, 18, 12, 0, 0, TimeSpan.Zero);
 
@@ -51,7 +64,7 @@ internal static class Build
                     new DateTimeOffset(2026, 10, 18, 12, 0, 0, TimeSpan.Zero)).Value;
 
     internal static Invoice Draft(bool simplified = false) =>
-        DraftWith(simplified ? null : Guid.NewGuid(), Header(Guid.NewGuid(),simplified).Value, Data());
+        DraftWith(simplified ? null : Guid.NewGuid(), Header(CreateSeries(Tenant()).Value, simplified).Value, Data());
 
     internal static Invoice DraftWith(Guid? customerId, InvoiceHeader? header, InvoiceData? data)
     {
@@ -69,5 +82,5 @@ internal static class Build
     }
 
     internal static TenantId Tenant()
-        => TenantId.Create(Guid.NewGuid()).Value;
+        => TenantId.Create(Guid.CreateVersion7()).Value;
 }

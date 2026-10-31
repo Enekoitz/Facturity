@@ -8,17 +8,19 @@ public class CreateDraftTests
     [Fact]
     public void CreateDraft_WithValidData_ReturnsDraftInvoice()
     {
-        var tenant = Build.Tenant();
         var customerId = Guid.NewGuid();
-        var header = Build.Header(Guid.NewGuid(), false).Value;
+        var tenantId = Build.Tenant();
+        var series = Build.CreateSeries(tenantId).Value;
+        var header = Build.Header(series, false).Value;
         var data = Build.Data(lines: 2);
 
-        var result = Invoice.CreateDraft(tenant, customerId, header, data);
+        var result = Invoice.CreateDraft(tenantId, customerId, header, data);
 
-        Assert.True(result.IsSuccess);
         var invoice = result.Value;
+        
+        Assert.True(result.IsSuccess);
         Assert.NotEqual(Guid.Empty, invoice.Id);
-        Assert.Equal(tenant, invoice.TenantId);
+        Assert.Equal(tenantId, invoice.TenantId);
         Assert.Equal(customerId, invoice.CustomerId);
         Assert.Same(header, invoice.Header);
         Assert.Same(data, invoice.Data);
@@ -43,8 +45,9 @@ public class CreateDraftTests
     public void CreateDraft_AllowedCustomerCombinations_Succeed(bool simplified, bool withCustomer)
     {
         Guid? customerId = withCustomer ? Guid.NewGuid() : null;
-
-        var result = Invoice.CreateDraft(Build.Tenant(), customerId, Build.Header(Guid.NewGuid(), simplified).Value, Build.Data());
+        var tenantId = Build.Tenant();
+        var series = Build.CreateSeries(tenantId).Value;
+        var result = Invoice.CreateDraft(tenantId, customerId, Build.Header(series, simplified).Value, Build.Data());
 
         Assert.True(result.IsSuccess);
     }
@@ -52,7 +55,9 @@ public class CreateDraftTests
     [Fact]
     public void CreateDraft_SimplifiedWithCustomer_Fails()
     {
-        var result = Invoice.CreateDraft(Build.Tenant(), Guid.NewGuid(), Build.Header(Guid.NewGuid(), true).Value, Build.Data());
+        var tenantId = Build.Tenant();
+        var series = Build.CreateSeries(tenantId).Value;
+        var result = Invoice.CreateDraft(tenantId, Guid.NewGuid(), Build.Header(series, true).Value, Build.Data());
 
         Assertions.FailsWith(result, InvoiceError.CustomerIdAtSimplifiedInvoice);
     }
@@ -111,7 +116,8 @@ public class UpdateDraftTests
     {
         var invoice = Build.Draft();
         var newCustomer = Guid.NewGuid();
-        var newHeader =Build.Header(Guid.NewGuid(), false).Value;
+        var series = Build.CreateSeries().Value;
+        var newHeader = Build.Header(series, false).Value;
         var newData = Build.Data(lines: 3);
 
         var result = invoice.UpdateDraft(newCustomer, newHeader, newData);
@@ -127,8 +133,8 @@ public class UpdateDraftTests
     public void UpdateDraft_ToSimplifiedWithoutCustomer_Succeeds()
     {
         var invoice = Build.Draft();
-
-        var result = invoice.UpdateDraft(null, Build.Header(Guid.NewGuid(), true).Value, Build.Data());
+        var series = Build.CreateSeries().Value;
+        var result = invoice.UpdateDraft(null, Build.Header(series, true).Value, Build.Data());
 
         Assert.True(result.IsSuccess);
         Assert.Null(invoice.CustomerId);
@@ -142,8 +148,9 @@ public class UpdateDraftTests
         var customerBefore = invoice.CustomerId;
         var headerBefore = invoice.Header;
         var dataBefore = invoice.Data;
+        var series = Build.CreateSeries().Value;
 
-        var result = invoice.UpdateDraft(Guid.NewGuid(), Build.Header(Guid.NewGuid(), true).Value, Build.Data(lines: 5));
+        var result = invoice.UpdateDraft(Guid.NewGuid(), Build.Header(series, true).Value, Build.Data(lines: 5));
 
         Assertions.FailsWith(result, InvoiceError.NotInDraft);
         Assert.Equal(customerBefore, invoice.CustomerId);
@@ -159,10 +166,11 @@ public class UpdateDraftTests
         var customerBefore = invoice.CustomerId;
         var headerBefore = invoice.Header;
         var dataBefore = invoice.Data;
+        var series = Build.CreateSeries().Value;
 
         var result = invoice.UpdateDraft(
             customerId: Guid.NewGuid(), 
-            header: Build.Header(Guid.NewGuid(), true).Value,
+            header: Build.Header(series, true).Value,
             data: Build.Data(lines: 5));
 
         Assertions.FailsWith(result, InvoiceError.CustomerIdAtSimplifiedInvoice);
@@ -273,7 +281,8 @@ public class IssueTests
     [Fact]
     public void Issue_WithoutData_Fails()
     {
-        var invoice = Build.DraftWith(Guid.NewGuid(), Build.Header(Guid.NewGuid(), false).Value, null);
+        var series = Build.CreateSeries().Value;
+        var invoice = Build.DraftWith(Guid.NewGuid(), Build.Header(series, false).Value, null);
 
         var result = invoice.Issue(Build.Now, Build.Now);
 
@@ -335,8 +344,9 @@ public class IssueTests
     public void UpdateDraft_AfterIssue_Fails()
     {
         var invoice = Build.Issued();
+        var series = Build.CreateSeries().Value;
 
-        var result = invoice.UpdateDraft(Guid.NewGuid(), Build.Header(Guid.NewGuid(), true).Value, Build.Data());
+        var result = invoice.UpdateDraft(Guid.NewGuid(), Build.Header(series, true).Value, Build.Data());
 
         Assertions.FailsWith(result, InvoiceError.NotInDraft);
     }
@@ -347,7 +357,8 @@ public class TaxBreakdownTests
     [Fact]
     public void TaxBreakdown_WithoutData_IsEmpty()
     {
-        var invoice = Build.DraftWith(Guid.NewGuid(), Build.Header(Guid.NewGuid(), false).Value, null);
+        var series = Build.CreateSeries().Value;
+        var invoice = Build.DraftWith(Guid.NewGuid(), Build.Header(series, false).Value, null);
 
         Assert.Empty(invoice.TaxBreakdown);
     }
@@ -356,7 +367,8 @@ public class TaxBreakdownTests
     public void TaxBreakdown_WithLines_MatchesBreakdownLineCreation()
     {
         var data = Build.Data(lines: 3);
-        var invoice = Build.DraftWith(Guid.NewGuid(), Build.Header(Guid.NewGuid(), false).Value, data);
+        var series = Build.CreateSeries().Value;
+        var invoice = Build.DraftWith(Guid.NewGuid(), Build.Header(series, false).Value, data);
 
         var expected = BreakdownLine.CreateList(data.Lines);
 

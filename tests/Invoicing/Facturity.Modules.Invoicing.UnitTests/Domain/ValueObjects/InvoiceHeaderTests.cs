@@ -9,26 +9,26 @@ public class InvoiceHeaderTests
     [InlineData(false)]
     public void Create_WithValidData_ShouldSuccessReturningInvoiceHeader(bool isSimplified)
     {
-        var seriesId = Guid.NewGuid(); 
+        var series = Build.CreateSeries().Value;
         
-        var result = Build.Header(seriesId, isSimplified);
+        var result = Build.Header(series, isSimplified);
 
         Assert.True(result.IsSuccess);
-        Assert.Equal(seriesId, result.Value.SeriesId);
+        Assert.Equal(series, result.Value.Series);
         Assert.Equal(isSimplified, result.Value.IsSimplified);
     }
 
     [Fact]
-    public void Create_WithoutSeriesId_ShouldFail()
+    public void Create_WithoutSeries_ShouldFail()
     {
-        var seriesId = Guid.Empty;
+        InvoiceSeries series = null; 
         const bool isSimplified = false;
         DateTimeOffset? issuedAtUtc = null;
         
-        var result = Build.Header(seriesId, isSimplified);
+        var result = Build.Header(series, isSimplified);
 
         Assert.True(result.IsFailure);
-        Assert.Contains(InvoiceHeaderError.SeriesIdEmpty, result.Errors);
+        Assert.Contains(InvoiceHeaderError.SeriesRequired, result.Errors);
     }
 
     [Fact]
@@ -36,10 +36,11 @@ public class InvoiceHeaderTests
     {
         var seriesId = Guid.NewGuid();
         const bool isSimplified = false;
+        var series = Build.CreateSeries().Value;
         
         var issuedAtUtc = new DateTimeOffset(2026, 12, 29, 09, 00,00, TimeSpan.Zero);
         
-        var header = Build.Header(seriesId, isSimplified).Value;
+        var header = Build.Header(series, isSimplified).Value;
         
         header = header.WithIssuance(issuedAtUtc);
 

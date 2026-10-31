@@ -11,17 +11,22 @@ internal sealed class InvoiceSeries : Entity<Guid>, ITenantEntity
     internal string Name { get; private init; }
     internal string? Description { get; private init; } 
 
-    private InvoiceSeries(string name, string? description)
+    private InvoiceSeries(Guid id, TenantId tenantId, string name, string? description)
+        : base(id)
     {
+        TenantId = tenantId;
         Name = name;
         Description = description;
     }
     
     private InvoiceSeries(){ }
 
-    internal static Result<InvoiceSeries> Create(string name, string? description)
+    internal static Result<InvoiceSeries> Create(Guid id, TenantId tenantId,string name, string? description)
     { 
         List<Error> errors = [];
+        
+        if (id == Guid.Empty)
+            errors.Add(InvoiceSeriesErrors.IdInvalid);
 
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -41,6 +46,6 @@ internal sealed class InvoiceSeries : Entity<Guid>, ITenantEntity
 
         return errors.Count > 0
             ? Result.Fail<InvoiceSeries>(errors)
-            : Result.Ok(new InvoiceSeries(name, description));
+            : Result.Ok(new InvoiceSeries(id, tenantId, name, description));
     }
 }

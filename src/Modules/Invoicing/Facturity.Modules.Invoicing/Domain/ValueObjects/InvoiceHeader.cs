@@ -4,25 +4,25 @@ namespace Facturity.Modules.Invoicing.Domain;
 
 internal sealed record InvoiceHeader
 {
-    internal Guid SeriesId { get; private init; }
+    internal InvoiceSeries Series { get; private init; }
     internal bool IsSimplified { get; private init; }
     internal DateTimeOffset? IssuedAtUtc { get; private init; }
     internal uint? Number { get; private init; } //Only loaded by ORM materialization
 
-    private InvoiceHeader(Guid seriesId, bool isSimplified)
+    private InvoiceHeader(InvoiceSeries series, bool isSimplified)
     {
-        SeriesId = seriesId;
+        Series = series;
         IsSimplified = isSimplified;
     }
 
     private InvoiceHeader() { } //ORM Materialization
 
-    internal static Result<InvoiceHeader> Create(Guid seriesId, bool isSimplified)
+    internal static Result<InvoiceHeader> Create(InvoiceSeries series, bool isSimplified)
     {
-        if (seriesId == Guid.Empty)
-            return Result.Fail<InvoiceHeader>(InvoiceHeaderError.SeriesIdEmpty);
-
-        return Result.Ok(new InvoiceHeader(seriesId, isSimplified));
+        if (series is null)
+            return Result.Fail<InvoiceHeader>(InvoiceHeaderError.SeriesRequired);
+            
+        return Result.Ok(new InvoiceHeader(series, isSimplified));
     }
 
     internal InvoiceHeader WithIssuance(DateTimeOffset issuedAt) =>
