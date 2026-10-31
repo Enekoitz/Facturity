@@ -1,12 +1,13 @@
 ﻿using Facturity.Modules.SharedKernel.Domain;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Query.ExpressionTranslators.Internal;
 
 namespace Facturity.Modules.Invoicing.Domain;
 
-internal sealed class InvoiceSeries : Entity
+internal sealed class InvoiceSeries : Entity<Guid>, ITenantEntity
 {
     internal const int NameMaxLength = 20;
     internal const int DescriptionMaxLength = 250;
+    
+    public TenantId TenantId{get; private set; }
     internal string Name { get; private init; }
     internal string? Description { get; private init; } 
 

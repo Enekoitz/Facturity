@@ -1,13 +1,13 @@
 ﻿namespace Facturity.Modules.SharedKernel.Domain;
 
-public abstract class Entity
+public abstract class Entity<TId>
 {
-    public Guid Id { get; private set; }
+    public TId Id { get; private set; }
 
     private readonly List<IDomainEvent> _domainEvents = [];
     public IReadOnlyList<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
 
-    protected Entity(Guid id)
+    protected Entity(TId id)
     {
         Id = id;
     }
@@ -22,17 +22,24 @@ public abstract class Entity
 
     public override bool Equals(object? obj)
     {
-        if (obj is null || obj.GetType() != GetType())
+        return Equals(obj as Entity<TId>);
+    }
+    public bool Equals(Entity<TId>? other)
+    {
+        if (other is null)
             return false;
 
-        return ((Entity)obj).Id == Id;
+        if (other.GetType() != GetType())
+            return false;
+
+        return EqualityComparer<TId>.Default.Equals(Id, other.Id);
     }
 
     public override int GetHashCode() => Id.GetHashCode();
 
-    public static bool operator ==(Entity? left, Entity? right) =>
+    public static bool operator ==(Entity<TId>? left, Entity<TId>? right) =>
         Equals(left, right);
 
-    public static bool operator !=(Entity? left, Entity? right) =>
+    public static bool operator !=(Entity<TId>? left, Entity<TId>? right) =>
         !Equals(left, right);
 }
