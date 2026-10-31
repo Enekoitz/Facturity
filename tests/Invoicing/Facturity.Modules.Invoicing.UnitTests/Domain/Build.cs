@@ -15,7 +15,7 @@ internal static class Build
         decimal units = 1m,
         decimal unitPrice = 10m,
         decimal taxRate = 21m) =>
-        InvoiceLine.Create(description!, units, GetUnitPrice(unitPrice), GetTaxRate(taxRate));
+        InvoiceLine.Create(Guid.CreateVersion7(), description!, units, GetUnitPrice(unitPrice), GetTaxRate(taxRate));
     
     internal static List<InvoiceLine> GetInvoiceLinesSampleList() =>
     [
@@ -55,6 +55,7 @@ internal static class Build
         InvoiceData.Create("Data description",
                     Enumerable.Range(1, lines)
                                     .Select(i => InvoiceLine.Create(
+                                        Guid.CreateVersion7(),
                                         $"Line {i}", 
                                         units: i, 
                                         unitPrice: GetUnitPrice(10m * i), 
@@ -68,7 +69,8 @@ internal static class Build
 
     internal static Invoice DraftWith(Guid? customerId, InvoiceHeader? header, InvoiceData? data)
     {
-        var result = Invoice.CreateDraft(Tenant(), customerId, header, data);
+        var tenantId = Tenant();
+        var result = Invoice.CreateDraft(tenantId, customerId, header, data);
         Assert.True(result.IsSuccess);
         return result.Value;
     }

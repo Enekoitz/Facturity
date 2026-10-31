@@ -4,7 +4,11 @@ namespace Facturity.Modules.Invoicing.Domain;
 
 internal record InvoiceLine
 {
-    internal string Description { get; private init; }
+    internal const int DescriptionMaxLength = 100;
+    internal const int UnitsMaxDecimalPlaces = 2;
+    
+    internal Guid InvoiceId { get; private init; }
+    internal string Description { get; private init; }  
     internal decimal Units { get; private init; }
     internal UnitPrice UnitPrice { get; private init; }
     internal Money TaxBase{ get; private init; }
@@ -12,9 +16,10 @@ internal record InvoiceLine
     internal Money TaxAmount { get; private init; }
     internal Money TotalAmount { get; private init; }
 
-    private InvoiceLine(string description, decimal units, UnitPrice unitPrice, 
+    private InvoiceLine(Guid invoiceId, string description, decimal units, UnitPrice unitPrice, 
                         Money taxBase, TaxRate taxRate, Money taxAmount, Money totalAmount)
     {
+        InvoiceId = invoiceId;
         Description = description;
         Units = units;
         UnitPrice = unitPrice;
@@ -26,22 +31,26 @@ internal record InvoiceLine
     
     private InvoiceLine(){ }
 
-    internal static Result<InvoiceLine> Create(string description, decimal units, UnitPrice unitPrice, TaxRate taxRate)
+    internal static Result<InvoiceLine> Create(Guid invoiceId, string description, decimal units, 
+                                                UnitPrice unitPrice, TaxRate taxRate)
     {
-        var errors = new List<Error>();
-
+        List<Error> errors = [];
+        
+        if(invoiceId == Guid.Empty)
+            errors.Add(InvoiceLineError.InvoiceIdInvalid);
+        
         var trimmedDescription = description?.Trim();
 
         if (string.IsNullOrEmpty(trimmedDescription))
-            errors.Add(InvoiceLineError.NullOrEmptyDescription);
-        else if (trimmedDescription.Length > Parameters.DescriptionMaxLength)
-            errors.Add(InvoiceLineError.ExceededMaximumLengthDescription);
+            errors.Add(InvoiceLineError.DescriptionEmpty);
+        else if (trimmedDescription.Length > DescriptionMaxLength)
+            errors.Add(InvoiceLineError.DescriptionTooLong);
         
         if (units <= 0)
-            errors.Add(InvoiceLineError.NegativeOrZeroUnits);
+            errors.Add(InvoiceLineError.UnitsNegativeOrZero);
         
-        if (Utilities.GetSignificantDecimalPlaces(units) > Parameters.UnitsMaxDecimalPlaces)
-            errors.Add(InvoiceLineError.ExceededMaximumDecimalPlacesUnits);
+        if (Utilities.GetSignificantDecimalPlaces(units) > UnitsMaxDecimalPlaces)
+            errors.Add(InvoiceLineError.UnitsTooMuchDecimalPlaces);
         
         if (errors.Count > 0)
             return Result.Fail<InvoiceLine>(errors);
@@ -58,7 +67,7 @@ internal record InvoiceLine
         if (totalAmountResult.IsFailure)
             return Result.Fail<InvoiceLine>(totalAmountResult.Errors);
         
-        return Result.Ok(new InvoiceLine(trimmedDescription!, units, unitPrice, taxBaseResult.Value, 
+        return Result.Ok(new InvoiceLine(invoiceId, trimmedDescription!, units, unitPrice, taxBaseResult.Value, 
                                         taxRate, taxAmountResult.Value, totalAmountResult.Value));
     }
 }

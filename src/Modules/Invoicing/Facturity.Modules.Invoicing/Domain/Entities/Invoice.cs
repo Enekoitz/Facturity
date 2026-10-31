@@ -4,39 +4,53 @@ namespace Facturity.Modules.Invoicing.Domain;
 
 internal class Invoice : AggregateRoot<Guid>
 {
+    internal const string DefaultCurrency = "EUR";
+    internal const int CurrencyExactLength = 3;
+    
     internal Guid? CustomerId { get; private set; }
     internal InvoiceHeader? Header { get; private set; }
     internal InvoiceData? Data { get; private set; }
     internal IReadOnlyList<BreakdownLine> TaxBreakdown => GetTaxBreakdown();
     internal InvoiceStatus Status { get; private set; }
+    internal string Currency { get; private set; } = DefaultCurrency;
 
     private Invoice(Guid id, TenantId tenantId, Guid? customerId, InvoiceHeader? header, 
-                    InvoiceData? data, InvoiceStatus status) : base(id, tenantId)
+                    InvoiceData? data, InvoiceStatus status, string currency = DefaultCurrency) 
+        : base(id, tenantId)
     {
         CustomerId = customerId;
         Header = header;
         Data = data;
         Status = status;
+        Currency = currency;
     }
     
-    private Invoice() { } //ORM Materialization
+    private Invoice() { }
 
     internal static Result<Invoice> CreateDraft(TenantId tenantId, Guid? customerId, 
-                                                InvoiceHeader? header, InvoiceData? data)
+                                                InvoiceHeader? header, InvoiceData? data, 
+                                                string? currencyCode = DefaultCurrency)
     {
-        var errors = ValidateDraft(customerId, header);
+        currencyCode ??= DefaultCurrency;
+        currencyCode = currencyCode.Trim().ToUpper();
+        
+        var errors = ValidateDraft(customerId, header, currencyCode);
         if (errors.Count > 0)
             return Result.Fail<Invoice>(errors);
 
-        return Result.Ok(new Invoice(Guid.NewGuid(), tenantId, customerId, header, data, InvoiceStatus.Draft));
+        return Result.Ok(new Invoice(Guid.NewGuid(), tenantId, customerId, header, data, InvoiceStatus.Draft, currencyCode));
     }
 
-    internal Result UpdateDraft(Guid? customerId, InvoiceHeader? header, InvoiceData? data)
+    internal Result UpdateDraft(Guid? customerId, InvoiceHeader? header, InvoiceData? data, string? currencyCode = DefaultCurrency)
     {
         if (Status != InvoiceStatus.Draft)
             return Result.Fail(InvoiceError.NotInDraft);
+        
+        currencyCode ??= DefaultCurrency;
+        currencyCode = currencyCode.Trim().ToUpper();
 
-        var errors = ValidateDraft(customerId, header);
+        List<Error> errors = ValidateDraft(customerId, header, currencyCode);
+
         if (errors.Count > 0)
             return Result.Fail(errors);
 
@@ -52,7 +66,7 @@ internal class Invoice : AggregateRoot<Guid>
             return Result.Fail(InvoiceError.NotInDraft);
 
         var errors = ValidateForIssue();
-
+        
         if (issuedAtUtc > now)
             errors.Add(InvoiceError.FutureIssueDate);
             
@@ -67,10 +81,13 @@ internal class Invoice : AggregateRoot<Guid>
         return Result.Ok();
     }
 
-    private static List<Error> ValidateDraft(Guid? customerId, InvoiceHeader? header)
+    private static List<Error> ValidateDraft(Guid? customerId, InvoiceHeader? header, string currencyCode)
     {
         var errors = new List<Error>();
         if (header is null) return errors;
+        
+        if (currencyCode.Length != CurrencyExactLength)
+            errors.Add(InvoiceError.InvalidCurrencyCode);
 
         if (header.IsSimplified && customerId is not null)
             errors.Add(InvoiceError.CustomerIdAtSimplifiedInvoice);

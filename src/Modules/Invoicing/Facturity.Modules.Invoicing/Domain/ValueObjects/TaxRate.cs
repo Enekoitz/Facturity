@@ -7,6 +7,7 @@ namespace Facturity.Modules.Invoicing.Domain;
 /// </summary>
 internal sealed record TaxRate
 {
+    internal const int MaxDecimalPlaces = 2;
     internal decimal Percentage { get; private init; }
 
     private TaxRate(decimal percentage)
@@ -21,7 +22,7 @@ internal sealed record TaxRate
         if (percentage is < 0 or > 100) 
             return Result.Fail<TaxRate>(TaxRateError.InvalidTaxRate);
         
-        return Result.Ok(new TaxRate(InvoiceRounding.Round(percentage)));
+        return Result.Ok(new TaxRate(InvoiceRounding.Round(percentage, MaxDecimalPlaces)));
     }
     
     public override string ToString() => $"{Percentage:F2}%";

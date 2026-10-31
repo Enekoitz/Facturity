@@ -4,6 +4,10 @@ namespace Facturity.Modules.Invoicing.Domain;
 
 internal static class InvoiceError
 {
+    internal static readonly Error InvalidCurrencyCode =
+        Error.Validation("Invoice.InvalidCurrencyCode", 
+            "The currency code is invalid. It must be 3 characters long.");
+    
     internal static readonly Error IssueDateAtInvoiceDraft =
         Error.Validation("Invoice.IssueDateAtInvoiceDraft", 
             $"An invoice draft cannot have issued date.");

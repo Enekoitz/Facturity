@@ -1,5 +1,6 @@
 
 using Facturity.Modules.Invoicing.Domain;
+using Facturity.Modules.SharedKernel.Domain;
 
 namespace Facturity.Modules.Invoicing.UnitTests.Domain;
 
@@ -53,14 +54,14 @@ public class InvoiceLineTests
         var result = Build.CreateLine(description: description);
 
         Assert.True(result.IsFailure);
-        Assert.Contains(InvoiceLineError.NullOrEmptyDescription, result.Errors);
-        Assert.DoesNotContain(InvoiceLineError.ExceededMaximumLengthDescription, result.Errors);
+        Assert.Contains(InvoiceLineError.DescriptionEmpty, result.Errors);
+        Assert.DoesNotContain(InvoiceLineError.DescriptionTooLong, result.Errors);
     }
 
     [Fact]
     public void Create_WithDescriptionOfMaxLength_ShouldSucceed()
     {
-        var description = new string('a', Parameters.DescriptionMaxLength);
+        var description = Utilities.GetRandomLength(InvoiceLine.DescriptionMaxLength);
 
         var result = Build.CreateLine(description: description);
 
@@ -70,12 +71,12 @@ public class InvoiceLineTests
     [Fact]
     public void Create_WithDescriptionOverMaxLength_ShouldFail()
     {
-        var description = new string('a', Parameters.DescriptionMaxLength + 1);
+        var description = Utilities.GetRandomLength(InvoiceLine.DescriptionMaxLength + 1);
 
         var result = Build.CreateLine(description: description);
 
         Assert.True(result.IsFailure);
-        Assert.Contains(InvoiceLineError.ExceededMaximumLengthDescription, result.Errors);
+        Assert.Contains(InvoiceLineError.DescriptionTooLong, result.Errors);
     }
 
     [Fact]
@@ -89,7 +90,7 @@ public class InvoiceLineTests
     [Fact]
     public void Create_WithMaxLengthDescriptionPlusSurroundingSpaces_ShouldSucceed()
     {
-        var description = "  " + new string('a', Parameters.DescriptionMaxLength) + "  ";
+        var description = "  " + new string('a', InvoiceLine.DescriptionMaxLength) + "  ";
 
         var result = Build.CreateLine(description: description);
 
@@ -104,7 +105,7 @@ public class InvoiceLineTests
         var result = Build.CreateLine(units: units);
 
         Assert.True(result.IsFailure);
-        Assert.Contains(InvoiceLineError.NegativeOrZeroUnits, result.Errors);
+        Assert.Contains(InvoiceLineError.UnitsNegativeOrZero, result.Errors);
     }
 
     [Theory]
@@ -126,7 +127,7 @@ public class InvoiceLineTests
         var result = Build.CreateLine(units: units);
 
         Assert.True(result.IsFailure);
-        Assert.Contains(InvoiceLineError.ExceededMaximumDecimalPlacesUnits, result.Errors);
+        Assert.Contains(InvoiceLineError.UnitsTooMuchDecimalPlaces, result.Errors);
     }
 
     [Fact]
@@ -135,7 +136,7 @@ public class InvoiceLineTests
         var result = Build.CreateLine(description: "", units: 0m);
 
         Assert.True(result.IsFailure);
-        Assert.Contains(InvoiceLineError.NullOrEmptyDescription, result.Errors);
-        Assert.Contains(InvoiceLineError.NegativeOrZeroUnits, result.Errors);
+        Assert.Contains(InvoiceLineError.DescriptionEmpty, result.Errors);
+        Assert.Contains(InvoiceLineError.UnitsNegativeOrZero, result.Errors);
     }
 }

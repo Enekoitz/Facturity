@@ -4,19 +4,23 @@ namespace Facturity.Modules.Invoicing.Domain;
 
 internal static class InvoiceLineError
 {
-    internal static readonly Error NullOrEmptyDescription =
-        Error.Validation("InvoiceLine.NullOrEmptyDescription", 
-            $"The invoice line description can`t be null or empty.");
+    internal static readonly Error InvoiceIdInvalid =
+        Error.Validation("InvoiceLine.InvoiceIdInvalid", 
+            $"Invoice Id is invalid.");
     
-    internal static readonly Error ExceededMaximumLengthDescription =
-        Error.Validation("InvoiceLine.ExceededMaximumLengthDescription", 
-            $"The invoice line description can`t be greater than 100 characters.");
+    internal static readonly Error DescriptionEmpty =
+        Error.Validation("InvoiceLine.DescriptionEmpty", 
+            $"Invoice line description is empty.");
     
-    internal static readonly Error NegativeOrZeroUnits =
-        Error.Validation("InvoiceLine.NegativeOrZeroUnits", 
+    internal static readonly Error DescriptionTooLong =
+        Error.Validation("InvoiceLine.DescriptionTooLong", 
+            $"Invoice line description exceeds the maximum length of {InvoiceLine.DescriptionMaxLength} characters.");
+    
+    internal static readonly Error UnitsNegativeOrZero =
+        Error.Validation("InvoiceLine.UnitsNegativeOrZero", 
             $"The invoice line units can`t be zero or negative.");
     
-    internal static readonly Error ExceededMaximumDecimalPlacesUnits =
-        Error.Validation("InvoiceLine.ExceededMaximumDecimalPlacesUnits", 
-            $"The unit decimal places can`t be greater than {Parameters.UnitsMaxDecimalPlaces}.");
+    internal static readonly Error UnitsTooMuchDecimalPlaces =
+        Error.Validation("InvoiceLine.UnitsTooMuchDecimalPlaces", 
+            $"The unit decimal places can`t be greater than {InvoiceLine.UnitsMaxDecimalPlaces}.");
 }

@@ -5,16 +5,6 @@ namespace Facturity.Modules.Invoicing.UnitTests.Domain;
 
 public class BreakdownLineTests
 {
-    private static UnitPrice Price(decimal value) => UnitPrice.Create(value).Value;
-    private static TaxRate Rate(decimal value) => TaxRate.Create(value).Value;
-
-    private static Result<InvoiceLine> CreateLine(
-        string? description = "Consulting",
-        decimal units = 1m,
-        decimal unitPrice = 10m,
-        decimal taxRate = 21m) =>
-        InvoiceLine.Create(description!, units, Price(unitPrice), Rate(taxRate));
-
     [Fact]
     public void CreateList_WithNoEmptyInvoiceLinesList_ShouldCreateBreakdownLinesReadOnlyList()
     {

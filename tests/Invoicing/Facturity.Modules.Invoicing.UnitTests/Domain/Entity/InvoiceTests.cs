@@ -30,11 +30,13 @@ public class CreateDraftTests
     [Fact]
     public void CreateDraft_WithoutHeaderAndData_Succeeds()
     {
-        var result = Invoice.CreateDraft(Build.Tenant(), null, null, null);
+        const string currencyCode = "DOL";
+        var result = Invoice.CreateDraft(Build.Tenant(), null, null, null, currencyCode);
 
         Assert.True(result.IsSuccess);
         Assert.Null(result.Value.Header);
         Assert.Null(result.Value.Data);
+        Assert.Equal(currencyCode, result.Value.Currency);
         Assert.Equal(InvoiceStatus.Draft, result.Value.Status);
     }
 
@@ -44,10 +46,12 @@ public class CreateDraftTests
     [InlineData(true, false)]
     public void CreateDraft_AllowedCustomerCombinations_Succeed(bool simplified, bool withCustomer)
     {
+        const string currencyCode = "EUR";
         Guid? customerId = withCustomer ? Guid.NewGuid() : null;
         var tenantId = Build.Tenant();
         var series = Build.CreateSeries(tenantId).Value;
-        var result = Invoice.CreateDraft(tenantId, customerId, Build.Header(series, simplified).Value, Build.Data());
+        var result = Invoice.CreateDraft(tenantId, customerId, 
+            Build.Header(series, simplified).Value, Build.Data(), currencyCode);
 
         Assert.True(result.IsSuccess);
     }
@@ -55,11 +59,14 @@ public class CreateDraftTests
     [Fact]
     public void CreateDraft_SimplifiedWithCustomer_Fails()
     {
+        const string currencyCode = "EURRRRRRR";
         var tenantId = Build.Tenant();
         var series = Build.CreateSeries(tenantId).Value;
-        var result = Invoice.CreateDraft(tenantId, Guid.NewGuid(), Build.Header(series, true).Value, Build.Data());
+        var result = Invoice.CreateDraft(tenantId, Guid.NewGuid(), 
+            Build.Header(series, true).Value, Build.Data(), currencyCode);
 
-        Assertions.FailsWith(result, InvoiceError.CustomerIdAtSimplifiedInvoice);
+        Error[] expectedErrors = [InvoiceError.CustomerIdAtSimplifiedInvoice, InvoiceError.InvalidCurrencyCode];
+        Assertions.FailsWith(result, expectedErrors);
     }
     
     // TODO: ARREGLAR EL SIGUIENTE TEST TRAS REFACTORIZAR TODO EL DOMAIN 
@@ -162,6 +169,8 @@ public class UpdateDraftTests
     [Fact]
     public void UpdateDraft_WithInvalidData_FailsAndKeepsState()
     {
+        const string currencyCode = "EURRRRRRR";
+        
         var invoice = Build.Draft();
         var customerBefore = invoice.CustomerId;
         var headerBefore = invoice.Header;
@@ -171,9 +180,10 @@ public class UpdateDraftTests
         var result = invoice.UpdateDraft(
             customerId: Guid.NewGuid(), 
             header: Build.Header(series, true).Value,
-            data: Build.Data(lines: 5));
+            data: Build.Data(lines: 5),
+            currencyCode);
 
-        Assertions.FailsWith(result, InvoiceError.CustomerIdAtSimplifiedInvoice);
+        Assertions.FailsWith(result, [InvoiceError.CustomerIdAtSimplifiedInvoice, InvoiceError.InvalidCurrencyCode]);
         Assert.Equal(customerBefore, invoice.CustomerId);
         Assert.Same(headerBefore, invoice.Header);
         Assert.Same(dataBefore, invoice.Data);
