@@ -5,57 +5,60 @@ namespace Facturity.Modules.Invoicing.UnitTests.Domain;
 
 public class InvoiceSeriesTests
 {
-    [Fact]
-    public void Create_WithValidData_ShouldSuccessReturningInvoiceSeries()
+    [Theory]
+    [InlineData("GENERATE_MAX_LENGTH_TEXT")]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void Create_WithValidData_ShouldSuccessReturningInvoiceSeries(string? description)
     {
+        const string descriptionControlCode = "GENERATE_MAX_LENGTH_TEXT";
+        
         var name = Utilities.GetRandomLength(InvoiceSeries.NameMaxLength);
         
-        var result = Build.CreateSeries(name);
+        if (description == descriptionControlCode) 
+            description = Utilities.GetRandomLength(InvoiceSeries.DescriptionMaxLength); 
+        
+        var result = Build.CreateSeries(name, description);
 
         Assert.True(result.IsSuccess);
-    }
-
-    [Fact]
-    public void Create_ShouldKeepInputValues()
-    {
-        var result = Build.CreateLine(description: "Consulting", units: 2.5m, unitPrice: 10m, taxRate: 10m);
-
-        Assert.Equal("Consulting", result.Value.Description);
-        Assert.Equal(2.5m, result.Value.Units);
-        Assert.Equal(10m, result.Value.UnitPrice.Price);
-        Assert.Equal(10m, result.Value.TaxRate.Percentage);
     }
 
     [Theory]
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void Create_WithNullOrBlankName_ShouldFail(string? name)
+    public void Create_WithNullOrBlankName_ShouldFail(string name)
     {
         var result = Build.CreateSeries(name);
 
         Assert.True(result.IsFailure);
-        Assert.Contains(InvoiceSeriesErrors.NullOrEmptyName, result.Errors);
-        Assert.DoesNotContain(InvoiceSeriesErrors.ExceededMaximumLengthName, result.Errors);
+        Assert.Contains(InvoiceSeriesErrors.NameEmpty, result.Errors);
+        Assert.DoesNotContain(InvoiceSeriesErrors.NameTooLong, result.Errors);
     }
 
     [Fact]
-    public void Create_WithNameExceededMaxLength_ShouldFail()
+    public void Create_WithValuesExceededMaxLength_ShouldFail()
     {
-        var name = new string('a', InvoiceSeries.NameMaxLength + 1);
+        var name = Utilities.GetRandomLength(InvoiceSeries.NameMaxLength + 1);
+        var description = Utilities.GetRandomLength(InvoiceSeries.DescriptionMaxLength + 1);
 
-        var result = Build.CreateSeries(name);
+        var result = Build.CreateSeries(name, description);
 
         Assert.True(result.IsFailure);
-        Assert.Contains(InvoiceSeriesErrors.ExceededMaximumLengthName, result.Errors);
-        Assert.DoesNotContain(InvoiceSeriesErrors.NullOrEmptyName, result.Errors);
+        Assert.DoesNotContain(InvoiceSeriesErrors.NameEmpty, result.Errors);
+        Assert.Contains(InvoiceSeriesErrors.NameTooLong, result.Errors);
+        Assert.Contains(InvoiceSeriesErrors.DescriptionTooLong, result.Errors);
     }
 
     [Fact]
-    public void Create_ShouldTrimName()
+    public void Create_ShouldTrimNameAndDescription()
     {
-        var result = Build.CreateSeries("  DFB_MLC     ");
+        var result = Build.CreateSeries(
+            "  DFB_MLC     "
+            , "    Esta es una serie de MLC ejemplo TRIM   a           ");
 
         Assert.Equal("DFB_MLC", result.Value.Name);
+        Assert.Equal("Esta es una serie de MLC ejemplo TRIM   a", result.Value.Description);
     }
 }

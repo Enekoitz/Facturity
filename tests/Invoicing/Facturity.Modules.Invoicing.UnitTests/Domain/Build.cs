@@ -27,8 +27,9 @@ internal static class Build
     ];
     
     internal static Result<InvoiceSeries> CreateSeries(
-        string name = "DFB_MLC") =>
-        InvoiceSeries.Create(name);
+        string name = "DFB_MLC",
+        string? description = null) =>
+        InvoiceSeries.Create(name, description);
     
     internal static Result<InvoiceHeader> Header(
         Guid seriesId,
