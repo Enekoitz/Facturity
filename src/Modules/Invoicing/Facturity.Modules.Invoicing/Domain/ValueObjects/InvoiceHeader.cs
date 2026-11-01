@@ -4,11 +4,12 @@ namespace Facturity.Modules.Invoicing.Domain;
 
 internal sealed record InvoiceHeader
 {
-    internal InvoiceSeries Series { get; private init; }
+    internal Guid SeriesId { get; private init; }
     internal bool IsSimplified { get; private init; }
     internal DateTimeOffset? IssuedAtUtc { get; private init; }
     internal ulong? Number { get; private init; } //Only loaded by ORM materialization
-
+    public InvoiceSeries Series { get; private set; } = null!;
+    
     private InvoiceHeader(InvoiceSeries series, bool isSimplified)
     {
         Series = series;
