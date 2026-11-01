@@ -7,7 +7,7 @@ internal sealed record InvoiceHeader
     internal InvoiceSeries Series { get; private init; }
     internal bool IsSimplified { get; private init; }
     internal DateTimeOffset? IssuedAtUtc { get; private init; }
-    internal uint? Number { get; private init; } //Only loaded by ORM materialization
+    internal ulong? Number { get; private init; } //Only loaded by ORM materialization
 
     private InvoiceHeader(InvoiceSeries series, bool isSimplified)
     {
