@@ -14,6 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Auth\Facturity.Modules.Auth\Facturity.Modules.Auth.csproj" />
     <ProjectReference Include="..\Customer\Facturity.Modules.Customer\Facturity.Modules.Customer.csproj" />
+    <ProjectReference Include="..\Invoicing\Facturity.Modules.Invoicing\Facturity.Modules.Invoicing.csproj" />
   </ItemGroup>
 
 </Project>
