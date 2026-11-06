@@ -1,86 +1,101 @@
 # Domain model: Invoicing
 
-Invoicing module 
+## Aggregate root
+### Invoice
 
-## Invoice (aggregate root)
-
-The aggregate root of the invoicing module.
-
-| Field        | Type                           | Rules                                                                                | Nullable |
-| ------------ | ------------------------------ | ------------------------------------------------------------------------------------ | -------- |
-| Id           | `Guid`                         | - Technical identity                                                                 | No       |
-| TenantId     | `Guid`                         | - Owner identity (invoice issuer)                                                    | No       |
-| CustomerId   | `Guid`                         | - Recipient of the invoice (invoice recipient)<br>- Null if is an simplified invoice | Yes      |
-| Header       | `InvoiceHeader`                | - VO                                                                                 | No       |
-| Data         | `InvoiceData`                  | - VO                                                                                 | No       |
-| TaxBreakdown | `IReadOnlyList<BreakdownLine>` | - Minimun of 1 element                                                               | No       |
-| Status       | `InvoiceStatus`                | - Draft / Issued                                                                     | No       |
-| Audit        | `AuditInfo`                    | - CreatedAt, CreatedBy, UpdatedAt...                                                 | No       |
+| Field            | Type                           | Rules                                                                                | Nullable                                           |
+| ---------------- | ------------------------------ | ------------------------------------------------------------------------------------ | -------------------------------------------------- |
+| Id               | `Guid`                         | - Technical identity                                                                 | No                                                 |
+| TenantId         | `Guid`                         | - Owner identity (invoice issuer)                                                    | No                                                 |
+| CustomerId       | `Guid`                         | - Recipient of the invoice (invoice recipient)<br>- Null if is an simplified invoice | Yes                                                |
+| SeriesId         | `Guid`                         |                                                                                      | Yes                                                |
+| Status           | `InvoiceStatus`                | - Draft / Issued                                                                     | No                                                 |
+| IssuanceInfo     | `IssuanceInfo`                 | - VO                                                                                 | Yes                                                |
+| IsSimplified     | `bool`                         | - Default: false                                                                     | No                                                 |
+| Description      | `string`                       | - Required <br>- Max length. 250                                                     | Yes                                                |
+| InvoiceLines     | `IReadOnlyList<InvoiceLine>`   | - At least 1 element                                                                 | No (but can exist as an empty collection in Draft) |
+| TaxBreakdown     | `IReadOnlyList<BreakdownLine>` | - Minimun of 1 element                                                               | No                                                 |
+| TotalAmount      | `Money`                        | - Positive (except for amended returns)                                              | No                                                 |
+| TransactionAtUtc | `DateTimeOffset`               | - Non-future date                                                                    | Yes                                                |
+| Currency         | `string`                       | - Operations only between the same currency                                          | No                                                 |
+| Series           | `InvoiceSeries`                | - Navigation                                                                         | Yes                                                |
 
 ### Invariants
 
-- `Data.TotalAmount` = sum of bases + amounts of `InvoiceLine` list.
+- `TotalAmount` = sum of bases + amounts of `InvoiceLine` list.
 - An `Issued` invoice is inmutable.
 - Only a `Draft` invoice can be converted into an `Issued` invoice.
 
-Regarding the operation type:
+Regarding the type of operation:
 
-- Create Draft:
-	- The `Status` must be set to `Draft` and not to `Issued`.
-	- An uncompleted invoice can be saved as a draft; final validation takes place during the issuance process. So:
-		- It can accept zero or null invoice lines.
-		- It can save `CustomerId` to null when is specified as a no simplified invoice.
-		
-- Update Draft (without issuing):
-	- The `Status` must be set to `Draft` and not to `Issued`.
-	- An uncompleted invoice can be saved as a draft; final validation takes place during the issuance process. So:
-		- It can accept zero or null invoice lines.
-		- It can save `CustomerId` to null when is specified as a no simplified invoice.
-		
-- Issue:
-	- The  `Header.Number` is calculated and assigned solely during the issuance process, via issuing database transaction. This ensures the integrity and sequential continuity of the numbers—with no gaps—while also preventing potential race conditions and concurrency conflicts.
-	- The `Status` must be `Draft` and not `Issued`.
-	- The `Header.IssuedAtUtc` cannot be null or future.
-	- If is a simplified invoice (`HeaderIsSimplified == true`), `CustomerId` must be null.
-	- If is not a simplified invoice (`HeaderIsSimplified == false`), `CustomerId` must be valid and not null.
-	- The invoice must have at least a detail line. And, consequently, at least a breakdown line.
-
+- Creating an invoice draft:
+	- The `Status` must be set to `Draft`, not `Issued`.
+	- An incomplete invoice may be saved as a draft; final validation occurs during the issuance process. Therefore:
+		- An invoice identifier cannot be saved with the value `Guid.Empty`.
+		- An empty collection of invoice lines (zero elements) is permitted, but a null collection is not.
+	- Values ​​such as the description, transaction date, series, or customer are defined via additional operations (methods).
+	
+- Changing the customer:
+	- This is only possible when the invoice is in the `Draft` state.
+	- The customer identifier cannot be `Guid.Empty`.
+	- It may be set to null.
+	- It is possible to assign a null value to `CustomerId` when the invoice is not of the "simplified" type; however, this action is restricted during the issuance process.
+	- It is not possible to assign a non-null value to `CustomerId` for a simplified invoice.
+	
+- Changing the currency:
+	- This is only possible when the invoice is in the `Draft` state.
+	- The currency code must be three characters long.
+	
+- Changing the description:
+	- This is only possible when the invoice is in the `Draft` state.
+	- The description may be null; otherwise, it must not exceed the maximum permitted length.
+	
+- Changing the transaction date:
+	- This is only possible when the invoice is in the `Draft` state.
+	- The transaction date cannot be a future date.
+	
+- Changing the series:
+	- This is only possible when the invoice is in the `Draft` state.
+	- The series identifier cannot be `Guid.Empty`.
+	- It may be set to null. 
+	- Issuance of an invoice draft:
+	
+- The `IssuanceInfo.Number` field is calculated and assigned exclusively during the issuance process, via a database transaction. This ensures the integrity and sequential continuity of the numbers—with no gaps—while preventing potential race conditions and concurrency conflicts.
+	- The `Status` must be `Draft`, not `Issued`.
+	- The `IssuanceInfo.IssuedAtUtc` field cannot be null, nor can it represent a future date.
+	- If it is a simplified invoice (`IsSimplified == true`), `CustomerId` must be null.
+	- If it is not a simplified invoice (`IsSimplified == false`), `CustomerId` must be valid and non-null.
+	- The invoice must contain at least one invoice line item.
 ## Entities
 
 ### InvoiceSeries
-| Field | Type     | Rules            |
-| ----- | -------- | ---------------- |
-| Id    | `Guid`   |                  |
-| Name  | `string` | - Max length: 20 
+| Field       | Type       | Rules             | Nullable |
+| ----------- | ---------- | ----------------- | -------- |
+| Id          | `Guid`     |                   | No       |
+| TenantId    | `TenantId` |                   | No       |
+| Name        | `string`   | - Max length: 20  | No       |
+| Description | `string`   | - Max length: 250 | Yes      |
+### InvoiceLine
+| Field       | Type        | Rules                                  | Nullable |
+| ----------- | ----------- | -------------------------------------- | -------- |
+| Id          | `Guid`      |                                        | No       |
+| TenantId    | `Guid`      |                                        | No       |
+| InvoiceId   | `Guid`      | -                                      | No       |
+| Description | `string`    | - Max length: 100                      | No       |
+| Units       | `decimal`   | - Greater than 0                       | No       |
+| UnitPrice   | `UnitPrice` | - Max six decimal places               | No       |
+| TaxBase     | `Money`     | - = Units * UnitAmount                 | No       |
+| TaxRate     | `TaxRate`   | - 0 to 100                             | No       |
+| TaxAmount   | `Money`     | - = TaxBase * TaxRate / 100 (rounding) | No       |
+| TotalAmount | `Money`     | - = TaxBase + TaxAmount                | No       |
 
 ## Value Objects
 
-### InvoiceHeader
-| Field        | Type                   | Rules                                       | Nullable |
-| ------------ | ---------------------- | ------------------------------------------- | -------- |
-| SeriesId     | `Guid` (or `SeriesId`) | - Required<br>- Max length. 20              | No       |
-| Number       | `uint`                 | - Greater than 0<br>- Related to the series | Yes      |
-| IssuedAtUtc  | `DateTimeOffset`       | - Non-future date                           | Yes      |
-| IsSimplified | `bool`                 | - Default: false                            | No       |
-
-### InvoiceData
-| Field            | Type                         | Rules                                   |
-| ---------------- | ---------------------------- | --------------------------------------- |
-| Description      | `string`                     | - Required, <br>- Max length. 500       |
-| InvoiceLines     | `IReadOnlyList<InvoiceLine>` | - At least 1 element                    |
-| TotalAmount      | `Money`                      | - Positive (except for amended returns) |
-| TransactionAtUtc | `DateTimeOffset`             | - Non-future date                       |
-
-### InvoiceLine
-| Field       | Type        | Rules                                  |
-| ----------- | ----------- | -------------------------------------- |
-| Description | `string`    | - Max length: 100                      |
-| Units       | `decimal`   | - Greater than 0                       |
-| UnitPrice   | `UnitPrice` | - Max six decimal places               |
-| TaxBase     | `Money`     | - = Units * UnitAmount                 |
-| TaxRate     | `TaxRate`   | - 0 to 100                             |
-| TaxAmount   | `Money`     | - = TaxBase * TaxRate / 100 (rounding) |
-| TotalAmount | `Money`     | - = TaxBase + TaxAmount                |
+### IssuanceInfo
+| Field       | Type             | Rules                                                                | Nullable |
+| ----------- | ---------------- | -------------------------------------------------------------------- | -------- |
+| Number      | `ulong`          | - Greater than 0<br>- Related to the series<br>- Only set by EF Core | Yes      |
+| IssuedAtUtc | `DateTimeOffset` | - Non-future date                                                    | No       |
 
 ### BreakdownLine
 | Field       | Type      | Rules                                  |
@@ -92,23 +107,22 @@ Regarding the operation type:
 - Deriva de las `invoice lines`.
 
 ### Money
-| Field    | Type      | Rules                                        |
-| -------- | --------- | -------------------------------------------- |
-| Amount   | `decimal` | - Max. two decimal places                    |
-| Currency | `char`    | - Operations only between the same currency. |
+| Field  | Type      | Rules                    |
+| ------ | --------- | ------------------------ |
+| Amount | `decimal` | - Max. decimal places: 2 |
 - It accepts a maximum of two decimal places.
 
 ### UnitPrice
-| Field    | Type      | Rules                                        |
-| -------- | --------- | -------------------------------------------- |
-| Price    | `decimal` | - Max. six decimal places                    |
-| Currency | `char`    | - Operations only between the same currency. |
+| Field | Type      | Rules                    |
+| ----- | --------- | ------------------------ |
+| Price | `decimal` | - Max. decimal places: 6 |
+
 - It accepts a maximum of six decimal places.
 
 ### TaxRate
-| Field | Type      | Rules               |
-| ----- | --------- | ------------------- |
-| Value | `decimal` | - Between 0 and 100 |
+| Field | Type      | Rules                                           |
+| ----- | --------- | ----------------------------------------------- |
+| Value | `decimal` | - Between 0 and 100<br>- Max. decimal places: 2 |
 
 ## Enums
 
@@ -117,10 +131,13 @@ Regarding the operation type:
 | -------- | ----- | ------------------------------------------------------------------ |
 | `Draft`  | 1     | The invoice is in draft status, not issued yet                     |
 | `Issued` | 2     | The invoice has been issued previously passing through draf status |
+- Disclaimer: It is important to consider whether the numbering sequence truly needs to be modified, and to exercise caution, as this directly affects invoice control and stored records.
 
 # Notes
 
-- All decimal values ​​are rounded away from zero (not banker's rounding).
+- The domain layer does not verify whether the `CustomerId` or `SeriesId` identifiers belong to the specified **tenant**. Instead, this is ensured through validation within the use cases and by implementing robust, critical infrastructure security mechanisms—such as global filters and row-level security (RLS) at the database level. Further details will be provided in the next ADR: [[adr-005-tenant-security-warranty]].
+
+- **All decimal values ​​are rounded away from zero (not banker's rounding)**.
 
 ---
-_Last review: 2026-10-17_
+_Last review: 2026-10-31_
