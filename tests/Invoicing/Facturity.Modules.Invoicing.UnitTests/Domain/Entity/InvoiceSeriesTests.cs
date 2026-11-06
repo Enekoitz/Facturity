@@ -17,9 +17,10 @@ public class InvoiceSeriesTests
         var name = Utilities.GetRandomLength(InvoiceSeries.NameMaxLength);
         
         if (description == descriptionControlCode) 
-            description = Utilities.GetRandomLength(InvoiceSeries.DescriptionMaxLength); 
+            description = Utilities.GetRandomLength(InvoiceSeries.DescriptionMaxLength);
         
-        var result = Build.CreateSeries(name, description);
+        var tenantId = Build.Tenant();
+        var result = Build.CreateSeries(tenantId, name, description);
 
         Assert.True(result.IsSuccess);
     }
@@ -30,7 +31,8 @@ public class InvoiceSeriesTests
     [InlineData("   ")]
     public void Create_WithNullOrBlankName_ShouldFail(string name)
     {
-        var result = Build.CreateSeries(name);
+        var tenantId = Build.Tenant();
+        var result = Build.CreateSeries(tenantId, name);
 
         Assert.True(result.IsFailure);
         Assert.Contains(InvoiceSeriesErrors.NameEmpty, result.Errors);
@@ -43,7 +45,8 @@ public class InvoiceSeriesTests
         var name = Utilities.GetRandomLength(InvoiceSeries.NameMaxLength + 1);
         var description = Utilities.GetRandomLength(InvoiceSeries.DescriptionMaxLength + 1);
 
-        var result = Build.CreateSeries(name, description);
+        var tenantId = Build.Tenant();
+        var result = Build.CreateSeries(tenantId, name, description);
 
         Assert.True(result.IsFailure);
         Assert.DoesNotContain(InvoiceSeriesErrors.NameEmpty, result.Errors);
@@ -54,8 +57,10 @@ public class InvoiceSeriesTests
     [Fact]
     public void Create_ShouldTrimNameAndDescription()
     {
+        var tenantId = Build.Tenant();
         var result = Build.CreateSeries(
-            "  DFB_MLC     "
+            tenantId
+            ,"  DFB_MLC     "
             , "    Esta es una serie de MLC ejemplo TRIM   a           ");
 
         Assert.Equal("DFB_MLC", result.Value.Name);

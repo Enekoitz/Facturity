@@ -9,7 +9,9 @@ public class InvoiceLineTests
     [Fact]
     public void Create_WithValidData_ShouldCalculateTaxBaseTaxAmountAndTotal()
     {
-        var result = Build.CreateLine(units: 2m, unitPrice: 10m, taxRate: 21m);
+        var tenantId = Build.Tenant();
+        var invoiceId = Guid.CreateVersion7();
+        var result = Build.CreateLine(tenantId, invoiceId,units: 2m, unitPrice: 10m, taxRate: 21m);
 
         Assert.True(result.IsSuccess);
         Assert.Equal(20.00m, result.Value.TaxBase.Amount);
@@ -26,7 +28,9 @@ public class InvoiceLineTests
         decimal units, decimal unitPrice, decimal taxRate,
         decimal expectedBase, decimal expectedTax, decimal expectedTotal)
     {
-        var result = Build.CreateLine(units: units, unitPrice: unitPrice, taxRate: taxRate);
+        var tenantId = Build.Tenant();
+        var invoiceId = Guid.CreateVersion7();
+        var result = Build.CreateLine(tenantId, invoiceId, units: units, unitPrice: unitPrice, taxRate: taxRate);
 
         Assert.True(result.IsSuccess);
         Assert.Equal(expectedBase, result.Value.TaxBase.Amount);
@@ -37,7 +41,9 @@ public class InvoiceLineTests
     [Fact]
     public void Create_ShouldKeepInputValues()
     {
-        var result = Build.CreateLine(description: "Consulting", units: 2.5m, unitPrice: 10m, taxRate: 10m);
+        var tenantId = Build.Tenant();
+        var invoiceId = Guid.CreateVersion7();
+        var result = Build.CreateLine(tenantId, invoiceId,description: "Consulting", units: 2.5m, unitPrice: 10m, taxRate: 10m);
 
         Assert.Equal("Consulting", result.Value.Description);
         Assert.Equal(2.5m, result.Value.Units);
@@ -51,7 +57,9 @@ public class InvoiceLineTests
     [InlineData("   ")]
     public void Create_WithNullOrBlankDescription_ShouldFailWithoutThrowing(string? description)
     {
-        var result = Build.CreateLine(description: description);
+        var tenantId = Build.Tenant();
+        var invoiceId = Guid.CreateVersion7();
+        var result = Build.CreateLine(tenantId, invoiceId, description: description);
 
         Assert.True(result.IsFailure);
         Assert.Contains(InvoiceLineError.DescriptionEmpty, result.Errors);
@@ -63,7 +71,9 @@ public class InvoiceLineTests
     {
         var description = Utilities.GetRandomLength(InvoiceLine.DescriptionMaxLength);
 
-        var result = Build.CreateLine(description: description);
+        var tenantId = Build.Tenant();
+        var invoiceId = Guid.CreateVersion7();
+        var result = Build.CreateLine(tenantId, invoiceId,description: description);
 
         Assert.True(result.IsSuccess);
     }
@@ -73,7 +83,9 @@ public class InvoiceLineTests
     {
         var description = Utilities.GetRandomLength(InvoiceLine.DescriptionMaxLength + 1);
 
-        var result = Build.CreateLine(description: description);
+        var tenantId = Build.Tenant();
+        var invoiceId = Guid.CreateVersion7();
+        var result = Build.CreateLine(tenantId, invoiceId,description: description);
 
         Assert.True(result.IsFailure);
         Assert.Contains(InvoiceLineError.DescriptionTooLong, result.Errors);
@@ -82,7 +94,9 @@ public class InvoiceLineTests
     [Fact]
     public void Create_ShouldTrimDescription()
     {
-        var result = Build.CreateLine(description: "  Consulting  ");
+        var tenantId = Build.Tenant();
+        var invoiceId = Guid.CreateVersion7();
+        var result = Build.CreateLine(tenantId, invoiceId,description: "  Consulting  ");
 
         Assert.Equal("Consulting", result.Value.Description);
     }
@@ -92,7 +106,9 @@ public class InvoiceLineTests
     {
         var description = "  " + new string('a', InvoiceLine.DescriptionMaxLength) + "  ";
 
-        var result = Build.CreateLine(description: description);
+        var tenantId = Build.Tenant();
+        var invoiceId = Guid.CreateVersion7();
+        var result = Build.CreateLine(tenantId, invoiceId,description: description);
 
         Assert.True(result.IsSuccess);
     }
@@ -102,7 +118,9 @@ public class InvoiceLineTests
     [InlineData(-1)]
     public void Create_WithZeroOrNegativeUnits_ShouldFail(decimal units)
     {
-        var result = Build.CreateLine(units: units);
+        var tenantId = Build.Tenant();
+        var invoiceId = Guid.CreateVersion7();
+        var result = Build.CreateLine(tenantId, invoiceId,units: units);
 
         Assert.True(result.IsFailure);
         Assert.Contains(InvoiceLineError.UnitsNegativeOrZero, result.Errors);
@@ -114,7 +132,9 @@ public class InvoiceLineTests
     [InlineData(1.500000)]
     public void Create_WithUnitsWithinMaxDecimals_ShouldSucceed(decimal units)
     {
-        var result = Build.CreateLine(units: units);
+        var tenantId = Build.Tenant();
+        var invoiceId = Guid.CreateVersion7();
+        var result = Build.CreateLine(tenantId, invoiceId,units: units);
 
         Assert.True(result.IsSuccess);
     }
@@ -124,7 +144,9 @@ public class InvoiceLineTests
     [InlineData(1.001)]
     public void Create_WithUnitsOverMaxDecimals_ShouldFailAndNotRound(decimal units)
     {
-        var result = Build.CreateLine(units: units);
+        var tenantId = Build.Tenant();
+        var invoiceId = Guid.CreateVersion7();
+        var result = Build.CreateLine(tenantId, invoiceId,units: units);
 
         Assert.True(result.IsFailure);
         Assert.Contains(InvoiceLineError.UnitsTooMuchDecimalPlaces, result.Errors);
@@ -133,7 +155,9 @@ public class InvoiceLineTests
     [Fact]
     public void Create_WithSeveralInvalidFields_ShouldReturnAllErrors()
     {
-        var result = Build.CreateLine(description: "", units: 0m);
+        var tenantId = Build.Tenant();
+        var invoiceId = Guid.CreateVersion7();
+        var result = Build.CreateLine(tenantId, invoiceId,description: "", units: 0m);
 
         Assert.True(result.IsFailure);
         Assert.Contains(InvoiceLineError.DescriptionEmpty, result.Errors);

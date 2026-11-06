@@ -6,120 +6,180 @@ internal class Invoice : AggregateRoot<Guid>
 {
     internal const string DefaultCurrency = "EUR";
     internal const int CurrencyExactLength = 3;
+    internal const int DescriptionMaxLength = 250;
+    
+    private readonly List<InvoiceLine> _lines = [];
     
     internal Guid? CustomerId { get; private set; }
-    internal InvoiceHeader? Header { get; private set; }
-    internal InvoiceData? Data { get; private set; }
-    internal IReadOnlyList<BreakdownLine> TaxBreakdown => GetTaxBreakdown();
+    internal Guid? SeriesId { get; private set; }
     internal InvoiceStatus Status { get; private set; }
+    internal bool IsSimplified { get; private init; }
+    internal IssuanceInfo? IssuanceInfo { get; private set; } = null!;
+    internal DateTimeOffset? TransactionAtUtc{ get; private set; }
+    internal string? Description { get; private set; }
+    internal IReadOnlyList<InvoiceLine> Lines => _lines.AsReadOnly();
+    internal Money TotalAmount() => Lines.Sum(i => i.TotalAmount);
+    internal IReadOnlyList<BreakdownLine> TaxBreakdown => GetTaxBreakdown();
     internal string Currency { get; private set; } = DefaultCurrency;
+    internal InvoiceSeries? Series { get; private set; } = null!;
 
-    private Invoice(Guid id, TenantId tenantId, Guid? customerId, InvoiceHeader? header, 
-                    InvoiceData? data, InvoiceStatus status, string currency = DefaultCurrency) 
+    private Invoice(Guid id, TenantId tenantId, InvoiceStatus status, bool isSimplified) 
         : base(id, tenantId)
     {
-        CustomerId = customerId;
-        Header = header;
-        Data = data;
+        IsSimplified = isSimplified;
         Status = status;
-        Currency = currency;
     }
     
     private Invoice() { }
 
-    internal static Result<Invoice> CreateDraft(TenantId tenantId, Guid? customerId, 
-                                                InvoiceHeader? header, InvoiceData? data, 
-                                                string? currencyCode = DefaultCurrency)
+    internal static Result<Invoice> CreateDraft(Guid id, TenantId tenantId, bool isSimplified)
     {
-        currencyCode ??= DefaultCurrency;
-        currencyCode = currencyCode.Trim().ToUpper();
+        List<Error> errors = [];
         
-        var errors = ValidateDraft(customerId, header, currencyCode);
-        if (errors.Count > 0)
-            return Result.Fail<Invoice>(errors);
-
-        return Result.Ok(new Invoice(Guid.NewGuid(), tenantId, customerId, header, data, InvoiceStatus.Draft, currencyCode));
+        if (id  == Guid.Empty)
+            errors.Add(InvoiceError.IdInvalid);
+  
+        return errors.Count > 0 
+            ? Result.Fail<Invoice>(errors) 
+            : Result.Ok(new Invoice(id, tenantId, InvoiceStatus.Draft, isSimplified));
     }
 
-    internal Result UpdateDraft(Guid? customerId, InvoiceHeader? header, InvoiceData? data, string? currencyCode = DefaultCurrency)
-    {
-        if (Status != InvoiceStatus.Draft)
-            return Result.Fail(InvoiceError.NotInDraft);
-        
-        currencyCode ??= DefaultCurrency;
-        currencyCode = currencyCode.Trim().ToUpper();
-
-        List<Error> errors = ValidateDraft(customerId, header, currencyCode);
-
-        if (errors.Count > 0)
-            return Result.Fail(errors);
-
-        CustomerId = customerId;
-        Header = header;
-        Data = data;
-        return Result.Ok();
-    }
-
-    internal Result Issue(DateTimeOffset issuedAtUtc, DateTimeOffset now)
+    internal Result ChangeCustomer(Guid? customerId)
     {
         if (Status != InvoiceStatus.Draft)
             return Result.Fail(InvoiceError.NotInDraft);
 
-        var errors = ValidateForIssue();
+        if (customerId == Guid.Empty)
+            return Result.Fail(InvoiceError.CustomerIdInvalid);
         
-        if (issuedAtUtc > now)
-            errors.Add(InvoiceError.FutureIssueDate);
+        if (IsSimplified && customerId is not null)
+            return Result.Fail(InvoiceError.CustomerIdNoAtSimplifiedInvoice);
             
-        if (errors.Count > 0)
-            return Result.Fail(errors);
+        CustomerId = customerId;
         
-        //The invoice number (InvoiceNumber) is set within a database transaction to ensure consistency and sequential
-        //ordering, thereby avoiding race conditions and concurrency conflicts.
-        
-        Header = Header!.WithIssuance(issuedAtUtc); 
-        Status = InvoiceStatus.Issued;
         return Result.Ok();
     }
-
-    private static List<Error> ValidateDraft(Guid? customerId, InvoiceHeader? header, string currencyCode)
+    
+    internal Result ChangeSeries(Guid? seriesId)
     {
-        var errors = new List<Error>();
-        if (header is null) return errors;
+        if (Status != InvoiceStatus.Draft)
+            return Result.Fail(InvoiceError.NotInDraft);
+
+        if (seriesId is not null && seriesId == Guid.Empty)
+            return Result.Fail(InvoiceError.SeriesInvalid);
+            
+        SeriesId = seriesId;
+        
+        return Result.Ok();
+    }
+    
+    internal Result ChangeDetails(string description, DateTimeOffset? transactionAtUtc, DateTimeOffset? nowUtc)
+    {
+        if (Status != InvoiceStatus.Draft)
+            return Result.Fail(InvoiceError.NotInDraft);
+        
+        List<Error> errors = [];
+        
+        if (description?.Length > DescriptionMaxLength)
+            errors.Add(InvoiceError.DescriptionTooLong);
+        
+        if (transactionAtUtc is not null && transactionAtUtc == DateTimeOffset.MinValue)
+            errors.Add(InvoiceError.TransactionDateInvalid);
+        else if (transactionAtUtc > nowUtc)
+            errors.Add(InvoiceError.TransactionDateIsFuture);
+        
+        if (errors.Count > 0)
+            return Result.Fail(errors);
+            
+        Description = description;
+        TransactionAtUtc = transactionAtUtc;
+        
+        return Result.Ok();
+    }
+    
+    internal Result ChangeCurrency(string? currencyCode)
+    {
+        if (Status != InvoiceStatus.Draft)
+            return Result.Fail(InvoiceError.NotInDraft);
+        
+        currencyCode ??= DefaultCurrency;
+        currencyCode = currencyCode.Trim().ToUpper();
         
         if (currencyCode.Length != CurrencyExactLength)
-            errors.Add(InvoiceError.InvalidCurrencyCode);
-
-        if (header.IsSimplified && customerId is not null)
-            errors.Add(InvoiceError.CustomerIdAtSimplifiedInvoice);
+            return Result.Fail(InvoiceError.InvalidCurrencyCode);
         
-        if (header.IssuedAtUtc is not null)
-            errors.Add(InvoiceError.IssueDateAtInvoiceDraft);
+        Currency = currencyCode;
         
-        if (header.Number is not null)
-            errors.Add(InvoiceError.SeriesNumberSetAtDomain);
-
-        return errors;
+        return Result.Ok();
+    }
+    
+    internal Result AddLine(InvoiceLine line)
+    {
+        if (Status != InvoiceStatus.Draft)
+            return Result.Fail(InvoiceError.NotInDraft);
+        
+        if (line is null)
+            return Result.Fail(InvoiceError.LineEmpty);
+            
+        _lines.Add(line);
+        
+        return Result.Ok();
+    }
+    
+    internal Result AddLines(IEnumerable<InvoiceLine> lines)
+    {
+        if (Status != InvoiceStatus.Draft)
+            return Result.Fail(InvoiceError.NotInDraft);
+        
+        if (lines is not null && lines.Any(null))
+            return Result.Fail(InvoiceError.LineEmpty);
+            
+        _lines.AddRange(lines);
+        
+        return Result.Ok();
     }
 
-    private List<Error> ValidateForIssue()
+    internal Result Issue(DateTimeOffset issuedAtUtc, DateTimeOffset nowUtc)
     {
-        var errors = new List<Error>();
+        List<Error> errors = [];
+        
+        if (Status != InvoiceStatus.Draft)
+            return Result.Fail(InvoiceError.NotInDraft);
+        
+        switch (IsSimplified)
+        {
+            case true when CustomerId is not null:
+                errors.Add(InvoiceError.CustomerIdNoAtSimplifiedInvoice);
+                break;
+            case false when CustomerId is null:
+                errors.Add(InvoiceError.CustomerIdNeededAtNoSimplifiedInvoice);
+                break;
+        }
+        
+        if(SeriesId is null)
+            errors.Add(InvoiceError.SeriesRequired);
 
-        if (Header is null)
-            errors.Add(InvoiceError.NullInvoiceHeader);
-        else if (!Header.IsSimplified && CustomerId is null)
-            errors.Add(InvoiceError.MissingCustomerIdAtNoSimplifiedInvoice);
+        if (issuedAtUtc == DateTimeOffset.MinValue)
+            errors.Add(InvoiceError.IssueDateInvalid);
+        else if (issuedAtUtc > nowUtc)
+            errors.Add(InvoiceError.IssueDateFuture);
+        
+        if(_lines.Count == 0)
+            errors.Add(InvoiceError.InvoiceLinesEmpty);
 
-        if (Data is null)
-            errors.Add(InvoiceError.NullInvoiceData);
-        else if (Data.Lines.Count == 0)
-            errors.Add(InvoiceError.NoInvoiceLines);
+        if (errors.Count > 0)
+            return Result.Fail(errors);
+        
+        var issuanceInfo = IssuanceInfo.Create(issuedAtUtc, nowUtc);
+        if (issuanceInfo.IsFailure)
+            errors.AddRange(issuanceInfo.Errors);
 
-        return errors;
+        IssuanceInfo = issuanceInfo.Value;
+        Status = InvoiceStatus.Issued;
+        
+        return Result.Ok();
     }
 
     internal IReadOnlyList<BreakdownLine> GetTaxBreakdown() =>
-        Data is null
-            ? []
-            : BreakdownLine.CreateList(Data.Lines);
+        BreakdownLine.CreateList(_lines);
 }

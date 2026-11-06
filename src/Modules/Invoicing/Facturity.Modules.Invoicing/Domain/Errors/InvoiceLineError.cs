@@ -4,6 +4,10 @@ namespace Facturity.Modules.Invoicing.Domain;
 
 internal static class InvoiceLineError
 {
+    internal static readonly Error InvoiceLineIdInvalid =
+        Error.Validation("InvoiceLine.InvoiceLineIdInvalid", 
+            $"Invoice line Id is invalid.");
+    
     internal static readonly Error InvoiceIdInvalid =
         Error.Validation("InvoiceLine.InvoiceIdInvalid", 
             $"Invoice Id is invalid.");

@@ -2,23 +2,26 @@
 
 namespace Facturity.Modules.Invoicing.Domain;
 
-internal record InvoiceLine
+internal sealed class InvoiceLine : Entity<Guid>, ITenantEntity
 {
     internal const int DescriptionMaxLength = 100;
     internal const int UnitsMaxDecimalPlaces = 2;
     
-    internal Guid InvoiceId { get; private init; }
-    internal string Description { get; private init; }  
-    internal decimal Units { get; private init; }
-    internal UnitPrice UnitPrice { get; private init; }
-    internal Money TaxBase{ get; private init; }
-    internal TaxRate TaxRate { get; private init; }
-    internal Money TaxAmount { get; private init; }
-    internal Money TotalAmount { get; private init; }
+    
+    public TenantId TenantId { get; private init; }
+    internal Guid InvoiceId { get; private set; }
+    internal string Description { get; private set; }  
+    internal decimal Units { get; private set; }
+    internal UnitPrice UnitPrice { get; private set; }
+    internal Money TaxBase{ get; private set; }
+    internal TaxRate TaxRate { get; private set; }
+    internal Money TaxAmount { get; private set; }
+    internal Money TotalAmount { get; private set; }
 
-    private InvoiceLine(Guid invoiceId, string description, decimal units, UnitPrice unitPrice, 
-                        Money taxBase, TaxRate taxRate, Money taxAmount, Money totalAmount)
+    private InvoiceLine(Guid id, TenantId tenantId, Guid invoiceId, string description, decimal units, UnitPrice unitPrice, 
+                        Money taxBase, TaxRate taxRate, Money taxAmount, Money totalAmount) : base(id)
     {
+        TenantId = tenantId;
         InvoiceId = invoiceId;
         Description = description;
         Units = units;
@@ -31,10 +34,14 @@ internal record InvoiceLine
     
     private InvoiceLine(){ }
 
-    internal static Result<InvoiceLine> Create(Guid invoiceId, string description, decimal units, 
+    internal static Result<InvoiceLine> Create(Guid id, TenantId tenantId, Guid invoiceId, 
+                                                string description, decimal units, 
                                                 UnitPrice unitPrice, TaxRate taxRate)
     {
         List<Error> errors = [];
+        
+        if(id == Guid.Empty)
+            errors.Add(InvoiceLineError.InvoiceLineIdInvalid);
         
         if(invoiceId == Guid.Empty)
             errors.Add(InvoiceLineError.InvoiceIdInvalid);
@@ -67,7 +74,7 @@ internal record InvoiceLine
         if (totalAmountResult.IsFailure)
             return Result.Fail<InvoiceLine>(totalAmountResult.Errors);
         
-        return Result.Ok(new InvoiceLine(invoiceId, trimmedDescription!, units, unitPrice, taxBaseResult.Value, 
+        return Result.Ok(new InvoiceLine(id, tenantId, invoiceId, trimmedDescription!, units, unitPrice, taxBaseResult.Value, 
                                         taxRate, taxAmountResult.Value, totalAmountResult.Value));
     }
 }
