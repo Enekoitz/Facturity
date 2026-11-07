@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Shared\Facturity.Modules.SharedKernel\Facturity.Modules.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Facturity.SharedKernel.Infrastructure\Facturity.SharedKernel.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
