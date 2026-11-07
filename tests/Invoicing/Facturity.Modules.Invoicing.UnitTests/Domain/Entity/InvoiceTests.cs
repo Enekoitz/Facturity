@@ -251,11 +251,87 @@ public class ChangeDetailsTests
         Assert.Contains(InvoiceError.TransactionDateInvalid, result.Errors);
     }
 }
+
+public class AddLineTests
+{
+    [Fact]
+    public void AddLine_IntoInvoiceDraftWithASingleValidLine_Succeeds()
     {
-        Assert.False(result.IsSuccess);
-        var actual = result.Errors.ToList();
-        Assert.Equal(expected.Length, actual.Count);
-        foreach (var error in expected)
-            Assert.Contains(error, actual);
+        var invoiceId = Guid.CreateVersion7();
+        var tenantId = Build.Tenant();
+        var invoice = InvoiceBuilder.BuildDraft(id: invoiceId, tenantId: tenantId, isSimplified: false);
+        
+        var line = Build.CreateLine(tenantId, invoiceId).Value;
+
+        var result = invoice.AddLine(line);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(invoice.Id, line.InvoiceId);
+        Assert.Equal(invoice.TenantId, line.TenantId);
+        Assert.Single(invoice.Lines, line);
+    }
+    
+    [Fact]
+    public void AddLine_IntoInvoiceDraftWithSomeValidLines_Succeeds()
+    {
+        var invoiceId = Guid.CreateVersion7();
+        var tenantId = Build.Tenant();
+        var invoice = InvoiceBuilder.BuildDraft(id: invoiceId, tenantId: tenantId, isSimplified: false);
+        
+        var line1 = Build.CreateLine(tenantId, invoiceId, "Leek", units: 25, unitPrice: 1.5m, taxRate: 4).Value;
+        var line2 = Build.CreateLine(tenantId, invoiceId, "Lettuce", units: 5, unitPrice: 5.5m, taxRate: 4).Value;
+        var line3 = Build.CreateLine(tenantId, invoiceId, "Pumpkin", units: 14.54m, unitPrice: 1.4m, taxRate: 4).Value;
+        var line4 = Build.CreateLine(tenantId, invoiceId, "Zucchini", units: 13.56m, unitPrice: 1.000m, taxRate: 4).Value;
+
+        var result1 = invoice.AddLine(line1);
+        var result2 = invoice.AddLine(line2);
+        var result3 = invoice.AddLine(line3);
+
+        IEnumerable<InvoiceLine> expectedLines = [line1, line2, line3];
+
+        Assert.True(result1.IsSuccess && result2.IsSuccess &&  result3.IsSuccess);
+        Assert.Equal(invoice.Id, line1.InvoiceId);
+        Assert.Equal(invoice.Id, line2.InvoiceId);
+        Assert.Equal(invoice.Id, line3.InvoiceId);
+        Assert.Equal(invoice.TenantId, line1.TenantId);
+        Assert.Equal(invoice.TenantId, line2.TenantId);
+        Assert.Equal(invoice.TenantId, line3.TenantId);
+        Assert.DoesNotContain(line4, invoice.Lines);
+        Assert.Equivalent(expectedLines, invoice.Lines);
+    }
+    
+    [Fact]
+    public void AddLine_IntoInvoiceDraftWithSomeInvalidLines_FailsAtAddingInvalidLines()
+    {
+        var invoiceId = Guid.CreateVersion7();
+        var tenantId = Build.Tenant();
+        var invoice = InvoiceBuilder.BuildDraft(id: invoiceId, tenantId: tenantId, isSimplified: false);
+        
+        var lineDiffersInvoiceId = Build.CreateLine(tenantId, Guid.CreateVersion7(), "Leek", units: 25, unitPrice: 1.5m, taxRate: 4).Value;
+        var lineDiffersTenantId = Build.CreateLine(Build.Tenant(), invoiceId, "Lettuce", units: 5, unitPrice: 5.5m, taxRate: 4).Value;
+        var lineDiffersTenantAndInvoiceIds = Build.CreateLine(Build.Tenant(), Guid.CreateVersion7(), "Pumpkin", units: 14.54m, unitPrice: 1.4m, taxRate: 4).Value;
+        var lineValid = Build.CreateLine(tenantId, invoiceId, "Tomato", units: 18.45m, unitPrice: 5.45m, taxRate: 4).Value;
+        InvoiceLine? lineNull = null;
+            
+        var resultDiffersInvoiceId = invoice.AddLine(lineDiffersInvoiceId);
+        var resultDiffersTenantId = invoice.AddLine(lineDiffersTenantId);
+        var resultDiffersTenantAndInvoiceIds = invoice.AddLine(lineDiffersTenantAndInvoiceIds);
+        var resultValid = invoice.AddLine(lineValid);
+        var resultNull = invoice.AddLine(lineNull);
+
+        Assert.True(resultDiffersInvoiceId.IsFailure 
+                    && resultDiffersTenantId.IsFailure 
+                    && resultDiffersTenantAndInvoiceIds.IsFailure 
+                    && resultValid.IsSuccess
+                    && resultNull.IsFailure);
+        Assert.Contains(InvoiceError.LineWithDifferentInvoiceIdentifier, resultDiffersInvoiceId.Errors);
+        Assert.DoesNotContain(InvoiceError.LineWithDifferentTenantIdentifier, resultDiffersInvoiceId.Errors);
+        Assert.DoesNotContain(InvoiceError.LineWithDifferentInvoiceIdentifier, resultDiffersTenantId.Errors);
+        Assert.Contains(InvoiceError.LineWithDifferentTenantIdentifier, resultDiffersTenantId.Errors);
+        Assert.Contains(InvoiceError.LineWithDifferentInvoiceIdentifier, resultDiffersTenantAndInvoiceIds.Errors);
+        Assert.Contains(InvoiceError.LineWithDifferentTenantIdentifier, resultDiffersTenantAndInvoiceIds.Errors);
+        Assert.Contains(InvoiceError.LineEmpty, resultNull.Errors);
+        Assert.Empty(resultValid.Errors);
+        Assert.Single(invoice.Lines, lineValid);
     }
 }
