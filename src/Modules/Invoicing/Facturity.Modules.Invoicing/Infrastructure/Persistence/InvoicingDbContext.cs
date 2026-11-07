@@ -1,4 +1,6 @@
 ﻿using Facturity.Modules.Invoicing.Domain;
+using Facturity.Modules.SharedKernel.Domain;
+using Facturity.Modules.SharedKernel.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 namespace Facturity.Modules.Invoicing.Infrastructure;
@@ -12,5 +14,12 @@ public class InvoicingDbContext(DbContextOptions<InvoicingDbContext> options) : 
         modelBuilder.HasDefaultSchema("invoicing");
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(InvoicingDbContext).Assembly);
         base.OnModelCreating(modelBuilder);
+    }
+    
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        configurationBuilder.Properties<TenantId>()
+            .HaveConversion<TenantIdConverter>()
+            .HaveColumnType("uuid");
     }
 }
