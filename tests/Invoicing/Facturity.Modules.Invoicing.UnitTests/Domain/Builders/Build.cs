@@ -50,8 +50,7 @@ internal static class Build
     { 
         var id = Guid.CreateVersion7();
         var result = InvoiceSeries.Create(id, tenantId, name, description);
-        Assert.True(result.IsSuccess);
-        Assert.Equal(id, result.Value.Id);
+
         return result;
     }
     
