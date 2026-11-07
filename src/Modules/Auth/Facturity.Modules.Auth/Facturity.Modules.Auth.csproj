@@ -18,7 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Facturity.Modules.SharedKernel\Facturity.Modules.SharedKernel.csproj" />
+      <ProjectReference Include="..\..\..\Shared\Facturity.Modules.SharedKernel\Facturity.Modules.SharedKernel.csproj" />
     </ItemGroup>
 
     <ItemGroup>

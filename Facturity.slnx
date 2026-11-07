@@ -4,7 +4,6 @@
   </Folder>
   <Folder Name="/Modules/">
     <Project Path="src/Modules/Facturity.Modules.Bootstrapper/Facturity.Modules.Bootstrapper.csproj" />
-    <Project Path="src/Modules/Facturity.Modules.SharedKernel/Facturity.Modules.SharedKernel.csproj" />
   </Folder>
   <Folder Name="/Modules/Auth/">
     <Project Path="src/Modules/Auth/Facturity.Modules.Auth/Facturity.Modules.Auth.csproj" />
@@ -14,6 +13,9 @@
   </Folder>
   <Folder Name="/Modules/Invoicing/">
     <Project Path="src/Modules/Invoicing/Facturity.Modules.Invoicing/Facturity.Modules.Invoicing.csproj" />
+  </Folder>
+  <Folder Name="/Shared/">
+    <Project Path="src/Shared/Facturity.Modules.SharedKernel/Facturity.Modules.SharedKernel.csproj" />
   </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".dockerignore" />
