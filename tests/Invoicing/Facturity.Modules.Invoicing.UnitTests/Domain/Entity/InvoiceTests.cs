@@ -142,6 +142,37 @@ public class ChangeCurrencyTests
     }
 }
 
+public class ChangeSeriesTests
+{
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void ChangeSeries_OfInvoiceDraftWithValidSeriesId_Succeeds(bool withSeries)
+    {
+        Guid? seriesId = withSeries ? Guid.CreateVersion7() : null;
+        var invoice = InvoiceBuilder.BuildDraft(isSimplified: false)
+            .WithCustomer(customerId: Guid.CreateVersion7());
+
+        var result = invoice.ChangeSeries(seriesId);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(seriesId, invoice.SeriesId);
+    }
+
+    [Fact]
+    public void ChangeSeries_OfInvoiceDraftWithEmptyGuidSeriesId_Fails()
+    {
+        var seriesId = Guid.Empty;
+        var invoice = InvoiceBuilder.BuildDraft(isSimplified: false)
+            .WithCustomer(customerId: Guid.CreateVersion7());
+
+        var result = invoice.ChangeSeries(seriesId);
+
+        Assert.True(result.IsFailure);
+        Assert.Single(result.Errors, InvoiceError.SeriesInvalid);
+    }
+}
+
 // public class OtherTestsPendingToRefactor
 // {
     //
