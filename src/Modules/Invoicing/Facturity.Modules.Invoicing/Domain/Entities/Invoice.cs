@@ -155,42 +155,35 @@ internal class Invoice : AggregateRoot<Guid>
 
     internal Result Issue(DateTimeOffset issuedAtUtc, DateTimeOffset nowUtc)
     {
-        List<Error> errors = [];
-        
         if (Status != InvoiceStatus.Draft)
             return Result.Fail(InvoiceError.NotInDraft);
-        
-        switch (IsSimplified)
-        {
-            case true when CustomerId is not null:
-                errors.Add(InvoiceError.CustomerIdNoAtSimplifiedInvoice);
-                break;
-            case false when CustomerId is null:
-                errors.Add(InvoiceError.CustomerIdNeededAtNoSimplifiedInvoice);
-                break;
-        }
-        
-        if(SeriesId is null)
-            errors.Add(InvoiceError.SeriesRequired);
 
-        if (issuedAtUtc == DateTimeOffset.MinValue)
-            errors.Add(InvoiceError.IssueDateInvalid);
-        else if (issuedAtUtc > nowUtc)
-            errors.Add(InvoiceError.IssueDateFuture);
+        List<Error> errors = [];
+
+        if (IsSimplified && CustomerId is not null)
+            errors.Add(InvoiceError.CustomerIdNoAtSimplifiedInvoice);
+        else if (!IsSimplified && CustomerId is null)
+            errors.Add(InvoiceError.CustomerIdNeededAtNoSimplifiedInvoice);
+
+        if (SeriesId is null)
+            errors.Add(InvoiceError.SeriesRequiredAtIssuanceTime);
+
+        if (Description is null)
+            errors.Add(InvoiceError.DescriptionRequiredAtIssuanceTime);
         
-        if(_lines.Count == 0)
+        if (_lines.Count == 0)
             errors.Add(InvoiceError.InvoiceLinesEmpty);
 
-        if (errors.Count > 0)
-            return Result.Fail(errors);
-        
         var issuanceInfo = IssuanceInfo.Create(issuedAtUtc, nowUtc);
         if (issuanceInfo.IsFailure)
             errors.AddRange(issuanceInfo.Errors);
-
+                
+        if (errors.Count > 0)
+            return Result.Fail(errors);
+        
         IssuanceInfo = issuanceInfo.Value;
         Status = InvoiceStatus.Issued;
-        
+
         return Result.Ok();
     }
 

@@ -16,7 +16,7 @@ internal sealed record IssuanceInfo
 
     internal static Result<IssuanceInfo> Create(DateTimeOffset issuedAtUtc, DateTimeOffset nowUtc)
     {
-        if (issuedAtUtc == default)
+        if (issuedAtUtc == DateTimeOffset.MinValue)
             return Result.Fail<IssuanceInfo>(IssuanceInfoError.IssueDateInvalid);
         
         if (issuedAtUtc > nowUtc)

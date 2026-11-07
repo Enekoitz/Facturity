@@ -342,7 +342,7 @@ public class InvoiceAddLinesTests
                                     .WithLine(line: existingLine);
         
         var newLines  = Build.GetInvoiceLinesSampleList(tenantId, invoiceId);
-        
+            
         var result = invoice.AddLines(newLines);
  
         Assert.True(result.IsSuccess);
@@ -389,5 +389,180 @@ public class InvoiceAddLinesTests
         Assert.True(result.IsFailure);
         Assert.Contains(InvoiceError.LinesCollectionEmpty, result.Errors);
         Assert.Single(invoice.Lines, existingLine);
+    }
+}
+
+public class InvoiceIssueTests
+{
+    private static readonly DateTimeOffset Now = new(2026, 11, 7, 12, 0, 0, TimeSpan.Zero);
+    
+    private static Invoice CreateDraftInvoice(
+        bool isSimplified = false,
+        bool hasCustomer = true,
+        bool hasSeries = true,
+        bool hasLines = true,
+        bool hasDescription = true
+        )
+    {
+        var invoice = InvoiceBuilder.BuildDraft(isSimplified: isSimplified);
+        
+        if(hasCustomer)
+            invoice.WithCustomer(customerId: Guid.CreateVersion7());
+
+        if(hasSeries)
+            invoice.WithSeries(seriesId: Guid.CreateVersion7());
+        
+        if(hasDescription)
+            invoice.WithDescription(description: "Sample sales description");
+        
+        if(hasLines)
+            invoice.WithLine().WithLine().WithLine();
+        
+        return invoice;
+    }
+ 
+    [Fact]
+    public void Issue_WhenNonSimplifiedInvoiceIsValid_ReturnsOkAndMarksAsIssued()
+    {
+        var invoice = CreateDraftInvoice();
+ 
+        var result = invoice.Issue(Now.AddMinutes(-5), Now);
+ 
+        Assert.True(result.IsSuccess);
+        Assert.Equal(InvoiceStatus.Issued, invoice.Status);
+        Assert.NotNull(invoice.IssuanceInfo);
+    }
+ 
+    [Fact]
+    public void Issue_WhenSimplifiedInvoiceHasNoCustomer_ReturnsOkAndMarksAsIssued()
+    {
+        var invoice = CreateDraftInvoice(isSimplified: true, hasCustomer: false);
+ 
+        var result = invoice.Issue(Now.AddMinutes(-5), Now);
+ 
+        Assert.True(result.IsSuccess);
+        Assert.Equal(InvoiceStatus.Issued, invoice.Status);
+    }
+ 
+    [Fact]
+    public void Issue_WhenIssueDateEqualsNow_ReturnsOk()
+    {
+        var invoice = CreateDraftInvoice();
+ 
+        var result = invoice.Issue(Now, Now);
+ 
+        Assert.True(result.IsSuccess);
+    }
+ 
+    [Fact]
+    public void Issue_WhenAlreadyIssued_FailsWithNotInDraftAndKeepsOriginalIssuanceInfo()
+    {
+        var invoice = CreateDraftInvoice();
+        Assert.True(invoice.Issue(Now.AddMinutes(-5), Now).IsSuccess);
+        var originalInfo = invoice.IssuanceInfo;
+ 
+        var result = invoice.Issue(Now.AddMinutes(-1), Now);
+ 
+        Assert.True(result.IsFailure);
+        Assert.Equal(InvoiceError.NotInDraft, Assert.Single(result.Errors));
+        Assert.Equal(InvoiceStatus.Issued, invoice.Status);
+        Assert.Equal(originalInfo, invoice.IssuanceInfo);
+    }
+ 
+    [Fact]
+    public void Issue_WhenNotDraftAndInputIsAlsoInvalid_ReturnsOnlyNotInDraft()
+    {
+        var invoice = CreateDraftInvoice();
+        Assert.True(invoice.Issue(Now.AddMinutes(-5), Now).IsSuccess);
+ 
+        var result = invoice.Issue(DateTimeOffset.MinValue, Now);
+ 
+        Assert.True(result.IsFailure);
+        Assert.Equal(InvoiceError.NotInDraft, Assert.Single(result.Errors));
+    }
+    
+    [Fact]
+    public void Issue_WhenNonSimplifiedInvoiceHasNoCustomer_FailsWithCustomerIdNeededAtNoSimplifiedInvoice()
+    {
+        var invoice = CreateDraftInvoice(isSimplified: false, hasCustomer: false);
+ 
+        var result = invoice.Issue(Now.AddMinutes(-5), Now);
+ 
+        Assert.True(result.IsFailure);
+        Assert.Equal(InvoiceError.CustomerIdNeededAtNoSimplifiedInvoice, Assert.Single(result.Errors));
+    }
+    
+    [Fact]
+    public void Issue_WhenSeriesIsMissing_FailsWithSeriesRequired()
+    {
+        var invoice = CreateDraftInvoice(hasSeries: false);
+ 
+        var result = invoice.Issue(Now.AddMinutes(-5), Now);
+ 
+        Assert.True(result.IsFailure);
+        Assert.Equal(InvoiceError.SeriesRequiredAtIssuanceTime, Assert.Single(result.Errors));
+    }
+    
+    [Fact]
+    public void Issue_WhenIssueDateIsMinValue_FailsWithIssueDateInvalidOnly()
+    {
+        var invoice = CreateDraftInvoice();
+ 
+        var result = invoice.Issue(DateTimeOffset.MinValue, Now);
+ 
+        Assert.True(result.IsFailure);
+        Assert.Equal(IssuanceInfoError.IssueDateInvalid, Assert.Single(result.Errors));
+        Assert.DoesNotContain(IssuanceInfoError.IssueDateIsFuture, result.Errors);
+    }
+ 
+    [Fact]
+    public void Issue_WhenIssueDateIsInTheFuture_FailsWithIssueDateFuture()
+    {
+        var invoice = CreateDraftInvoice();
+ 
+        var result = invoice.Issue(Now.AddDays(1), Now);
+ 
+        Assert.True(result.IsFailure);
+        Assert.Equal(IssuanceInfoError.IssueDateIsFuture, Assert.Single(result.Errors));
+    }
+ 
+    [Fact]
+    public void Issue_WhenIssueDateIsOneTickAfterNow_FailsWithIssueDateFuture()
+    {
+        var invoice = CreateDraftInvoice();
+ 
+        var result = invoice.Issue(Now.AddTicks(1), Now);
+ 
+        Assert.Equal(IssuanceInfoError.IssueDateIsFuture, Assert.Single(result.Errors));
+    }
+ 
+    [Fact]
+    public void Issue_WhenInvoiceHasNoLines_FailsWithInvoiceLinesEmpty()
+    {
+        var invoice = CreateDraftInvoice(hasLines: false);
+ 
+        var result = invoice.Issue(Now.AddMinutes(-5), Now);
+ 
+        Assert.True(result.IsFailure);
+        Assert.Equal(InvoiceError.InvoiceLinesEmpty, Assert.Single(result.Errors));
+    }
+ 
+    [Fact]
+    public void Issue_WhenSeveralRulesAreBroken_ReturnsAllErrorsAndDoesNotChangeState()
+    {
+        var invoice = CreateDraftInvoice(
+            isSimplified: false, hasCustomer: false, hasSeries: false, hasLines: false);
+ 
+        var result = invoice.Issue(DateTimeOffset.MinValue, Now);
+ 
+        Assert.True(result.IsFailure);
+        Assert.Equal(4, result.Errors.Count());
+        Assert.Contains(InvoiceError.CustomerIdNeededAtNoSimplifiedInvoice, result.Errors);
+        Assert.Contains(InvoiceError.SeriesRequiredAtIssuanceTime, result.Errors);
+        Assert.Contains(IssuanceInfoError.IssueDateInvalid, result.Errors);
+        Assert.Contains(InvoiceError.InvoiceLinesEmpty, result.Errors);
+ 
+        Assert.Equal(InvoiceStatus.Draft, invoice.Status);
+        Assert.Null(invoice.IssuanceInfo);
     }
 }

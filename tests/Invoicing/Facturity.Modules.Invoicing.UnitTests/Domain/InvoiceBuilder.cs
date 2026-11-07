@@ -35,6 +35,25 @@ public static class InvoiceBuilder
             return invoice;
         }
         
+        internal Invoice WithSeries(Guid seriesId)
+        {
+            var result = invoice.ChangeSeries(seriesId);
+            if (!result.IsSuccess)
+                throw new InvalidOperationException($"Error setting the seriesId: {result.Errors}");
+            
+            return invoice;
+        }
+        
+        internal Invoice WithDescription(string?  description)
+        {
+            var nowUtc = new DateTimeOffset(2026, 11, 07, 09, 00, 00, TimeSpan.Zero);
+            var result = invoice.ChangeDetails(description, invoice.TransactionAtUtc, nowUtc);
+            if (!result.IsSuccess)
+                throw new InvalidOperationException($"Error setting invoice description: {result.Errors}");
+            
+            return invoice;
+        }
+        
         internal Invoice WithLine(InvoiceLine line)
         {
             var result = invoice.AddLine(line);
