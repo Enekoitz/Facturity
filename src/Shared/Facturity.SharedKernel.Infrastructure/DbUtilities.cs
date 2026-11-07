@@ -1,4 +1,4 @@
-﻿namespace Facturity.Modules.SharedKernel.Infra;
+﻿namespace Facturity.Modules.SharedKernel.Infrastructure;
 
 public static class DbUtilities
 {
