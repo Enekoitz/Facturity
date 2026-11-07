@@ -25,7 +25,6 @@ public class InvoiceCreateDraftTests
         Assert.Equal(isSimplified, invoice.IsSimplified);
         Assert.Null(invoice.TransactionAtUtc);
         Assert.Null(invoice.CustomerId);
-        Assert.Null(invoice.Series);
         Assert.Null(invoice.SeriesId);
         Assert.Null(invoice.IssuanceInfo);
         Assert.Null(invoice.Description);

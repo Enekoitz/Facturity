@@ -18,7 +18,6 @@
 | TotalAmount      | `Money`                        | - Positive (except for amended returns)                                              | No                                                 |
 | TransactionAtUtc | `DateTimeOffset`               | - Non-future date                                                                    | Yes                                                |
 | Currency         | `string`                       | - Operations only between the same currency                                          | No                                                 |
-| Series           | `InvoiceSeries`                | - Navigation                                                                         | Yes                                                |
 
 ### Invariants
 

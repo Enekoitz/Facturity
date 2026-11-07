@@ -21,7 +21,6 @@ internal class Invoice : AggregateRoot<Guid>
     internal Money TotalAmount() => Lines.Sum(i => i.TotalAmount);
     internal IReadOnlyList<BreakdownLine> TaxBreakdown => GetTaxBreakdown();
     internal string Currency { get; private set; } = DefaultCurrency;
-    internal InvoiceSeries? Series { get; private set; } = null!;
 
     private Invoice(Guid id, TenantId tenantId, InvoiceStatus status, bool isSimplified) 
         : base(id, tenantId)
