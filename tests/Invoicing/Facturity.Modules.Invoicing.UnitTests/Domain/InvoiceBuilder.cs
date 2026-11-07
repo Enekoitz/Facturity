@@ -13,7 +13,7 @@ public static class InvoiceBuilder
         var result = Invoice.CreateDraft(id.Value, tenantId.Value, isSimplified);
         
         if (!result.IsSuccess)
-            throw new InvalidOperationException($"No se pudo crear el borrador en el setup: {result.Errors}");
+            throw new InvalidOperationException($"The draft could not be created during setup: {result.Errors}");
 
         return result.Value;
     }
@@ -24,7 +24,7 @@ public static class InvoiceBuilder
         {
             var result = invoice.ChangeCustomer(customerId);
             if (!result.IsSuccess)
-                throw new InvalidOperationException($"Error configurando el cliente: {result.Errors}");
+                throw new InvalidOperationException($"Error setting the customer: {result.Errors}");
             
             return invoice;
         }
@@ -32,6 +32,25 @@ public static class InvoiceBuilder
         internal Invoice WithoutCustomer()
         {
             invoice.ChangeCustomer(null);
+            return invoice;
+        }
+        
+        internal Invoice WithLine(InvoiceLine line)
+        {
+            var result = invoice.AddLine(line);
+            if (!result.IsSuccess)
+                throw new InvalidOperationException($"Error setting the customer: {result.Errors}");
+            
+            return invoice;
+        }
+        
+        internal Invoice WithLine()
+        {
+            var line = Build.GetValidInvoiceLine(invoice.TenantId, invoice.Id);
+            var result = invoice.AddLine(line);
+            if (!result.IsSuccess)
+                throw new InvalidOperationException($"Error setting the customer: {result.Errors}");
+            
             return invoice;
         }
     }

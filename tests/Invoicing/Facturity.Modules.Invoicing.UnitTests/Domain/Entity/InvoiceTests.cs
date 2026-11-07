@@ -1,25 +1,14 @@
 using Facturity.Modules.Invoicing.Domain;
 using Facturity.Modules.SharedKernel.Domain;
-using Microsoft.EntityFrameworkCore.Migrations.Operations;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Query.ExpressionTranslators.Internal;
 
 namespace Facturity.Modules.Invoicing.UnitTests.Domain;
 
-// CreateDraft
-// ChangeCustomer (Must be from Draft)
-// ChangeSeries (Must be from Draft)
-// ChangeDetails (Must be from Draft)
-// ChangeCurrency (Must be from Draft)
-// AddLine (Must be from Draft)
-// AddLines (Must be from Draft)
-// Issue (Must be from Draft)
-
-public class CreateDraftTests
+public class InvoiceCreateDraftTests
 {
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public void CreateDraft_WithValidData_SucceedsReturningInvoiceDraft(bool isSimplified)
+    public void CreateDraft_WithValidData_SucceedsAndReturnsInvoiceDraft(bool isSimplified)
     {
         var id = Guid.CreateVersion7();
         var tenantId = Build.Tenant();
@@ -48,7 +37,7 @@ public class CreateDraftTests
     }
     
     [Fact]
-    public void CreateDraft_WithInvalidData_FailsNotReturningInvoiceDraft()
+    public void CreateDraft_WithInvalidData_FailsAndNotReturnsInvoiceDraft()
     {
         const bool isSimplified = false;
         var id = Guid.Empty;
@@ -61,7 +50,7 @@ public class CreateDraftTests
     }
 }
 
-public class ChangeCustomerTests
+public class InvoiceChangeCustomerTests
 {
     [Fact]
     public void ChangeCustomer_OfNonSimplifiedInvoiceDraftWithNonEmptyCustomerId_Succeeds()
@@ -106,7 +95,7 @@ public class ChangeCustomerTests
     // once we have developed builder methods of IssueInvoice
 }
 
-public class ChangeCurrencyTests
+public class InvoiceChangeCurrencyTests
 {
     [Theory]
     [InlineData("EUR", "EUR")]
@@ -116,8 +105,7 @@ public class ChangeCurrencyTests
      
     public void ChangeCurrency_OfInvoiceDraftWithValidCurrencyCode_Succeeds(string? currencyCode, string expected)
     {
-        var invoice = InvoiceBuilder.BuildDraft(isSimplified: false)
-            .WithCustomer(customerId: Guid.CreateVersion7());
+        var invoice = InvoiceBuilder.BuildDraft(isSimplified: false);
 
         var result = invoice.ChangeCurrency(currencyCode);
 
@@ -132,8 +120,7 @@ public class ChangeCurrencyTests
      
     public void ChangeCurrency_OfInvoiceDraftWithInvalidCurrencyCode_Fails(string? currencyCode)
     {
-        var invoice = InvoiceBuilder.BuildDraft(isSimplified: false)
-            .WithCustomer(customerId: Guid.CreateVersion7());
+        var invoice = InvoiceBuilder.BuildDraft(isSimplified: false);
 
         var result = invoice.ChangeCurrency(currencyCode);
 
@@ -142,7 +129,7 @@ public class ChangeCurrencyTests
     }
 }
 
-public class ChangeSeriesTests
+public class InvoiceChangeSeriesTests
 {
     [Theory]
     [InlineData(true)]
@@ -150,8 +137,7 @@ public class ChangeSeriesTests
     public void ChangeSeries_OfInvoiceDraftWithValidSeriesId_Succeeds(bool withSeries)
     {
         Guid? seriesId = withSeries ? Guid.CreateVersion7() : null;
-        var invoice = InvoiceBuilder.BuildDraft(isSimplified: false)
-            .WithCustomer(customerId: Guid.CreateVersion7());
+        var invoice = InvoiceBuilder.BuildDraft(isSimplified: false);
 
         var result = invoice.ChangeSeries(seriesId);
 
@@ -163,8 +149,7 @@ public class ChangeSeriesTests
     public void ChangeSeries_OfInvoiceDraftWithEmptyGuidSeriesId_Fails()
     {
         var seriesId = Guid.Empty;
-        var invoice = InvoiceBuilder.BuildDraft(isSimplified: false)
-            .WithCustomer(customerId: Guid.CreateVersion7());
+        var invoice = InvoiceBuilder.BuildDraft(isSimplified: false);
 
         var result = invoice.ChangeSeries(seriesId);
 
@@ -173,7 +158,7 @@ public class ChangeSeriesTests
     }
 }
 
-public class ChangeDetailsTests
+public class InvoiceChangeDetailsTests
 {
     [Theory]
     [InlineData("Venta de hortalizas.   ",false)]
@@ -230,14 +215,6 @@ public class ChangeDetailsTests
     [Fact]
     public void ChangeDetails_OfInvoiceDraftWithTransactionDateMinValue_Fails()
     {
-        Assert.False(result.IsSuccess);
-        var actual = result.Errors.ToList();
-        Assert.Equal(expected.Length, actual.Count);
-        foreach (var error in expected)
-            Assert.Contains(error, actual);
-    }
-    
-    public static void FailsWith<T>(Result<T> result, params Error[] expected)
         var nowUtc = new DateTimeOffset(2026, 11, 07, 
             08,43,59, 
             TimeSpan.Zero).ToUniversalTime(); // 2026-11-07 08:43:59
@@ -252,7 +229,7 @@ public class ChangeDetailsTests
     }
 }
 
-public class AddLineTests
+public class InvoiceAddLineTests
 {
     [Fact]
     public void AddLine_IntoInvoiceDraftWithASingleValidLine_Succeeds()
@@ -317,7 +294,7 @@ public class AddLineTests
         var resultDiffersTenantId = invoice.AddLine(lineDiffersTenantId);
         var resultDiffersTenantAndInvoiceIds = invoice.AddLine(lineDiffersTenantAndInvoiceIds);
         var resultValid = invoice.AddLine(lineValid);
-        var resultNull = invoice.AddLine(lineNull);
+        var resultNull = invoice.AddLine(lineNull!);
 
         Assert.True(resultDiffersInvoiceId.IsFailure 
                     && resultDiffersTenantId.IsFailure 
@@ -333,5 +310,84 @@ public class AddLineTests
         Assert.Contains(InvoiceError.LineEmpty, resultNull.Errors);
         Assert.Empty(resultValid.Errors);
         Assert.Single(invoice.Lines, lineValid);
+    }
+}
+
+
+
+public class InvoiceAddLinesTests
+{
+    [Fact]
+    public void AddLines_WhenDraftAndLinesAreValid_ReturnsOkAndAddsAllLines()
+    {
+        var invoiceId = Guid.CreateVersion7();
+        var tenantId = Build.Tenant();
+        var invoice = InvoiceBuilder.BuildDraft(id: invoiceId, tenantId: tenantId, isSimplified: false);
+        
+        var lines  = Build.GetInvoiceLinesSampleList(tenantId, invoiceId);
+        
+        var result = invoice.AddLines(lines);
+ 
+        Assert.True(result.IsSuccess);
+        Assert.Equal(lines, invoice.Lines);
+    }
+    
+    [Fact]
+    public void AddLines_WhenInvoiceAlreadyHasLines_AppendsAndPreservesOrder()
+    {
+        var invoiceId = Guid.CreateVersion7();
+        var tenantId = Build.Tenant();
+        var existingLine = Build.GetValidInvoiceLine(tenantId, invoiceId);
+        var invoice = InvoiceBuilder.BuildDraft(id: invoiceId, tenantId: tenantId, isSimplified: true)
+                                    .WithLine(line: existingLine);
+        
+        var newLines  = Build.GetInvoiceLinesSampleList(tenantId, invoiceId);
+        
+        var result = invoice.AddLines(newLines);
+ 
+        Assert.True(result.IsSuccess);
+        Assert.Equal(invoice.Lines, new[] { existingLine }.Concat(newLines));
+    }
+    
+    [Fact]
+    public void AddLines_WhenLinesIsNull_FailsWithLinesCollectionEmpty()
+    {
+        var invoice = InvoiceBuilder.BuildDraft(isSimplified: false).WithLine();
+        var existingLine = invoice.Lines[0];
+ 
+        var result = invoice.AddLines(null!);
+ 
+        Assert.True(result.IsFailure);
+        Assert.Contains(InvoiceError.LinesCollectionEmpty, result.Errors);
+        Assert.Single(invoice.Lines, existingLine);
+    }
+    
+    [Fact]
+    public void AddLines_WhenLinesIsEmpty_FailsWithLinesCollectionEmpty()
+    {
+        var invoice = InvoiceBuilder.BuildDraft(isSimplified: false).WithLine();
+        var existingLine = invoice.Lines[0];
+    
+        var result = invoice.AddLines([]);
+    
+        Assert.True(result.IsFailure);
+        Assert.Contains(InvoiceError.LinesCollectionEmpty, result.Errors);
+        Assert.Single(invoice.Lines, existingLine);
+    }
+    
+    [Fact]
+    public void AddLines_WhenAnyLineIsNull_FailsAndIsAtomic_NoValidLineIsAdded()
+    {
+        var invoice = InvoiceBuilder.BuildDraft(isSimplified: false).WithLine();
+        var existingLine = invoice.Lines[0];
+
+        var lines = Build.GetInvoiceLinesSampleList(invoice.TenantId, invoice.Id);
+        lines.Add(null!);
+    
+        var result = invoice.AddLines(lines!);
+    
+        Assert.True(result.IsFailure);
+        Assert.Contains(InvoiceError.LinesCollectionEmpty, result.Errors);
+        Assert.Single(invoice.Lines, existingLine);
     }
 }

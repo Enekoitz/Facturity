@@ -73,13 +73,14 @@ internal class Invoice : AggregateRoot<Guid>
         return Result.Ok();
     }
     
-    internal Result ChangeDetails(string description, DateTimeOffset? transactionAtUtc, DateTimeOffset? nowUtc)
+    internal Result ChangeDetails(string? description, DateTimeOffset? transactionAtUtc, DateTimeOffset? nowUtc)
     {
         if (Status != InvoiceStatus.Draft)
             return Result.Fail(InvoiceError.NotInDraft);
         
         List<Error> errors = [];
         
+        description = string.IsNullOrWhiteSpace(description) ? null : description.Trim();
         if (description?.Length > DescriptionMaxLength)
             errors.Add(InvoiceError.DescriptionTooLong);
         
@@ -115,11 +116,22 @@ internal class Invoice : AggregateRoot<Guid>
     
     internal Result AddLine(InvoiceLine line)
     {
+        List<Error> errors = [];
+        
         if (Status != InvoiceStatus.Draft)
             return Result.Fail(InvoiceError.NotInDraft);
         
         if (line is null)
-            return Result.Fail(InvoiceError.LineEmpty);
+            errors.Add(InvoiceError.LineEmpty);
+        
+        if (Id != line?.InvoiceId)
+            errors.Add(InvoiceError.LineWithDifferentInvoiceIdentifier);
+        
+        if (TenantId != line?.TenantId)
+            errors.Add(InvoiceError.LineWithDifferentTenantIdentifier);
+        
+        if(errors.Count > 0)
+            return Result.Fail(errors);
             
         _lines.Add(line);
         
@@ -130,12 +142,14 @@ internal class Invoice : AggregateRoot<Guid>
     {
         if (Status != InvoiceStatus.Draft)
             return Result.Fail(InvoiceError.NotInDraft);
+    
+        var linesList = lines?.ToList();
+
+        if (linesList is null || linesList.Count == 0 || linesList.Any(l => l is null))
+            return Result.Fail(InvoiceError.LinesCollectionEmpty);
         
-        if (lines is not null && lines.Any(null))
-            return Result.Fail(InvoiceError.LineEmpty);
-            
-        _lines.AddRange(lines);
-        
+        _lines.AddRange(linesList);
+    
         return Result.Ok();
     }
 

@@ -27,6 +27,9 @@ internal static class Build
         CreateLine(tenantId, invoiceId, units: 1m, unitPrice: 2.34m, taxRate: 4m).Value
     ];
     
+    internal static InvoiceLine GetValidInvoiceLine(TenantId tenantId, Guid invoiceId) =>
+        CreateLine(tenantId, invoiceId, units: 145m, unitPrice: 0.256m, taxRate: 10.00m).Value;
+    
     internal static Result<Invoice> CreateDraft(
         Guid id,
         TenantId tenantId,

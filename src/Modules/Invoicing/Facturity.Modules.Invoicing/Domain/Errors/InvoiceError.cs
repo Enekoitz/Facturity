@@ -24,6 +24,18 @@ internal static class InvoiceError
         Error.Validation("Invoice.LineEmpty", 
             "Invoice line is empty.");
     
+    internal static readonly Error LineWithDifferentInvoiceIdentifier =
+        Error.Validation("Invoice.LineWithDifferentInvoiceIdentifier", 
+            "The invoice identifier for the invoice line differs from that of the invoice.");
+    
+    internal static readonly Error LineWithDifferentTenantIdentifier =
+        Error.Validation("Invoice.LineWithDifferentTenantIdentifier", 
+            "The tenant identifier for the invoice line differs from that of the invoice.");
+    
+    internal static readonly Error LinesCollectionEmpty =
+        Error.Validation("Invoice.LinesCollectionEmpty", 
+            "The invoice lines collection is empty.");
+    
     internal static readonly Error IssueDateAtInvoiceDraft =
         Error.Validation("Invoice.IssueDateAtInvoiceDraft", 
             $"An invoice draft cannot have issued date.");
