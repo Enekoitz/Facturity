@@ -492,6 +492,17 @@ public class InvoiceIssueTests
     }
     
     [Fact]
+    public void Issue_WhenDescriptionIsMissing_FailsWithDescriptionRequired()
+    {
+        var invoice = CreateDraftInvoice(hasDescription: false);
+ 
+        var result = invoice.Issue(Now.AddDays(-1), Now);
+ 
+        Assert.True(result.IsFailure);
+        Assert.Equal(InvoiceError.DescriptionRequiredAtIssuanceTime, Assert.Single(result.Errors));
+    }
+    
+    [Fact]
     public void Issue_WhenSeriesIsMissing_FailsWithSeriesRequired()
     {
         var invoice = CreateDraftInvoice(hasSeries: false);
@@ -550,13 +561,14 @@ public class InvoiceIssueTests
     public void Issue_WhenSeveralRulesAreBroken_ReturnsAllErrorsAndDoesNotChangeState()
     {
         var invoice = CreateDraftInvoice(
-            isSimplified: false, hasCustomer: false, hasSeries: false, hasLines: false);
+            isSimplified: false, hasCustomer: false, hasSeries: false, hasDescription:false, hasLines: false);
  
         var result = invoice.Issue(DateTimeOffset.MinValue, Now);
  
         Assert.True(result.IsFailure);
-        Assert.Equal(4, result.Errors.Count());
+        Assert.Equal(5, result.Errors.Count());
         Assert.Contains(InvoiceError.CustomerIdNeededAtNoSimplifiedInvoice, result.Errors);
+        Assert.Contains(InvoiceError.DescriptionRequiredAtIssuanceTime, result.Errors);
         Assert.Contains(InvoiceError.SeriesRequiredAtIssuanceTime, result.Errors);
         Assert.Contains(IssuanceInfoError.IssueDateInvalid, result.Errors);
         Assert.Contains(InvoiceError.InvoiceLinesEmpty, result.Errors);
