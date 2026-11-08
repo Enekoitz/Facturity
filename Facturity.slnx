@@ -30,6 +30,7 @@
     <File Path="README.md" />
   </Folder>
   <Folder Name="/Tests/">
+    <Project Path="tests/Facturity.ArchitectureTests/Facturity.ArchitectureTests.csproj" />
     <Project Path="tests/Facturity.IntegrationTests/Facturity.IntegrationTests.csproj" />
   </Folder>
   <Folder Name="/Tests/Modules/" />
