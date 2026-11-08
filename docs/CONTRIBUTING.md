@@ -1,34 +1,134 @@
-# How to Contribute
+# Contributing
 
-## Workflow (GitHub flow)
+Thanks for contributing! This guide takes you from a fresh clone to a merged pull request.
 
-1. Create a branch from `main` with a prefix matching the type of change:
-   - `feat/...`, `fix/...`, `docs/...`
+## Development Setup
 
-2. Make small commits with clear messages.
+1. Fork and clone the repository.
+2. Install dependencies:
 
-3. Open a PR using the template.
+```bash
+dotnet restore
+```
 
-4. Merge after review (or self-review if you work alone).
+3. Run the test suite to confirm everything works:
 
-## Documentation rules
+```bash
+dotnet test
+```
 
-- **One branch per unit of change**, not per thinking session.
+## Branch Naming
 
-- If a code change affects the docs, **update them in the same PR** (`docs-as-code`).
+All branches are created from `main` and follow the pattern:
 
-- Changes to scope, architecture or important decisions → **new ADR** (Architecture Decision Record).
+```
+<type>/<issue#>-<short-description>
+```
 
-- Minor fixes (typos, glossary) can go straight to `main` if you work alone.
+| Type       | Purpose                               | Example                      |
+| ---------- | ------------------------------------- | ---------------------------- |
+| `feat`     | New feature                           | `feat/42-add-csv-export`     |
+| `fix`      | Bug fix                               | `fix/89-header-overflow`     |
+| `hotfix`   | Urgent production fix                 | `hotfix/101-crash-on-login`  |
+| `refactor` | Code restructure (no behavior change) | `refactor/56-optimize-query` |
+| `docs`     | Documentation only                    | `docs/12-update-api`         |
+| `test`     | Test additions or fixes               | `test/77-add-e2e-coverage`   |
+| `chore`    | Maintenance, deps, config             | `chore/30-update-deps`       |
 
-- Backlog and tasks are **not** documented here: they go to the task manager, **GitHub Issues**.
+**Rules:**
 
-## Conventions
+- Lowercase, kebab-case (hyphens, no underscores or spaces).
+    
+- Include the issue number (no `#`).
+    
+- Keep the description to 2–5 words.
+    
+- Delete the branch after merge.
+    
 
-- Commits: `type: description` (`docs: update scope`, `feat(api): add global exception handler`, etc.).
+## Commit Messages
 
-- File names in lowercase with hyphens.
+We follow [Conventional Commits](https://www.conventionalcommits.org/):
 
-- Diagrams with Mermaid whenever possible.
+```
+<type>[optional scope]: <description>
 
-- Every document ends with `Last reviewed: date`.
+[optional body]
+
+[optional footer — e.g. Closes #42]
+```
+
+**Examples:**
+
+```
+feat(auth): add OAuth2 login flow 
+
+Implements the OAuth2 provider requested in #42.
+
+Closes #42
+```
+
+```
+fix: correct off-by-one in pagination
+
+The last page was skipped when total % perPage === 0.
+```
+
+**Rules:**
+
+- Use the imperative mood: "add", not "added".
+    
+- Keep the subject line under 72 characters.
+    
+- One logical change per commit.
+    
+- Reference related issues in the footer.
+    
+
+## Pull Requests
+
+Before opening a PR, make sure:
+
+- [ ] Branch is up to date with `main`.
+    
+- [ ] All tests pass locally (`dotnet test`).
+    
+- [ ] Lint and format checks pass (`dotnet format --verify-no-changes`).
+    
+- [ ] The PR is focused on a single concern.
+    
+- [ ] The description links the issue (`Closes #42`).
+    
+
+**PR description should include:**
+
+- What changed and why.
+    
+- How to test / verify the change.
+    
+- Screenshots or recordings for UI changes.
+    
+
+**Merge policy:** Squash and merge only. The PR title becomes the commit message, so keep it in Conventional Commits format.
+
+## Code Style
+
+- Follow the existing code style (enforced by linter).
+    
+- Run `dotnet format` before committing.
+    
+- Keep functions small and focused.
+    
+- Add tests for new behavior.
+    
+
+## Code of Conduct
+
+Please read our Code of Conduct. Be kind and respectful in all interactions.
+
+## Questions?
+
+- For small fixes (typos, obvious bugs), go ahead and open a PR.
+    
+- For larger changes or new features, open an issue first to discuss the approach.
+    
