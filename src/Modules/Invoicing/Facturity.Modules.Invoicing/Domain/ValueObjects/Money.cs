@@ -17,17 +17,10 @@ internal static class MoneyExtension
 internal sealed record Money
 {
     internal static readonly Money Zero = new(0m);
+    internal const int MaxDecimalPlaces = 2;
     
-    internal const string DefaultCurrency = "EUR";
     internal decimal Amount { get; private init; }
-    internal string Currency { get; private init; } = DefaultCurrency;
 
-    private Money(decimal amount, string currency)
-    {
-        Amount = amount;
-        Currency = currency;
-    }
-    
     private Money(decimal amount)
     {
         Amount = amount;
@@ -35,27 +28,21 @@ internal sealed record Money
     
     private Money(){}
 
-    public static Result<Money> Create(decimal amount, string currency = DefaultCurrency)
+    public static Result<Money> Create(decimal amount)
     {
         var errors = new List<Error>();
         
         if (amount <= 0) 
             errors.Add(MoneyError.InvalidAmountNegativeOrZero);
         
-        currency ??= DefaultCurrency;
-        
-        currency = currency.Trim().ToUpper();
-        if (currency.Length != 3)
-            errors.Add(MoneyError.InvalidCurrencyCode);
-        
         if (errors.Count > 0)
             return Result.Fail<Money>(errors);
 
-        return Result.Ok(new Money(InvoiceRounding.Round(amount), currency));
+        return Result.Ok(new Money(InvoiceRounding.Round(amount)));
     }
     
     public static Money operator +(Money left, Money right) =>
         new(left.Amount + right.Amount);
     
-    public override string ToString() => $"{Amount:F2} {Currency}";
+    public override string ToString() => $"{Amount:F2}";
 }

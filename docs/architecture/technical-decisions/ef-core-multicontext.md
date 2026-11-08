@@ -6,11 +6,11 @@ Each module has its own context associated with a specific database schema. This
 
 ### `DbContext` filenames by module
 
-| Module                                        | DbContext               | DB Schema   |
-| --------------------------------------------- | ----------------------- | ----------- |
-| UgeFactura.Modules.Clientes.Infrastructure    | ClientesDbContext.cs    | clientes    |
-| UgeFactura.Modules.Facturacion.Infrastructure | FacturacionDbContext.cs | facturacion |
-| ....                                          | ....                    | ....        |
+| Module                                     | DbContext             | DB Schema |
+| ------------------------------------------ | --------------------- | --------- |
+| Facturity.Modules.Customer.Infrastructure  | CustomerDbContext.cs  | customer  |
+| Facturity.Modules.Invoicing.Infrastructure | InvoicingDbContext.cs | invoicing |
+| ....                                       | ....                  | ....      |
 
 ### EF Core Global CLI Tool
 
@@ -22,7 +22,7 @@ dotnet tool install --global dotnet-ef
 
 ### Migrations are performed from the Host
 
-All migrations are executed from the host project, `UgeFactura.API`. Consequently, this project must have the `Microsoft.EntityFrameworkCore.Design` package installed and referenced. This package enables the execution of migrations—the only EF Core functionality required at this level of the system.
+All migrations are executed from the host project, `Facurity.API`. Consequently, this project must have the `Microsoft.EntityFrameworkCore.Design` package installed and referenced. This package enables the execution of migrations—the only EF Core functionality required at this level of the system.
 
 ### History Tables
 
@@ -34,14 +34,13 @@ This configuration is defined in the EF Core setup as follows:
 
 ```c#
 // In the Clientes module
-options.UseSqlServer(connectionString, x =>
-x.MigrationsHistoryTable("__EFMigrationsHistory", "clientes"));
-``` // <--- Dedicated table within its own schema
+options.UseNpgsql(connectionString, x =>
+x.MigrationsHistoryTable("__EFMigrationsHistory", "customer")); // <--- Dedicated table within its own schema
 
 // In the Invoices (Facturas) module
-options.UseSqlServer(connectionString, x =>
-x.MigrationsHistoryTable("__EFMigrationsHistory", "facturas")); // <--- Dedicated table within its own separate schema
-
+options.UseNpgsql(connectionString, x =>
+x.MigrationsHistoryTable("__EFMigrationsHistory", "invoicing")); // <--- Dedicated table within its own separate schema
+```
 ##### Advantages
 
 - **Total isolation**: Migrations for a specific module/schema are stored in their own dedicated history table.
@@ -49,7 +48,6 @@ x.MigrationsHistoryTable("__EFMigrationsHistory", "facturas")); // <--- Dedicate
 - **Cleanliness**: If you ever need to extract an entire module and assign it to an independent database (as you might when transitioning to microservices), you would simply need to move the corresponding schema.
 
 - **No conflicts**: Database changes for one module can be applied without interfering with the operations of other modules within the system.
-
 
 # Key EF Core Flags
 

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Facturity.Modules.Customer.Domain;
-using Facturity.Modules.SharedKernel.Infra;
+using Facturity.Modules.SharedKernel.Infrastructure;
 
 namespace Facturity.Modules.Customer.Infrastructure;
 

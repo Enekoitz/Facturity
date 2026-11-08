@@ -4,6 +4,7 @@ using Facturity.Modules.Customer.Features;
 using Facturity.Modules.Customer.Infrastructure;
 using Facturity.Modules.Auth.Features;
 using Facturity.Modules.Auth.Infrastructure;
+using Facturity.Modules.Invoicing.Infrastructure;
 
 namespace Facturity.Modules.Bootstrapper;
 
@@ -15,6 +16,7 @@ public static class ModuleInstaller
         {
             services.AddAuthModuleServices(connString);
             services.AddCustomerModuleServices(connString);
+            services.AddInvoicingModuleServices(connString);
         }
 
         private void AddAuthModuleServices(string connString)
@@ -28,7 +30,11 @@ public static class ModuleInstaller
             services.AddScoped<ITaxIdFactory, TaxIdFactory>();
             services.AddCustomerFeatures();
             services.AddCustomerInfrastructure(connString);
-
+        }
+        
+        private void AddInvoicingModuleServices(string connString)
+        {
+            services.AddInvoicingInfrastructure(connString);
         }
     }
 }

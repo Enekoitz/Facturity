@@ -7,7 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Facturity.Modules.SharedKernel\Facturity.Modules.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Facturity.Modules.SharedKernel\Facturity.Modules.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Facturity.SharedKernel.Infrastructure\Facturity.SharedKernel.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -17,15 +18,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.13" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="10.0.13" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="10.0.13" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.13" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.13" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="10.0.13" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="10.0.13" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.13" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.13" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.14" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="10.0.14" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="10.0.14" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.14" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.14" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="10.0.14" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="10.0.14" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.14" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.14" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
   </ItemGroup>
 
