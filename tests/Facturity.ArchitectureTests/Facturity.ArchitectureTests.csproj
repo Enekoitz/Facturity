@@ -19,4 +19,11 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Host\Facturity.Api\Facturity.Api.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Auth\Facturity.Modules.Auth\Facturity.Modules.Auth.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Customer\Facturity.Modules.Customer\Facturity.Modules.Customer.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Invoicing\Facturity.Modules.Invoicing\Facturity.Modules.Invoicing.csproj" />
+  </ItemGroup>
+
 </Project>
