@@ -1,5 +1,7 @@
 ﻿using ArchUnitNET.Domain;
 using ArchUnitNET.Loader;
+using Facturity.Modules.Auth;
+using Facturity.Modules.Customer;
 using Facturity.Modules.Invoicing;
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
 
@@ -7,7 +9,7 @@ namespace Facturity.ArchitectureTests;
 
 public abstract class ArchitectureTestBase
 {
-    private const string Modulo = @"^MiApi\.Modules\.[^.]+";
+    private const string Modulo = @"^Facturity\.Modules\.[^.]+";
 
     protected static readonly Architecture Architecture = new ArchLoader()
         .LoadAssemblies(
